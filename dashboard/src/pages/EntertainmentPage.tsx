@@ -434,7 +434,7 @@ export default function EntertainmentPage() {
                     </div>
 
                     {/* Row 2: Pill-shaped channel buttons with SVG icons */}
-                    <div className="flex items-center justify-between gap-2.5 pt-2 border-t border-slate-700/40">
+                    <div className="flex items-center justify-center gap-2.5 pt-2 border-t border-border">
                       {CHANNELS.map((ch, i) => (
                         <button
                           key={ch.id}
@@ -442,7 +442,7 @@ export default function EntertainmentPage() {
                           className={`relative flex items-center gap-1.5 font-mono text-xs transition-all border-2 select-none active:scale-95 px-2.5 h-8 rounded-full
                             ${activeIdx === i
                               ? "bg-primary text-primary-foreground border-primary shadow-lg"
-                              : "bg-slate-800 text-slate-300 border-slate-600 hover:bg-slate-700 hover:border-slate-500"
+                              : "bg-muted text-muted-foreground border-border hover:bg-muted/80 hover:border-foreground/30"
                             }`}
                         >
                           {/* Small channel icon */}
