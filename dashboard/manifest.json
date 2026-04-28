@@ -6,7 +6,8 @@
   "version": "1.0.0",
   "tab": {
     "path": "/entertainment",
-    "position": "after:dashboard"
+    "position": "after:dashboard",
+    "override": "/entertainment"
   },
   "slots": [],
   "entry": "dist/index.js",
