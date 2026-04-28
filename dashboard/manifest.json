@@ -1,0 +1,14 @@
+{
+  "name": "hermes-entertainment-pack",
+  "label": "Entertainment",
+  "description": "Hermes Dashboard Entertainment Pack \u2014 TV hub, games, gallery, mixtape, Discord.",
+  "icon": "Tv",
+  "version": "1.0.0",
+  "tab": {
+    "path": "/entertainment",
+    "position": "after:dashboard"
+  },
+  "slots": [],
+  "entry": "dist/index.js",
+  "api": "plugin_api.py"
+}
