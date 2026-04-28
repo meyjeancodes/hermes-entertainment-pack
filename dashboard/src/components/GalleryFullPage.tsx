@@ -291,7 +291,6 @@ export default function GalleryFullPage() {
   const [loaded, setLoaded] = useState<Record<string, boolean>>({});
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
   const [visibleCards, setVisibleCards] = useState<Set<string>>(new Set());
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -345,8 +344,6 @@ export default function GalleryFullPage() {
                       src={hero.url}
                       alt={hero.title}
                       onLoad={() => handleImageLoad(hero.id)}
-                      onClick={() => setSelectedImage(hero.url)}
-                      style={{ cursor: "pointer" }}
                       className={`${styles.heroImage} transition-opacity duration-700 ${
                         loaded[hero.id] ? "opacity-100" : "opacity-0"
                       }`}
@@ -380,7 +377,7 @@ export default function GalleryFullPage() {
 
           <div className={styles.cardsStack}>
             {GALLERY_IMAGES.filter(img => img.type === 'card').map((img, idx) => (
-                  <article key={img.id} ref={el => { cardRefs.current[idx] = el; }} data-card-id={img.id} onClick={() => setSelectedImage(img.url)} style={{ cursor: "pointer" }} className={`s.card} ${styles[`card--${img.orientation}`]} ${visibleCards.has(img.id) ? styles.visible : ''}`}>
+                  <article key={img.id} ref={el => { cardRefs.current[idx] = el; }} data-card-id={img.id} className={`${styles.card} ${styles[`card--${img.orientation}`]} ${visibleCards.has(img.id) ? styles.visible : ''}`}>
                 <div className={styles.cardImageWrapper}>
                   <img
                     src={img.url}
@@ -401,31 +398,16 @@ export default function GalleryFullPage() {
             ))}
           </div>
         </section>
-      {/* Full-size image modal */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
-          onClick={() => setSelectedImage(null)}
-        >
-          {/* Close button */}
-          <button
-            onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
-            className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-black/80 text-white/80 hover:text-white border border-white/10 transition-all"
-            aria-label="Close"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-          <img
-            src={selectedImage}
-            alt="Full size"
-            className="max-w-[95vw] max-h-[95vh] object-contain shadow-2xl"
-          />
-        </div>
-      )}
 
+        {/* CURATOR'S NOTE FOOTER */}
+        <footer className={styles.footer}>
+          <div className={styles.curatorNote}>
+            <h3 className={styles.noteLabel}>HERMES_ CURATOR&apos;S NOTE</h3>
+            <p className={styles.noteText}>
+              Curated from the Nous Research archives. Each frame tells a story — sometimes about code, sometimes about chaos, rarely about both.
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );
