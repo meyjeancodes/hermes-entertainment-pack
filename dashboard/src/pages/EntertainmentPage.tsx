@@ -249,13 +249,13 @@ export default function EntertainmentPage() {
       <div className="flex flex-col items-center gap-10">
         <Card className="overflow-hidden border-border bg-background-elevated relative w-full max-w-7xl mx-auto">
           <CardContent className="p-0">
-            <div className="relative px-8">
+            <div className="relative px-4 md:px-6 lg:px-8">
               {/* Wood base — wider, richer gradient */}
               <div className="absolute -bottom-4 left-20 right-20 h-6 bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 rounded-xl blur-[2px] shadow-lg" />
               <div className="absolute -bottom-2 left-24 right-24 h-1 bg-amber-700/60 rounded-full" />
 
                   {/* TV housing — beefier bezel with depth layers */}
-                <div className="relative bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 rounded-3xl p-8 shadow-2xl border-2 border-slate-600 ring-1 ring-slate-700/50">
+                <div className="relative bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 rounded-3xl p-4 md:p-6 lg:p-8 shadow-2xl border-2 border-slate-600 ring-1 ring-slate-700/50">
                   {/* Top vent — more pronounced */}
                   <div className="absolute top-6 left-1/2 -translate-x-1/2 w-80 h-4 bg-slate-950/90 rounded-full shadow-inner border border-slate-800/50" />
 
