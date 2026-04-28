@@ -62,6 +62,8 @@ hermes dashboard
 ---
 
 ### Spotify Setup
+**Note:** The Spotify REST API routes were added to Hermes Agent in April 2026. If you are on an older version, see [Updating Hermes Agent](#updating-hermes-agent) below.
+
 
 **Step 1 — OAuth**
 ```bash
@@ -239,3 +241,21 @@ Original recovered from git reflog (commits `27103ede` → `1cca3af2`). Standalo
 ## License
 
 MIT
+
+## 🔄 Updating Hermes Agent
+
+The Spotify controller API (`/api/spotify/*`) was introduced in Hermes Agent commit `2e6efaa0` (April 2026). To ensure Spotify works:
+
+1. Update your Hermes Agent installation:
+   ```bash
+   cd ~/.hermes/hermes-agent
+   git pull origin main
+   ```
+2. Verify that `hermes_cli/web_server.py` contains the `/api/spotify/*` route definitions.
+3. Restart the agent:
+   ```bash
+   hermes dashboard
+   ```
+4. Run `hermes auth spotify` to refresh OAuth if needed.
+
+If Spotify routes are missing, the frontend will show "Spotify unavailable".
