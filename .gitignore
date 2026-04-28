@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+dashboard/node_modules/
+
+# Build outputs (kept dist/ for distribution, but exclude temp build dirs if any)
+dashboard/.tsbuildinfo
+
+# OS / editor
+.DS_Store
+*.log
+.idea/
+.vscode/
