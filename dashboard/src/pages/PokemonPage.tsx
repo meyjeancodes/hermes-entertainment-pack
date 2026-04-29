@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Upload, Play, Square, RefreshCw, ExternalLink } from "lucide-react";
 
-export default function PokemonPage() {
+export default function PokemonPage({ initialRom }: { initialRom?: string }) {
   const [status, setStatus] = useState<"idle" | "running" | "starting" | "stopping" | "error">("idle");
   const [pid, setPid] = useState<number | null>(null);
   const [port, setPort] = useState<number | null>(null);
@@ -18,6 +18,13 @@ export default function PokemonPage() {
   const logContainerRef = useRef<HTMLDivElement>(null);
 
   const token = (window as any).__HERMES_SESSION_TOKEN__;
+
+  // Set initial ROM from props
+  useEffect(() => {
+    if (initialRom) {
+      setRom(initialRom);
+    }
+  }, [initialRom]);
 
   // Fetch status on mount and poll when running
   useEffect(() => {

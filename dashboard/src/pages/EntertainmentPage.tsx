@@ -3,13 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Power } from "lucide-react";
-
+import PokemonPage from "./PokemonPage";
+import GameBoyWidget from "@/components/GameBoyWidget";
 export interface Channel {
   id: string;
   name: string;
   type: "static" | "canvas" | "iframe" | "noise" | "video";
   src?: string;
   color?: string;
+  autoplay?: boolean;
 }
 
 const CHANNELS: Channel[] = [
@@ -17,10 +19,10 @@ const CHANNELS: Channel[] = [
   { id: "ch2", name: "Nous Network", type: "video", src: "/NousNetwork.mp4", color: "#0a0a1a" },
   { id: "ch3", name: "Music Scene", type: "iframe", src: "https://www.youtube.com/embed/NhheiPTdZCw?si=l0t7VslIKlOQ2wTC&controls=0" },
   { id: "ch4", name: "Weather Retro", type: "iframe", src: "https://weather.com/retro/" },
-  { id: "ch5", name: "Nature", type: "iframe", src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0" },
-  { id: "ch6", name: "Aethereon", type: "iframe", src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0" },
-  { id: "ch7", name: "Bedrock", type: "iframe", src: "https://www.youtube.com/embed/atzk_NAzTqU?si=8WnD-I0W9idWf9PY&controls=0" },
-  { id: "ch8", name: "Local 58", type: "iframe", src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q" },
+  { id: "ch5", name: "Nature", type: "iframe", src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0", autoplay: true },
+  { id: "ch6", name: "Aethereon", type: "iframe", src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0", autoplay: true },
+  { id: "ch7", name: "Bedrock", type: "iframe", src: "https://www.youtube.com/embed/atzk_NAzTqU?si=8WnD-I0W9idWf9PY&controls=0", autoplay: true },
+  { id: "ch8", name: "Local 58", type: "iframe", src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q", autoplay: true },
   { id: "ch9", name: "Market Tape", type: "iframe",    src: "/trading-tape.html"},
   { id: "ch10", name: "Spotify Visual", type: "iframe", src: "https://open.spotify.com/embed/album/5ht7ItJgpBH7W6vJ5BqpPr" },
 ];
@@ -31,6 +33,16 @@ const GAMES = [
   { id: "g4", name: "Link's Awakening", src: "/roms/links_awakening.gb" },
 ];
 
+
+// Wrapper to embed PokemonPage with game-specific ROM path
+function PokemonPageWrapper({ game }: { game: { id: string; name: string; src: string } }) {
+  return (
+    <div className="space-y-6">
+      <PokemonPage initialRom={game.src} title={game.name} />
+      <GameBoyWidget selectedGameId={game.id} />
+    </div>
+  );
+}
 
 export default function EntertainmentPage() {
   const [activeChannelId, setActiveChannelId] = useState(CHANNELS[1].id);
@@ -249,13 +261,15 @@ export default function EntertainmentPage() {
       <div className="flex flex-col items-center gap-10">
         <Card className="overflow-hidden border-border bg-background-elevated relative w-full max-w-7xl mx-auto">
           <CardContent className="p-0">
-            <div className="relative px-4 md:px-6 lg:px-8">
+            <div className="relative px-2 md:px-3 lg:px-4">
               {/* Wood base — wider, richer gradient */}
               <div className="absolute -bottom-4 left-20 right-20 h-6 bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 rounded-xl blur-[2px] shadow-lg" />
               <div className="absolute -bottom-2 left-24 right-24 h-1 bg-amber-700/60 rounded-full" />
 
+                {/* Hide YouTube large play button overlay */}
+                <style>{`.ytp-large-play-button { display: none !important; }`}</style>
                   {/* TV housing — beefier bezel with depth layers */}
-                <div className="relative bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 rounded-3xl p-4 md:p-6 lg:p-8 shadow-2xl border-2 border-slate-600 ring-1 ring-slate-700/50">
+                <div className="relative bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 rounded-3xl p-2 md:p-3 lg:p-4 shadow-2xl border-2 border-slate-600 ring-1 ring-slate-700/50">
                   {/* Top vent — more pronounced */}
                   <div className="absolute top-6 left-1/2 -translate-x-1/2 w-80 h-4 bg-slate-950/90 rounded-full shadow-inner border border-slate-800/50" />
 
@@ -334,7 +348,13 @@ export default function EntertainmentPage() {
                           opacity: 0.7,
                         }} />
                         <span className="text-[0.7rem] font-mono text-slate-400 tracking-[0.3em] uppercase animate-pulse">NO SIGNAL</span>
-                      </div>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/20">
+                    <span className="text-xs">NOUS</span>
+                  </div>
+                  <span className="text-sm text-midground/70">Entertainment System</span>
+                </div>
+                        </div>
                     )}
                   </div>
 
@@ -553,10 +573,6 @@ export default function EntertainmentPage() {
           </CardContent>
         </Card>
       </div>
-      {/* GAMING WIDGET — Pokémon Player */}
-      <div className="flex flex-col items-center">
-        <GameBoyWidget selectedGameId={selectedGameId} />
-      </div>
 
       {/* GAME GUIDE */}
       <Card className="overflow-hidden border-border bg-background-elevated relative w-full max-w-full">
@@ -564,34 +580,38 @@ export default function EntertainmentPage() {
           <div className="p-4 border-b border-border">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground shrink-0">Game Guide</h2>
+              {selectedGameId && (
+                <Button variant="ghost" size="sm" onClick={() => setSelectedGameId(null)}>
+                  Back to Library
+                </Button>
+              )}
               <div className="flex-1" />
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
-            {GAMES.map((game) => {
-              const isSelected = selectedGameId === game.id;
-              return (
+          {!selectedGameId ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
+              {GAMES.map((game) => (
                 <button
                   key={game.id}
                   onClick={() => setSelectedGameId(game.id)}
-                  className={`relative flex flex-col items-center gap-2 p-3 rounded-lg border transition-all ${
-                    isSelected
-                      ? "bg-primary/10 border-primary/40"
-                      : "bg-muted/20 border-border hover:bg-muted/30"
-                  }`}
+                  className="relative flex flex-col items-center gap-2 p-3 rounded-lg border border-border hover:bg-muted/30 transition-all"
                 >
                   <div className="w-12 h-12 rounded-md bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center border border-slate-600">
-                    <span className={`text-[0.6rem] font-mono ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}>
-                      {game.name.slice(0, 4).toUpperCase()}
-                    </span>
+                    <span className="text-[0.6rem] font-mono text-muted-foreground">{game.name.slice(0,4).toUpperCase()}</span>
                   </div>
-                  <span className={`text-[0.6rem] font-mono text-center leading-tight ${isSelected ? 'text-foreground' : 'text-muted-foreground/70'}`}>
-                    {game.name}
-                  </span>
+                  <span className="text-[0.6rem] font-mono text-center leading-tight text-muted-foreground/70">{game.name}</span>
                 </button>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-4">
+              {(() => {
+                const game = GAMES.find(g => g.id === selectedGameId);
+                if (!game) return null;
+                return <PokemonPageWrapper game={game} />;
+              })()}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -730,7 +750,7 @@ function YouTubePlayer({ channel, isPlaying, volume, isMuted }: { channel: Chann
       let videoId = '';
       let playerVars: Record<string, any> = {
         controls: 0,
-        autoplay: 0,
+        autoplay: channel.autoplay ? 1 : 0,
         mute: 0,
         loop: 1,
         modestbranding: 1,
@@ -1312,385 +1332,3 @@ function ChaosMatrixCanvas({ canvasId }: { canvasId: string }) {
 
 /* ─────────────── GameBoy Widget Component ─────────────── */
 
-function GameBoyWidget({ selectedGameId }: { selectedGameId: string | null }) {
-  const [powerOn, setPowerOn] = useState(false);
-  const [batteryLevel, setBatteryLevel] = useState(() => {
-    const saved = localStorage.getItem('gameboy-battery');
-    return saved ? parseFloat(saved) : 85;
-  });
-  const [romLoaded, setRomLoaded] = useState(false);
-  const [romName, setRomName] = useState('');
-  const [romBuffer, setRomBuffer] = useState<ArrayBuffer | null>(null);
-  const [gbReady, setGbReady] = useState(false);
-
-  // Refs
-  const screenRef = useRef<HTMLCanvasElement>(null);
-  const gbRef = useRef<any>(null);
-
-  // Load gameboy-online library
-  useEffect(() => {
-    if ((window as any).GameBoy) {
-      setGbReady(true);
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/gameboy-online/dist/gameboy.min.js';
-    script.async = true;
-    script.onload = () => setGbReady(true);
-    document.head.appendChild(script);
-    return () => { /* cleanup */ };
-  }, []);
-
-  // Battery drain effect (slow)
-  useEffect(() => {
-    if (!powerOn) return;
-    const interval = setInterval(() => {
-      setBatteryLevel(prev => {
-        const next = Math.max(0, prev - 0.1);
-        localStorage.setItem('gameboy-battery', next.toFixed(1));
-        return next;
-      });
-    }, 60000);
-    return () => clearInterval(interval);
-  }, [powerOn]);
-
-  // ROM file loader
-  const handleRomUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setRomName(file.name.replace(/\.[^.]+$/, '').toUpperCase());
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const buf = ev.target?.result as ArrayBuffer;
-      setRomBuffer(buf);
-      setRomLoaded(true);
-    };
-    reader.readAsArrayBuffer(file);
-  };
-
-  // Auto power on when ROM loaded
-  useEffect(() => {
-    if (romLoaded && !powerOn) {
-      setPowerOn(true);
-    }
-  }, [romLoaded]);
-
-  // Initialize emulator
-  useEffect(() => {
-    if (!powerOn || !gbReady || !romBuffer) return;
-    const canvas = screenRef.current;
-    if (!canvas) return;
-
-    const GameBoyClass = (window as any).GameBoy;
-    if (!GameBoyClass) return;
-
-    // Destroy previous instance
-    if (gbRef.current) {
-      gbRef.current.destroy?.();
-    }
-
-    const gb = new GameBoyClass({
-      onFrame: (pixels: Uint8ClampedArray) => {
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-        const imageData = new ImageData(new Uint8ClampedArray(pixels), 160, 144);
-        ctx.putImageData(imageData, 0, 0);
-      },
-    });
-
-    gb.loadROM(romBuffer);
-    gb.run();
-    gbRef.current = gb;
-
-    return () => {
-      gb.pause?.();
-      gb.destroy?.();
-    };
-  }, [powerOn, gbReady, romBuffer]);
-
-  const sendInput = (btn: number, pressed: boolean) => {
-    const gb = gbRef.current;
-    if (!gb) return;
-    const method = pressed ? 'buttonDown' : 'buttonUp';
-    switch (btn) {
-      case 0: gb[method]('UP'); break;
-      case 1: gb[method]('DOWN'); break;
-      case 2: gb[method]('LEFT'); break;
-      case 3: gb[method]('RIGHT'); break;
-      case 4: gb[method]('A'); break;
-      case 5: gb[method]('B'); break;
-      case 6: gb[method]('START'); break;
-      case 7: gb[method]('SELECT'); break;
-    }
-  };
-  // Keyboard input handling
-  useEffect(() => {
-    if (!powerOn || !romLoaded) return;
-    const keyMap: Record<string, number> = {
-      ArrowUp: 0, ArrowDown: 1, ArrowLeft: 2, ArrowRight: 3,
-      z: 4, x: 5, Enter: 6, Shift: 7,
-    };
-    const down = (e: KeyboardEvent) => {
-      if (keyMap[e.key] !== undefined) sendInput(keyMap[e.key], true);
-    };
-    const up = (e: KeyboardEvent) => {
-      if (keyMap[e.key] !== undefined) sendInput(keyMap[e.key], false);
-    };
-    window.addEventListener('keydown', down);
-    window.addEventListener('keyup', up);
-    return () => {
-      window.removeEventListener('keydown', down);
-      window.removeEventListener('keyup', up);
-    };
-  }, [powerOn, romLoaded]);
-
-  // Send input to emulator
-
-  const batteryColor = batteryLevel <= 20 ? '#ef4444' : batteryLevel <= 50 ? '#f59e0b' : '#22c55e';
-  // Draw placeholder text when powered on but no ROM loaded
-  useEffect(() => {
-    if (!powerOn || romLoaded) return;
-    const canvas = screenRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.fillStyle = '#8bac0f';
-    ctx.fillRect(0, 0, 160, 144);
-    ctx.fillStyle = '#0f380f';
-    ctx.font = '8px monospace';
-    const txt = selectedGameId ? selectedGameId.slice(0,9).toUpperCase() : 'INSERT ROM';
-    ctx.fillText(txt, 40, 72);
-  }, [powerOn, romLoaded, selectedGameId]);
-
-
-  return (
-    <div className="flex flex-col items-center gap-6 py-8 px-4">
-      {/* GameBoy Shell — frosted clear plastic body */}
-      <div className="relative group">
-        {/* Main body — glass-morphic, rounded, with subtle lighting */}
-        <div className="relative w-[340px] h-[480px] rounded-[2.5rem] bg-gradient-to-b from-slate-200/40 via-slate-100/20 to-slate-300/30
-                        backdrop-blur-[12px] border-2 border-white/30 shadow-[0_8px_64px_rgba(0,0,0,0.25),inset_0_1px_4px_rgba(255,255,255,0.6)]
-                        overflow-hidden">
-          
-          {/* Inner frame inset (bezel) — dark gray plastic rim around screen */}
-          <div className="absolute top-5 left-5 right-5 h-[160px] bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900 rounded-xl
-                          border-2 border-slate-600 shadow-[inset_0_4px_12px_rgba(0,0,0,0.7),0_1px_0_rgba(255,255,255,0.1)]">
-            
-            {/* Top vent pattern (ultrasonic mesh) */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-32 h-4 bg-slate-950/90 rounded-full blur-[2px] opacity-80" />
-            
-            {/* Power LED */}
-            <div className="absolute top-8 left-8 flex items-center gap-1.5">
-              <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor] transition-colors
-                              ${powerOn ? 'bg-red-500 text-red-500' : 'bg-slate-600 text-slate-600'}`} />
-              <span className="text-[0.5rem] font-mono text-slate-500 uppercase tracking-wider">POWER</span>
-            </div>
-
-            {/* Battery LED */}
-            <div className="absolute top-8 right-8 flex items-center gap-1.5">
-              <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor] transition-colors
-                              ${batteryLevel > 20 ? 'bg-emerald-400 text-emerald-400' : 'bg-red-500 text-red-500'}`} />
-              <span className="text-[0.5rem] font-mono text-slate-500 uppercase tracking-wider">BAT</span>
-            </div>
-
-            {/* Screen window — slightly recessed */}
-            <div className="absolute inset-3 m-auto w-[calc(100%-24px)] h-[calc(100%-24px)] bg-slate-950 rounded-lg border-2 border-slate-800/80 overflow-hidden">
-              <canvas
-                ref={screenRef}
-                width={160}
-                height={144}
-                className="w-full h-full pixelated bg-[#8bac0f]"
-                style={{ imageRendering: 'pixelated' }}
-              />
-              {/* Glass reflection overlay (frost) */}
-              <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-white/5 via-transparent to-black/10 rounded-lg" />
-            </div>
-
-            {/* "NOUS" branding on screen housing */}
-            <div className="absolute -bottom-5 left-1/2 -translate-x-1/2">
-              <span className="text-[0.6rem] font-mono text-slate-400/80 tracking-[0.5em] uppercase drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
-                NOUS
-              </span>
-            </div>
-          </div>
-
-          {/* Controls area — bottom section with matte plastic */}
-          <div className="absolute top-[185px] left-4 right-4 bottom-4 flex flex-col items-center">
-            
-            {/* D-Pad — cross shape */}
-            <div className="relative w-24 h-24 mt-2">
-              {/* Horizontal bar — LEFT / RIGHT */}
-              <button
-                onPointerDown={(e) => { e.preventDefault(); sendInput(2, true); }}   // LEFT
-                onPointerUp={(e) => { e.preventDefault(); sendInput(2, false); }}
-                className="absolute top-1/2 -translate-y-1/2 left-0 w-24 h-8 bg-slate-800 rounded-sm
-                           active:bg-slate-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5),0_1px_0_rgba(255,255,255,0.1)]
-                           border border-slate-900/50"
-              />
-              <button
-                onPointerDown={(e) => { e.preventDefault(); sendInput(3, true); }}   // RIGHT
-                onPointerUp={(e) => { e.preventDefault(); sendInput(3, false); }}
-                className="absolute top-1/2 -translate-y-1/2 right-0 w-24 h-8 bg-slate-800 rounded-sm
-                           active:bg-slate-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5),0_1px_0_rgba(255,255,255,0.1)]
-                           border border-slate-900/50"
-              />
-              {/* Vertical bar — UP / DOWN */}
-              <button
-                onPointerDown={(e) => { e.preventDefault(); sendInput(0, true); }}   // UP
-                onPointerUp={(e) => { e.preventDefault(); sendInput(0, false); }}
-                className="absolute left-1/2 -translate-x-1/2 top-0 h-24 w-8 bg-slate-800 rounded-sm
-                           active:bg-slate-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5),0_1px_0_rgba(255,255,255,0.1)]
-                           border border-slate-900/50"
-              />
-              <button
-                onPointerDown={(e) => { e.preventDefault(); sendInput(1, true); }}   // DOWN
-                onPointerUp={(e) => { e.preventDefault(); sendInput(1, false); }}
-                className="absolute left-1/2 -translate-x-1/2 bottom-0 h-24 w-8 bg-slate-800 rounded-sm
-                           active:bg-slate-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5),0_1px_0_rgba(255,255,255,0.1)]
-                           border border-slate-900/50"
-              />
-              {/* Center circle (depressible cosmetic) */}
-              <div className="absolute inset-0 m-auto w-10 h-10 bg-slate-900 rounded-full border-2 border-slate-950 pointer-events-none" />
-            </div>
-
-            {/* A / B buttons — red pill circles */}
-            <div className="relative w-32 h-16 mt-4 mb-2">
-              <button
-                onPointerDown={(e) => { e.preventDefault(); sendInput(4, true); }}   // A
-                onPointerUp={(e) => { e.preventDefault(); sendInput(4, false); }}
-                className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-gradient-to-b from-red-500 to-red-700
-                           active:from-red-600 active:to-red-800 shadow-[0_4px_8px_rgba(0,0,0,0.4),inset_0_2px_4px_rgba(255,255,255,0.4)]
-                           border-2 border-red-900/50"
-              >
-                <span className="text-[0.55rem] font-mono text-red-100/80 drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] font-bold">
-                  A
-                </span>
-              </button>
-              <button
-                onPointerDown={(e) => { e.preventDefault(); sendInput(5, true); }}   // B
-                onPointerUp={(e) => { e.preventDefault(); sendInput(5, false); }}
-                className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-gradient-to-b from-red-500 to-red-700
-                           active:from-red-600 active:to-red-800 shadow-[0_4px_8px_rgba(0,0,0,0.4),inset_0_2px_4px_rgba(255,255,255,0.4)]
-                           border-2 border-red-900/50"
-              >
-                <span className="text-[0.55rem] font-mono text-red-100/80 drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] font-bold">
-                  B
-                </span>
-              </button>
-            </div>
-
-            {/* Start / Select pill buttons */}
-            <div className="flex items-center gap-8 mt-2">
-              <button
-                onPointerDown={(e) => { e.preventDefault(); sendInput(6, true); }}   // START
-                onPointerUp={(e) => { e.preventDefault(); sendInput(6, false); }}
-                className="w-12 h-4 rounded-full bg-gradient-to-b from-slate-500 to-slate-700
-                           active:from-slate-600 active:to-slate-800 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]
-                           border border-slate-800/60"
-              >
-                <span className="text-[0.45rem] font-mono text-slate-300/70 uppercase tracking-wide select-none">
-                  START
-                </span>
-              </button>
-              <button
-                onPointerDown={(e) => { e.preventDefault(); sendInput(7, true); }}   // SELECT
-                onPointerUp={(e) => { e.preventDefault(); sendInput(7, false); }}
-                className="w-12 h-4 rounded-full bg-gradient-to-b from-slate-500 to-slate-700
-                           active:from-slate-600 active:to-slate-800 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]
-                           border border-slate-800/60"
-              >
-                <span className="text-[0.45rem] font-mono text-slate-300/70 uppercase tracking-wide select-none">
-                  SELECT
-                </span>
-              </button>
-            </div>
-
-            {/* Speaker grille */}
-            <div className="mt-6 flex gap-1 opacity-60">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="w-1.5 h-1.5 rounded-full bg-slate-700/80" />
-              ))}
-            </div>
-          </div>
-
-          {/* Volume slider (mini side slider) */}
-          <div className="absolute right-[-14px] top-1/2 -translate-y-1/2 w-3 h-12 bg-slate-800/90 rounded-full border-2 border-slate-700
-                          shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
-            <div className="absolute inset-x-0 top-1/2 h-1/2 bg-slate-950/60 rounded-t-full" />
-          </div>
-
-          {/* Link cable port (decorative) */}
-          <div className="absolute left-[-8px] top-1/3 w-2 h-4 bg-slate-800 rounded-sm border border-slate-700" />
-
-          {/* Cartridge slot (decorative) */}
-          <div className="absolute top-36 left-1/2 -translate-x-1/2 w-16 h-2 bg-slate-900/80 rounded-full
-                          shadow-[inset_0_1px_2px_rgba(0,0,0,0.8),0_1px_0_rgba(255,255,255,0.1)]" />
-        </div>
-
-        {/* Ground shadow */}
-        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-64 h-4 bg-black/30 blur-[8px] rounded-full" />
-      </div>
-
-      {/* ROM upload & UI controls row */}
-      <div className="flex items-center gap-4 mt-2">
-        <label className="cursor-pointer group">
-          <div className="px-4 py-1.5 rounded-full bg-gradient-to-b from-slate-700 to-slate-800 border border-slate-600
-                          text-[0.6rem] font-mono text-slate-300 group-hover:text-white group-hover:border-slate-500
-                          shadow-[0_2px_4px_rgba(0,0,0,0.3),inset_0_1px_1px_rgba(255,255,255,0.1)] text-center transition-all">
-            {romLoaded ? `🔁 ${romName}` : '📁 LOAD ROM'}
-          </div>
-          <input
-            type="file"
-            accept=".gb,.gbc,.bin"
-            onChange={handleRomUpload}
-            className="hidden"
-          />
-        </label>
-
-        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/60 backdrop-blur-[4px]">
-          <div className="text-[0.55rem] font-mono text-slate-500 uppercase tracking-wider">Battery</div>
-          <div className="relative w-16 h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
-            <div
-              className="absolute top-0 left-0 h-full transition-all duration-300"
-              style={{ width: `${batteryLevel}%`, backgroundColor: batteryColor }}
-            />
-          </div>
-          <span className="text-[0.5rem] font-mono text-slate-400 w-8">{Math.round(batteryLevel)}%</span>
-        </div>
-
-        <button
-          onClick={() => {
-            if (powerOn) localStorage.setItem('gameboy-battery', batteryLevel.toString());
-            setPowerOn(!powerOn);
-          }}
-          className={`px-4 py-1.5 rounded-full text-[0.6rem] font-mono uppercase tracking-wider transition-all
-                     ${powerOn
-                       ? 'bg-gradient-to-b from-emerald-600 to-emerald-800 text-white border-emerald-500 shadow-[0_2px_8px_rgba(16,185,129,0.4)]'
-                       : 'bg-gradient-to-b from-slate-600 to-slate-700 text-slate-200 border-slate-500'}`}
-        >
-          {powerOn ? 'ON' : 'OFF'}
-        </button>
-      </div>
-
-      {/* Help text */}
-      <div className="text-[0.5rem] font-mono text-slate-500/80 text-center leading-relaxed max-w-sm">
-        D-Pad: ↑ ↓ ← → · A: Z · B: X · Start: Enter · Select: Shift
-      </div>
-    </div>
-  );
-}
-
-// NOTE: Emulator input handling planned for future iteration (Web Worker integration)
-// function sendInput(btn: number, pressed: boolean) { console.log('GB Input:', btn, pressed ? '↓' : '↑'); }
-
-
-
-function FallbackScreen({ name }: { name: string }) {
-  return (
-    <div className="absolute inset-0 flex items-center justify-center bg-slate-950">
-      <div className="p-5 bg-primary/10 border-2 border-primary/40 text-primary text-base font-mono text-center animate-pulse">
-        [ {name} MODULE ]
-      </div>
-    </div>
-  );
-}
