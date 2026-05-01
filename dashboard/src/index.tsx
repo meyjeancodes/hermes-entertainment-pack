@@ -32,45 +32,45 @@ import EntertainmentPage from './pages/EntertainmentPage';
 import DiscordPage from './pages/DiscordPage';
 import GalleryPage from './pages/GalleryPage';
 import MusicPortalPage from './pages/MusicPortalPage';
-import SpotifyPage from './pages/SpotifyPage';
 
-// Hermes Plugin SDK — provides shared UI components and utilities
-const SDK = (window as any).__HERMES_PLUGIN_SDK__;
-const { Card, CardHeader, CardTitle, CardContent, Tabs, TabsList, TabsTrigger } = SDK.components;
+type TabId = 'entertainment' | 'discord' | 'gallery' | 'mixtape';
 
-type TabId = 'entertainment' | 'discord' | 'gallery' | 'mixtape' | 'spotify';
+const TABS: { id: TabId; label: string }[] = [
+  { id: 'entertainment', label: '📺 TV & Games' },
+  { id: 'discord',       label: '💬 Discord' },
+  { id: 'gallery',       label: '◆ Gallery' },
+  { id: 'mixtape',       label: '💿 Mixtape' },
+];
 
 function EntertainmentApp() {
   const [activeTab, setActiveTab] = useState<TabId>('entertainment');
 
   return (
-    <Card className="border-border bg-background-elevated">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-3 text-xl">
-          <span className="text-2xl">📺</span>
-          Entertainment Center
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <Tabs value={activeTab} onValueChange={(v: string) => setActiveTab(v as TabId)}>
-          <div className="px-6 border-b border-border">
-            <TabsList>
-              <TabsTrigger value="entertainment">TV & Games</TabsTrigger>
-              <TabsTrigger value="discord">Discord</TabsTrigger>
-              <TabsTrigger value="gallery">Gallery</TabsTrigger>
-              <TabsTrigger value="mixtape">Mixtape</TabsTrigger>
-              <TabsTrigger value="spotify">Spotify</TabsTrigger>
-            </TabsList>
-          </div>
-        </Tabs>
-        {/* Manual tab panel — no TabsContent in SDK */}
-        {activeTab === 'entertainment' && <EntertainmentPage />}
-        {activeTab === 'discord' && <DiscordPage />}
-        {activeTab === 'gallery' && <GalleryPage />}
-        {activeTab === 'mixtape' && <MusicPortalPage />}
-        {activeTab === 'spotify' && <SpotifyPage />}
-      </CardContent>
-    </Card>
+    <div className="w-full min-h-screen bg-background text-foreground">
+      {/* Tab bar — custom to avoid @nous-research/ui Tabs render-prop API */}
+      <div className="flex items-center gap-1 px-4 border-b border-border/30 bg-background/60 backdrop-blur-sm sticky top-0 z-10">
+        {TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={[
+              'px-4 py-3 text-xs font-mono tracking-widest uppercase transition-all border-b-2 -mb-px whitespace-nowrap',
+              activeTab === tab.id
+                ? 'border-midground text-midground'
+                : 'border-transparent text-midground/50 hover:text-midground/80',
+            ].join(' ')}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab panels */}
+      {activeTab === 'entertainment' && <EntertainmentPage />}
+      {activeTab === 'discord'       && <DiscordPage />}
+      {activeTab === 'gallery'       && <GalleryPage />}
+      {activeTab === 'mixtape'       && <MusicPortalPage />}
+    </div>
   );
 }
 

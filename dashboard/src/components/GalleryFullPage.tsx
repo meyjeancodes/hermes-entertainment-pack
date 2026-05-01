@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import styles from "./GalleryFullPage.module.css";
+import { PLUGIN_URL } from "@/lib/plugin";
 
 // ── Image data ──────────────────────────────────────────────────────────────
 const GALLERY_IMAGES = [
 
   {
     id: "bg",
-    url: "/gallery/G7RS46uWcAEndez.jpeg",
+    url: `${PLUGIN_URL}/gallery/G7RS46uWcAEndez.jpeg`,
     title: "INTELLIGENCE AT YOUR FINGERTIPS",
     subtitle: "THE HERMES CHRONICLE — ISSUE 001",
     type: "background",
@@ -16,7 +17,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "1",
-    url: "/gallery/G7bqBeqXoAAtPDp.jpeg",
+    url: `${PLUGIN_URL}/gallery/G7bqBeqXoAAtPDp.jpeg`,
     title: "NOUS RACING",
     subtitle: "INTELLIGENCE IN MOTION",
     type: "card",
@@ -25,7 +26,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "2",
-    url: "/gallery/G7_ghAxXgAIU50n.jpeg",
+    url: `${PLUGIN_URL}/gallery/G7_ghAxXgAIU50n.jpeg`,
     title: "PORTAL",
     subtitle: "TO THE UNKNOWN",
     type: "card",
@@ -34,7 +35,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "4",
-    url: "/gallery/G7VnBFrXwAQI6l4.jpeg",
+    url: `${PLUGIN_URL}/gallery/G7VnBFrXwAQI6l4.jpeg`,
     title: "RETRO-FUTURE INTELLIGENCE",
     subtitle: "V0.11.0 ARCHITECTURE",
     type: "card",
@@ -43,7 +44,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "7",
-    url: "/gallery/GeYAtoLXEAATM7r.png",
+    url: `${PLUGIN_URL}/gallery/GeYAtoLXEAATM7r.png`,
     title: "SYSTEM ARCHITECTURE (V0.11)",
     subtitle: "PIPELINE DIAGRAM",
     type: "card",
@@ -52,7 +53,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "10",
-    url: "/gallery/GwempU9bEAEwDq4.jpeg",
+    url: `${PLUGIN_URL}/gallery/GwempU9bEAEwDq4.jpeg`,
     title: "BLUEPRINT SERIES",
     subtitle: "OPENCLAW PROTOCOL",
     type: "card",
@@ -61,7 +62,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "5",
-    url: "/gallery/GvRbdvLXUAAbIQU.jpeg",
+    url: `${PLUGIN_URL}/gallery/GvRbdvLXUAAbIQU.jpeg`,
     title: "LATENT SPACE MINIMALISM",
     subtitle: "THINKING IN EMBEDDINGS",
     type: "card",
@@ -70,7 +71,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "6",
-    url: "/gallery/GWkiKOpb0AAsnBg.jpeg",
+    url: `${PLUGIN_URL}/gallery/GWkiKOpb0AAsnBg.jpeg`,
     title: "TEAM HERMES AT NOUS HQ",
     subtitle: "OCTOBER 2024",
     type: "card",
@@ -79,7 +80,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "11",
-    url: "/gallery/HBi6R5xWEAAWLvZ.jpeg",
+    url: `${PLUGIN_URL}/gallery/HBi6R5xWEAAWLvZ.jpeg`,
     title: "MORNING ROUTINE",
     subtitle: "DAILY STANDUP",
     type: "card",
@@ -88,7 +89,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "8",
-    url: "/gallery/Gssq-8iXwAAaLlb.jpeg",
+    url: `${PLUGIN_URL}/gallery/Gssq-8iXwAAaLlb.jpeg`,
     title: "THE WHITEBOARD CHRONICLES",
     subtitle: "STRATEGY SESSIONS",
     type: "card",
@@ -97,7 +98,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "9",
-    url: "/gallery/GuYLrlGWMAAYMcu copy.jpeg",
+    url: `${PLUGIN_URL}/gallery/GuYLrlGWMAAYMcu copy.jpeg`,
     title: "UNTITLED FRAGMENT",
     subtitle: "WORK IN PROGRESS",
     type: "card",
@@ -106,7 +107,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "13",
-    url: "/gallery/IMG_4D9E27515C6D-1.jpeg",
+    url: `${PLUGIN_URL}/gallery/IMG_4D9E27515C6D-1.jpeg`,
     title: "MANGA INTERLUDE",
     subtitle: "OTAKU MODE",
     type: "card",
@@ -115,7 +116,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "19",
-    url: "/gallery/GyVuMgfa4AIYlsO.jpeg",
+    url: `${PLUGIN_URL}/gallery/GyVuMgfa4AIYlsO.jpeg`,
     title: "HIDDEN LAYER",
     subtitle: "NOUS ARCHIVE",
     type: "card",
@@ -124,7 +125,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "20",
-    url: "/gallery/HBi6R5xWEAAWLvZ copy.jpeg",
+    url: `${PLUGIN_URL}/gallery/HBi6R5xWEAAWLvZ copy.jpeg`,
     title: "FRAGMENT",
     subtitle: "NOUS ARCHIVE",
     type: "card",
@@ -133,7 +134,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "21",
-    url: "/gallery/HEsUWTOXEAAsNdf.jpeg",
+    url: `${PLUGIN_URL}/gallery/HEsUWTOXEAAsNdf.jpeg`,
     title: "RAW DATA",
     subtitle: "NOUS ARCHIVE",
     type: "card",
@@ -142,7 +143,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "22",
-    url: "/gallery/HEv4IwZbEAAj0QV.jpeg",
+    url: `${PLUGIN_URL}/gallery/HEv4IwZbEAAj0QV.jpeg`,
     title: "SYSTEM GLITCH",
     subtitle: "NOUS ARCHIVE",
     type: "card",
@@ -151,7 +152,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "23",
-    url: "/gallery/HFhHPZObYAAeA_M.jpeg",
+    url: `${PLUGIN_URL}/gallery/HFhHPZObYAAeA_M.jpeg`,
     title: "MEMORY LEAK",
     subtitle: "NOUS ARCHIVE",
     type: "card",
@@ -160,7 +161,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "24",
-    url: "/gallery/HFjlPSLakAMHOCJ.jpeg",
+    url: `${PLUGIN_URL}/gallery/HFjlPSLakAMHOCJ.jpeg`,
     title: "DEEP MEMORY",
     subtitle: "NOUS ARCHIVE",
     type: "card",
@@ -169,7 +170,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "25",
-    url: "/gallery/IMG_BC48B855ED62-1.jpeg",
+    url: `${PLUGIN_URL}/gallery/IMG_BC48B855ED62-1.jpeg`,
     title: "SHADOW DATA",
     subtitle: "NOUS ARCHIVE",
     type: "card",
@@ -178,7 +179,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "26",
-    url: "/gallery/IMG_DE0F102C31BA-1.jpeg",
+    url: `${PLUGIN_URL}/gallery/IMG_DE0F102C31BA-1.jpeg`,
     title: "PROTOCOL",
     subtitle: "NOUS ARCHIVE",
     type: "card",
@@ -187,7 +188,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "27",
-    url: "/gallery/054dc020ec7e03b17efb4f96d56a0d04.jpg",
+    url: `${PLUGIN_URL}/gallery/054dc020ec7e03b17efb4f96d56a0d04.jpg`,
     title: "FRAGMENT — 001",
     subtitle: "UNPUBLISHED",
     type: "card",
@@ -196,7 +197,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "28",
-    url: "/gallery/1d1210673d4cb650dba75676a4182d32.jpg",
+    url: `${PLUGIN_URL}/gallery/1d1210673d4cb650dba75676a4182d32.jpg`,
     title: "FRAGMENT — 002",
     subtitle: "UNPUBLISHED",
     type: "card",
@@ -205,7 +206,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "29",
-    url: "/gallery/7612f4dba422c1b77b959ea4b3a3425f.jpg",
+    url: `${PLUGIN_URL}/gallery/7612f4dba422c1b77b959ea4b3a3425f.jpg`,
     title: "FRAGMENT — 003",
     subtitle: "UNPUBLISHED",
     type: "card",
@@ -214,7 +215,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "30",
-    url: "/gallery/HFahjjvWIAEa_rk.jpeg",
+    url: `${PLUGIN_URL}/gallery/HFahjjvWIAEa_rk.jpeg`,
     title: "FRAGMENT — 004",
     subtitle: "UNPUBLISHED",
     type: "card",
@@ -223,7 +224,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "31",
-    url: "/gallery/a330885a47ac0c6e4b7e2235f191f5bc.jpg",
+    url: `${PLUGIN_URL}/gallery/a330885a47ac0c6e4b7e2235f191f5bc.jpg`,
     title: "FRAGMENT — 005",
     subtitle: "UNPUBLISHED",
     type: "card",
@@ -232,7 +233,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "32",
-    url: "/gallery/fa455690328ce2d385e87df708c59574.jpg",
+    url: `${PLUGIN_URL}/gallery/fa455690328ce2d385e87df708c59574.jpg`,
     title: "FRAGMENT — 006",
     subtitle: "UNPUBLISHED",
     type: "card",
@@ -241,7 +242,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "14",
-    url: "/gallery/G-ARBtaXEAAf69p.jpeg",
+    url: `${PLUGIN_URL}/gallery/G-ARBtaXEAAf69p.jpeg`,
     title: "AESTHETIC STUDY",
     subtitle: "MOOD BOARD",
     type: "card",
@@ -250,7 +251,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "16",
-    url: "/gallery/G6ncNTRWEAA8OWk.jpeg",
+    url: `${PLUGIN_URL}/gallery/G6ncNTRWEAA8OWk.jpeg`,
     title: "NOUS MOMENT",
     subtitle: "NOUS ARCHIVE",
     type: "card",
@@ -259,7 +260,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "17",
-    url: "/gallery/GuYLrlGWMAAYMcu.jpeg",
+    url: `${PLUGIN_URL}/gallery/GuYLrlGWMAAYMcu.jpeg`,
     title: "UNSEEN FRAME",
     subtitle: "NOUS ARCHIVE",
     type: "card",
@@ -268,7 +269,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "18",
-    url: "/gallery/Gv6qOA0WIAAJVgs.jpeg",
+    url: `${PLUGIN_URL}/gallery/Gv6qOA0WIAAJVgs.jpeg`,
     title: "ARCHIVE SNAPSHOT",
     subtitle: "NOUS ARCHIVE",
     type: "card",
@@ -277,7 +278,7 @@ const GALLERY_IMAGES = [
 
   {
     id: "15",
-    url: "/gallery/HF04pTEXwAEO3Vi.jpeg",
+    url: `${PLUGIN_URL}/gallery/HF04pTEXwAEO3Vi.jpeg`,
     title: "THE HERMES CHRONICLE — ISSUE 001",
     subtitle: "NEWSPAPER ADVERT",
     type: "card",
@@ -379,7 +380,7 @@ export default function GalleryFullPage() {
           </div>
 
           <div className={styles.cardsStack}>
-            {GALLERY_IMAGES.filter(img => img.type === 'card').map((img, idx) => (
+            {GALLERY_IMAGES.filter(img => img.type === 'card' && img.id !== '14').map((img, idx) => (
                   <article key={img.id} ref={el => { cardRefs.current[idx] = el; }} data-card-id={img.id} className={`${styles.card} ${styles[`card--${img.orientation}`]} ${visibleCards.has(img.id) ? styles.visible : ''}`}>
                 <div className={styles.cardImageWrapper}>
                   <img
@@ -405,6 +406,30 @@ export default function GalleryFullPage() {
         </section>
 
         {/* Curator note removed per Task 2 */}
+
+        {/* ── AESTHETIC STUDY / MOOD BOARD — FOOTER HERO ── */}
+        {(() => {
+          const aestheticImg = GALLERY_IMAGES.find(img => img.id === "14")!;
+          return (
+            <section className={styles.aestheticFooter}>
+              <div className={styles.aestheticFooterInner}>
+                <img
+                  src={aestheticImg.url}
+                  alt={aestheticImg.title}
+                  onLoad={() => handleImageLoad(aestheticImg.id)}
+                  onClick={() => setSelectedImage(aestheticImg.url)}
+                  className={styles.aestheticImage}
+                />
+                <div className={styles.aestheticOverlay} />
+                <div className={styles.aestheticText}>
+                  <div className={styles.aestheticLabel}>SELECTED WORKS — FINAL ENTRY</div>
+                  <h2 className={styles.aestheticTitle}>{aestheticImg.title}</h2>
+                  <p className={styles.aestheticSubtitle}>{aestheticImg.subtitle}</p>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
       </div>
 
       {/* Full-screen image modal */}

@@ -378,7 +378,7 @@ export default function GameBoyWidget({ selectedGameId }: { selectedGameId: stri
 
 
 
-function FallbackScreen({ name }: { name: string }) {
+export function FallbackScreen({ name }: { name: string }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-slate-950">
       <div className="p-5 bg-primary/10 border-2 border-primary/40 text-primary text-base font-mono text-center animate-pulse">
