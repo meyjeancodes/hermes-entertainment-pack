@@ -1,6 +1,7 @@
 import styles from './MusicPortalPage.module.css';
 
 import { SpotifyFullPage } from '@/components/SpotifyFullPage';
+import { PLUGIN_URL } from '@/lib/plugin';
 
 export default function MusicPortalPage() {
   return (
@@ -10,7 +11,7 @@ export default function MusicPortalPage() {
         <div className={styles.heroContent}>
           {/* Mixtape cover — centered square widget */}
           <div className={styles.coverWrapper}>
-            <img src="/mixtape.jpeg" alt="Mixtape Cover" className={styles.cover} />
+            <img src={`${PLUGIN_URL}/public/mixtape.jpeg`} alt="Mixtape Cover" className={styles.cover} />
           </div>
         </div>
       </section>

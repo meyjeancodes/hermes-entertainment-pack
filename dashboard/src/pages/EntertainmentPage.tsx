@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Power } from "lucide-react";
-import PokemonPage from "./PokemonPage";
-import GameBoyWidget from "@/components/GameBoyWidget";
+import { FallbackScreen } from "@/components/GameBoyWidget";
+import { PLUGIN_URL } from "@/lib/plugin";
 export interface Channel {
   id: string;
   name: string;
@@ -16,7 +17,7 @@ export interface Channel {
 
 const CHANNELS: Channel[] = [
   { id: "ch1", name: "Static", type: "noise", color: "#111" },
-  { id: "ch2", name: "Nous Network", type: "video", src: "/NousNetwork.mp4", color: "#0a0a1a" },
+  { id: "ch2", name: "Nous Network", type: "video", src: `${PLUGIN_URL}/media/NousNetwork.mp4`, color: "#0a0a1a" },
   { id: "ch3", name: "Music Scene", type: "iframe", src: "https://www.youtube.com/embed/NhheiPTdZCw?si=l0t7VslIKlOQ2wTC&controls=0" },
   { id: "ch4", name: "Weather Retro", type: "iframe", src: "https://weather.com/retro/" },
   { id: "ch5", name: "Nature", type: "iframe", src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0", autoplay: true },
@@ -26,27 +27,16 @@ const CHANNELS: Channel[] = [
   { id: "ch9", name: "Market Tape", type: "iframe",    src: "/trading-tape.html"},
   { id: "ch10", name: "Spotify Visual", type: "iframe", src: "https://open.spotify.com/embed/album/5ht7ItJgpBH7W6vJ5BqpPr" },
 ];
-const GAMES = [
-  { id: "g1", name: "Pokemon Red", src: "/roms/pokemon_red.gb" },
-  { id: "g2", name: "Pokemon Blue", src: "/roms/pokemon_blue.gb" },
-  { id: "g3", name: "Tetris (GB)", src: "/roms/tetris.gb" },
-  { id: "g4", name: "Link's Awakening", src: "/roms/links_awakening.gb" },
+const GAMEBOY_GAMES = [
+  { id: "g1", name: "Mario Mini",  src: "https://mico27.itch.io/super-mario-bros-mini", icon: "🍄" },
+  { id: "g2", name: "2048",        src: "https://play2048.co",                           icon: "🔢" },
+  { id: "g3", name: "Dino Run",    src: "https://chromedino.com",                        icon: "🦕" },
+  { id: "g4", name: "Flappy Bird", src: "https://flappybird.io",                         icon: "🐦" },
 ];
-
-
-// Wrapper to embed PokemonPage with game-specific ROM path
-function PokemonPageWrapper({ game }: { game: { id: string; name: string; src: string } }) {
-  return (
-    <div className="space-y-6">
-      <PokemonPage initialRom={game.src} title={game.name} />
-      <GameBoyWidget selectedGameId={game.id} />
-    </div>
-  );
-}
 
 export default function EntertainmentPage() {
   const [activeChannelId, setActiveChannelId] = useState(CHANNELS[1].id);
-  const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
+  const [activeGameId, setActiveGameId] = useState<string>("g1");
   const [powerOn, setPowerOn] = useState(false);
    const [volume, setVolume] = useState(50);
    const [isPlaying, setIsPlaying] = useState(false);
@@ -259,7 +249,7 @@ export default function EntertainmentPage() {
 
       {/* TV UNIT — larger widescreen with enhanced retro styling */}
       <div className="flex flex-col items-center gap-10">
-        <Card className="overflow-hidden border-border bg-background-elevated relative w-full max-w-7xl mx-auto">
+        <Card className="overflow-hidden border-border bg-background-elevated relative w-full max-w-3xl mx-auto">
           <CardContent className="p-0">
             <div className="relative px-2 md:px-3 lg:px-4">
               {/* Wood base — wider, richer gradient */}
@@ -366,7 +356,7 @@ export default function EntertainmentPage() {
                     <div className="flex items-center justify-around gap-3 w-full">
                       {/* Power */}
                       <button onClick={togglePower} title="Power"
-                        className={`relative flex-shrink-0 w-16 h-11 flex items-center justify-center border-2 rounded-full shadow-lg active:scale-95 transition-all select-none
+                        className={`relative flex-shrink-0 w-10 h-10 flex items-center justify-center border-2 rounded-full shadow-lg active:scale-95 transition-all select-none
                           ${powerOn
                             ? "bg-emerald-600/85 border-emerald-500 hover:bg-emerald-500 text-emerald-50"
                             : "bg-slate-700 border-slate-600 hover:bg-slate-600 text-slate-300"
@@ -384,7 +374,7 @@ export default function EntertainmentPage() {
 
                       {/* Rewind */}
                       <button onClick={handleRewind} title="Rewind"
-                        className="flex-shrink-0 w-16 h-11 flex items-center justify-center border-2 border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-500 shadow-lg active:scale-95 transition-all select-none rounded-full">
+                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center border-2 border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-500 shadow-lg active:scale-95 transition-all select-none rounded-full">
                         <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
                           <polygon points="4,12 10,6 10,18" />
                           <polygon points="10,12 16,6 16,18" />
@@ -393,7 +383,7 @@ export default function EntertainmentPage() {
 
                       {/* Play/Pause — slightly larger, central */}
                       <button onClick={handlePlayPause} title={isPlaying ? "Pause" : "Play"}
-                        className="flex-shrink-0 w-18 h-12 flex items-center justify-center border-2 border-slate-600 bg-slate-700 hover:bg-slate-600 shadow-lg active:scale-95 transition-all select-none rounded-full">
+                        className="flex-shrink-0 w-12 h-12 flex items-center justify-center border-2 border-slate-600 bg-slate-700 hover:bg-slate-600 shadow-lg active:scale-95 transition-all select-none rounded-full">
                         {isPlaying ? (
                           <svg viewBox="0 0 24 24" className="w-6 h-6 text-slate-200" fill="currentColor">
                             <rect x="6" y="4" width="4" height="16" />
@@ -408,7 +398,7 @@ export default function EntertainmentPage() {
 
                       {/* Next */}
                       <button onClick={handleNext} title="Next"
-                        className="flex-shrink-0 w-16 h-11 flex items-center justify-center border-2 border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-500 shadow-lg active:scale-95 transition-all select-none rounded-full">
+                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center border-2 border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-500 shadow-lg active:scale-95 transition-all select-none rounded-full">
                         <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
                           <polygon points="20,12 14,6 14,18" />
                           <polygon points="14,12 8,6 8,18" />
@@ -420,7 +410,7 @@ export default function EntertainmentPage() {
 
                       {/* Volume Down */}
                       <button onClick={() => adjustVolume(-10)} title="Volume Down"
-                        className="w-14 h-11 flex items-center justify-center border-2 border-slate-600 bg-slate-700 hover:bg-slate-600 hover:scale-105 shadow-lg active:scale-95 transition-all select-none rounded-full">
+                        className="w-10 h-10 flex items-center justify-center border-2 border-slate-600 bg-slate-700 hover:bg-slate-600 hover:scale-105 shadow-lg active:scale-95 transition-all select-none rounded-full">
                         <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
                             <polygon points="4,12 10,6 10,18" />
                         </svg>
@@ -428,7 +418,7 @@ export default function EntertainmentPage() {
 
                       {/* Mute */}
                       <button onClick={toggleMute} title={isMuted ? 'Unmute' : 'Mute'}
-                        className={`w-14 h-11 flex items-center justify-center border-2 rounded-full shadow-lg active:scale-95 hover:scale-105 transition-all select-none
+                        className={`w-10 h-10 flex items-center justify-center border-2 rounded-full shadow-lg active:scale-95 hover:scale-105 transition-all select-none
                           ${isMuted
                             ? 'bg-red-500/90 border-red-400 text-white shadow-[0_0_12px_rgba(239,68,68,1)]'
                             : 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600'
@@ -446,7 +436,7 @@ export default function EntertainmentPage() {
 
                       {/* Volume Up */}
                       <button onClick={() => adjustVolume(10)} title="Volume Up"
-                        className="w-14 h-11 flex items-center justify-center border-2 border-slate-600 bg-slate-700 hover:bg-slate-600 hover:scale-105 shadow-lg active:scale-95 transition-all select-none rounded-full">
+                        className="w-10 h-10 flex items-center justify-center border-2 border-slate-600 bg-slate-700 hover:bg-slate-600 hover:scale-105 shadow-lg active:scale-95 transition-all select-none rounded-full">
                         <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
                             <polygon points="20,12 14,6 14,18" />
                         </svg>
@@ -574,46 +564,7 @@ export default function EntertainmentPage() {
         </Card>
       </div>
 
-      {/* GAME GUIDE */}
-      <Card className="overflow-hidden border-border bg-background-elevated relative w-full max-w-full">
-        <CardContent className="p-0">
-          <div className="p-4 border-b border-border">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground shrink-0">Game Guide</h2>
-              {selectedGameId && (
-                <Button variant="ghost" size="sm" onClick={() => setSelectedGameId(null)}>
-                  Back to Library
-                </Button>
-              )}
-              <div className="flex-1" />
-            </div>
-          </div>
-          {!selectedGameId ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
-              {GAMES.map((game) => (
-                <button
-                  key={game.id}
-                  onClick={() => setSelectedGameId(game.id)}
-                  className="relative flex flex-col items-center gap-2 p-3 rounded-lg border border-border hover:bg-muted/30 transition-all"
-                >
-                  <div className="w-12 h-12 rounded-md bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center border border-slate-600">
-                    <span className="text-[0.6rem] font-mono text-muted-foreground">{game.name.slice(0,4).toUpperCase()}</span>
-                  </div>
-                  <span className="text-[0.6rem] font-mono text-center leading-tight text-muted-foreground/70">{game.name}</span>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <div className="p-4">
-              {(() => {
-                const game = GAMES.find(g => g.id === selectedGameId);
-                if (!game) return null;
-                return <PokemonPageWrapper game={game} />;
-              })()}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <NousBoySection activeGameId={activeGameId} setActiveGameId={setActiveGameId} />
     </div>
   );
 }
@@ -732,7 +683,7 @@ function YouTubePlayer({ channel, isPlaying, volume, isMuted }: { channel: Chann
   const playerRef = useRef<YTPlayerInstance | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
-  const saveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveRef = useRef<number | null>(null);
 
   useEffect(() => { loadYTAPI(); }, []);
 
@@ -965,7 +916,7 @@ function StaticNoise() {
 
 function VideoPlayer({ src, isPlaying, channelId, volume, isMuted }: { src: string; isPlaying: boolean; channelId: string; volume: number; isMuted: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const saveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveRef = useRef<number | null>(null);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -1330,5 +1281,198 @@ function ChaosMatrixCanvas({ canvasId }: { canvasId: string }) {
 }
 
 
-/* ─────────────── GameBoy Widget Component ─────────────── */
+/* ─────────────── Nous Boy Section ─────────────── */
+
+function NousBoySection({
+  activeGameId,
+  setActiveGameId,
+}: {
+  activeGameId: string;
+  setActiveGameId: (id: string) => void;
+}) {
+  const activeGame = GAMEBOY_GAMES.find(g => g.id === activeGameId) || GAMEBOY_GAMES[0];
+  const activeGameIdx = GAMEBOY_GAMES.findIndex(g => g.id === activeGameId);
+  const [gbPower, setGbPower] = useState(true);
+
+  return (
+    <div className="flex flex-col items-center gap-0 w-full">
+      {/* Section header */}
+      <div className="w-full flex items-center gap-3 pb-4 pt-2">
+        <div className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+        <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">Nous Boy</h2>
+        <div className="flex-1 h-px bg-border/30" />
+        <span className="text-[0.6rem] font-mono text-muted-foreground/40 uppercase tracking-widest">
+          Click screen · use keyboard
+        </span>
+      </div>
+
+      {/* GameBoy console */}
+      <div className="flex justify-center mb-6">
+        <div style={{ width: 300 }}>
+          {/* Body */}
+          <div className="relative bg-gradient-to-b from-[#1a1228] via-[#130e1f] to-[#0d0918]
+                          rounded-[28px_28px_20px_20px]
+                          border-2 border-purple-900/40
+                          shadow-[0_12px_48px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)]
+                          px-5 pt-5 pb-8">
+
+            {/* Screen housing */}
+            <div className="bg-[#0a0814] rounded-2xl p-3 border border-purple-900/30 mb-5
+                            shadow-[inset_0_4px_16px_rgba(0,0,0,0.8)]">
+              {/* Status bar */}
+              <div className="flex items-center justify-between px-1 mb-2">
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-1.5 h-1.5 rounded-full transition-all
+                    ${gbPower ? 'bg-emerald-400 shadow-[0_0_6px_rgba(74,222,128,0.9)]' : 'bg-slate-700'}`} />
+                  <span className="text-[0.4rem] font-mono text-purple-400/50 tracking-widest uppercase">pwr</span>
+                </div>
+                <span className="text-[0.5rem] font-mono text-purple-300/40 tracking-[0.4em] uppercase font-semibold">NOUS BOY</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[0.4rem] font-mono text-purple-400/50 tracking-widest uppercase">bat</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(74,222,128,0.9)]" />
+                </div>
+              </div>
+
+              {/* Screen */}
+              <div className="relative bg-black rounded-xl overflow-hidden border-2 border-purple-950/80
+                              shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]"
+                   style={{ aspectRatio: '4/3' }}>
+                {gbPower ? (
+                  <>
+                    {/* CRT scanlines */}
+                    <div className="absolute inset-0 pointer-events-none z-10" style={{
+                      backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px)",
+                    }} />
+                    {/* Screen glow */}
+                    <div className="absolute inset-0 pointer-events-none z-10 rounded-xl"
+                         style={{ boxShadow: "inset 0 0 30px rgba(168,85,247,0.06)" }} />
+                    {/* Game iframe */}
+                    <iframe
+                      key={activeGame.id}
+                      src={activeGame.src}
+                      className="absolute inset-0 w-full h-full border-0 z-0"
+                      title={activeGame.name}
+                      allow="fullscreen; gamepad; autoplay"
+                      loading="lazy"
+                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
+                    />
+                  </>
+                ) : (
+                  <div className="absolute inset-0 bg-[#030208] flex flex-col items-center justify-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-purple-900/20 border border-purple-900/40 flex items-center justify-center">
+                      <Power className="w-4 h-4 text-purple-400/30" />
+                    </div>
+                    <span className="text-[0.45rem] font-mono text-purple-400/30 tracking-widest uppercase">No Signal</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Controls row */}
+            <div className="flex items-center justify-between px-1">
+              {/* D-pad */}
+              <div className="relative w-[68px] h-[68px]">
+                <div className="absolute inset-y-0 left-0 right-0 top-1/2 -translate-y-1/2 h-6 bg-[#1a1228] rounded-[3px] border border-purple-900/30 shadow-inner" />
+                <div className="absolute inset-x-0 left-1/2 -translate-x-1/2 top-0 bottom-0 w-6 bg-[#1a1228] rounded-[3px] border border-purple-900/30 shadow-inner" />
+                <div className="absolute inset-0 m-auto w-7 h-7 bg-[#0d0918] rounded-[3px] pointer-events-none" />
+                <span className="absolute top-0.5 left-1/2 -translate-x-1/2 text-[0.4rem] text-purple-400/25 pointer-events-none select-none">▲</span>
+                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 text-[0.4rem] text-purple-400/25 pointer-events-none select-none">▼</span>
+                <span className="absolute left-0.5 top-1/2 -translate-y-1/2 text-[0.4rem] text-purple-400/25 pointer-events-none select-none">◀</span>
+                <span className="absolute right-0.5 top-1/2 -translate-y-1/2 text-[0.4rem] text-purple-400/25 pointer-events-none select-none">▶</span>
+              </div>
+
+              {/* Select + Start */}
+              <div className="flex flex-col gap-2 items-center">
+                <button
+                  onClick={() => setGbPower(p => !p)}
+                  className="w-12 h-4 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
+                             border border-purple-600/40 shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]
+                             text-[0.38rem] font-mono text-purple-200/60 uppercase tracking-wide
+                             active:from-purple-800 transition-all hover:border-purple-500/60">
+                  SELECT
+                </button>
+                <button
+                  className="w-12 h-4 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
+                             border border-purple-600/40 shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]
+                             text-[0.38rem] font-mono text-purple-200/60 uppercase tracking-wide
+                             active:from-purple-800 transition-all hover:border-purple-500/60">
+                  START
+                </button>
+              </div>
+
+              {/* A / B buttons */}
+              <div className="relative w-[68px] h-[56px]">
+                <button className="absolute right-0 top-0 w-9 h-9 rounded-full
+                                   bg-gradient-to-b from-pink-500 to-pink-700
+                                   border-2 border-pink-900/40
+                                   shadow-[0_3px_8px_rgba(0,0,0,0.5),inset_0_1px_2px_rgba(255,255,255,0.25)]
+                                   text-[0.55rem] font-mono font-bold text-pink-100/80 select-none
+                                   active:from-pink-600 transition-all">A</button>
+                <button className="absolute left-0 bottom-0 w-9 h-9 rounded-full
+                                   bg-gradient-to-b from-pink-500 to-pink-700
+                                   border-2 border-pink-900/40
+                                   shadow-[0_3px_8px_rgba(0,0,0,0.5),inset_0_1px_2px_rgba(255,255,255,0.25)]
+                                   text-[0.55rem] font-mono font-bold text-pink-100/80 select-none
+                                   active:from-pink-600 transition-all">B</button>
+              </div>
+            </div>
+
+            {/* Speaker + branding */}
+            <div className="flex items-end justify-between mt-4 px-1">
+              <span className="text-[0.38rem] font-mono text-purple-400/20 tracking-[0.5em] uppercase">NOUS RESEARCH</span>
+              <div className="flex gap-0.5 opacity-35">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="w-1 h-3 rounded-full bg-purple-700" />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Shadow */}
+          <div className="h-3 mx-8 bg-black/40 rounded-full blur-md -mt-1" />
+        </div>
+      </div>
+
+      {/* Game Guide — matches TV Guide style */}
+      <Card className="w-full max-w-full border-border bg-background-elevated overflow-hidden">
+        <CardContent className="p-0">
+          <div className="p-4 border-b border-border">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground shrink-0">Game Guide</h2>
+              <div className="flex gap-1.5 shrink-0">
+                {GAMEBOY_GAMES.map((_, i) => (
+                  <div key={i} className={`w-1.5 h-5 rounded-full transition-all
+                    ${activeGameIdx === i
+                      ? 'bg-purple-400 shadow-[0_0_6px_rgba(168,85,247,0.6)]'
+                      : 'bg-slate-700'}`} />
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 divide-x divide-border">
+            {GAMEBOY_GAMES.map((game, i) => (
+              <button
+                key={game.id}
+                onClick={() => setActiveGameId(game.id)}
+                className={`group relative flex flex-col items-center justify-center gap-2 p-4 transition-all
+                  ${activeGameIdx === i ? 'bg-purple-500/5' : 'hover:bg-muted/30'}`}
+              >
+                <span className={`text-2xl transition-transform ${activeGameIdx === i ? 'scale-110' : 'group-hover:scale-105'}`}>
+                  {game.icon}
+                </span>
+                <span className={`text-[0.7rem] font-mono tracking-wide text-center leading-tight
+                  ${activeGameIdx === i ? 'text-foreground' : 'text-muted-foreground/70'}`}>
+                  {game.name}
+                </span>
+                {activeGameIdx === i && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-500" />
+                )}
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 

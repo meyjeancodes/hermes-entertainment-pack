@@ -13,6 +13,7 @@ import {
   Volume2,
 } from "lucide-react";
 import { useSpotifyPlayer } from "@/hooks/useSpotifyPlayer";
+import { PLUGIN_URL } from "@/lib/plugin";
 
 export function SpotifyFullPage() {
   const {
@@ -100,21 +101,14 @@ export function SpotifyFullPage() {
         <div
           className="absolute inset-0 bg-cover bg-center blur-2xl scale-110 opacity-40"
           style={{
-            backgroundImage: "url('/gallery/HBi6R5xWEAAWLvZ.jpeg')",
+            backgroundImage: `url('${PLUGIN_URL}/gallery/HBi6R5xWEAAWLvZ.jpeg')`,
             filter: "blur(20px) brightness(1.2)",
           }}
         />
         {/* Dark tint overlay */}
         <div className="absolute inset-0 bg-black/60" />
-        {/* Manim retro visualizer video (loop, muted, cover) */}
-        <video
-          className="absolute inset-0 w-full h-full object-cover opacity-70 mix-blend-screen"
-          autoPlay
-          loop
-          muted
-          playsInline
-          src="/visualizer/visualizer.mp4"
-        />
+        {/* Retro purple gradient overlay */}
+        <div className="absolute inset-0 opacity-20" style={{ background: "radial-gradient(ellipse at 50% 0%, #a855f7 0%, transparent 70%)" }} />
       </div>
 
       {/* Album Art - Large Hero (with retro CRT scanlines overlay) */}

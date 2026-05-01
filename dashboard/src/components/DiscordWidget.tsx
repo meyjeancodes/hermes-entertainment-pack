@@ -164,7 +164,7 @@ export default function DiscordWidget() {
     setLoadingMessages(true);
     setMessages([]);
     try {
-      const res = await authenticatedFetch(`/api/discord/messages?channel_id=${encodeURIComponent(channelId)}&limit=5`);
+      const res = await authenticatedFetch(`/api/discord/messages?channel_id=${encodeURIComponent(channelId)}&limit=50`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       let msgList: Message[] = [];
@@ -247,117 +247,171 @@ export default function DiscordWidget() {
     );
   }
 
+  const textChannels = channels.filter(c => c.type === 0);
+
   return (
-    <Card className="bg-background-base/50 border-current/10 overflow-hidden">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <MessageSquare className="w-4 h-4 text-indigo-500" />
-          <span className="truncate">
-            {channel ? `#${channel.name}` : "Discord"}
-          </span>
-          {guilds.length > 0 && (
-            <Badge variant="secondary" className="text-[10px] ml-auto flex items-center gap-1">
-              <Wifi className="w-2.5 h-2.5" />
-              Connected
-            </Badge>
-          )}
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-6 w-6 ml-1"
-            disabled={refreshing}
-            onClick={handleRefresh}
-            title="Refresh"
-          >
-            <RefreshCw className={`w-3 h-3 ${refreshing ? "animate-spin" : ""}`} />
-          </Button>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {/* Guild & channel selectors */}
-        <div className="flex flex-col gap-2">
+    <div className="flex h-[calc(100vh-120px)] min-h-[500px] bg-background-base/30 border border-border/30 rounded-lg overflow-hidden">
+      {/* Left sidebar */}
+      <div className="w-56 flex-shrink-0 border-r border-border/30 flex flex-col bg-background-elevated/40">
+        {/* Server selector */}
+        <div className="p-3 border-b border-border/30">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[0.6rem] font-mono text-muted-foreground/60 uppercase tracking-widest">Server</span>
+            <Button size="icon" variant="ghost" className="h-5 w-5" disabled={refreshing} onClick={handleRefresh} title="Refresh">
+              <RefreshCw className={`w-2.5 h-2.5 ${refreshing ? "animate-spin" : ""}`} />
+            </Button>
+          </div>
           <Select
             value={selectedGuildId ?? ""}
             onValueChange={(v: string) => setSelectedGuildId(v || null)}
             disabled={guilds.length === 0}
           >
-            <SelectOption value="">Select a server</SelectOption>
+            <SelectOption value="">— Select server —</SelectOption>
             {guilds.map((g) => (
-              <SelectOption key={g.id} value={g.id}>
-                {g.name}
-              </SelectOption>
+              <SelectOption key={g.id} value={g.id}>{g.name}</SelectOption>
             ))}
-          </Select>
-
-          <Select
-            value={selectedChannelId ?? ""}
-            onValueChange={(v: string) => setSelectedChannelId(v || null)}
-            disabled={channels.length === 0}
-          >
-            <SelectOption value="">Select a channel</SelectOption>
-            {channels
-              .filter((c) => c.type === 0)
-              .map((c) => (
-                <SelectOption key={c.id} value={c.id}>
-                  # {c.name}
-                </SelectOption>
-              ))}
           </Select>
         </div>
-        {initializing && !channel ? (
-          <div className="flex items-center gap-2 text-muted-foreground py-4">
-            <Loader2 className="animate-spin w-4 h-4" /> Loading…
-          </div>
-        ) : loadingMessages ? (
-          <div className="flex items-center gap-2 text-muted-foreground py-4">
-            <Loader2 className="animate-spin w-4 h-4" /> Loading messages…
-          </div>
-        ) : messages.length === 0 ? (
-          <p className="text-xs text-muted-foreground py-2">No messages in this channel yet.</p>
-        ) : (
-          <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
-            {messages.map((msg) => (
-              <div key={msg.id} className="flex gap-2 p-2 rounded bg-muted/20 border border-border/30">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-[10px] font-bold text-indigo-300">
-                  {formatAuthor(msg.author).charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-medium text-foreground truncate max-w-[120px]">
-                      {formatAuthor(msg.author)}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground">{formatTime(msg.timestamp)}</span>
-                  </div>
-                  <p className="mt-0.5 text-xs leading-relaxed whitespace-pre-wrap break-words text-midground/80 line-clamp-2">
-                    {msg.content}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
 
+        {/* Channel list */}
+        <div className="flex-1 overflow-y-auto p-2">
+          {initializing && textChannels.length === 0 ? (
+            <div className="flex items-center gap-1.5 text-muted-foreground p-2">
+              <Loader2 className="animate-spin w-3 h-3" />
+              <span className="text-[0.65rem]">Loading…</span>
+            </div>
+          ) : textChannels.length === 0 ? (
+            <p className="text-[0.6rem] text-muted-foreground/50 px-2 py-3">No text channels</p>
+          ) : (
+            <div className="space-y-0.5">
+              {textChannels.map(c => (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedChannelId(c.id)}
+                  className={`w-full flex items-center gap-1.5 px-2 py-1.5 rounded text-left transition-all
+                    ${selectedChannelId === c.id
+                      ? 'bg-indigo-500/15 text-indigo-300'
+                      : 'text-muted-foreground/60 hover:bg-muted/20 hover:text-muted-foreground'}`}
+                >
+                  <span className="text-[0.7rem] text-muted-foreground/40">#</span>
+                  <span className="text-[0.7rem] font-medium truncate">{c.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Status indicator */}
+        <div className="p-3 border-t border-border/30">
+          <div className="flex items-center gap-1.5">
+            {guilds.length > 0 ? (
+              <><Wifi className="w-3 h-3 text-emerald-400" /><span className="text-[0.55rem] text-emerald-400/80 font-mono uppercase tracking-widest">Connected</span></>
+            ) : (
+              <><WifiOff className="w-3 h-3 text-muted-foreground/40" /><span className="text-[0.55rem] text-muted-foreground/40 font-mono uppercase tracking-widest">Disconnected</span></>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Main channel area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Channel header */}
+        <div className="flex items-center gap-2 px-4 py-3 border-b border-border/30 bg-background-elevated/20 flex-shrink-0">
+          <MessageSquare className="w-4 h-4 text-indigo-400/60 flex-shrink-0" />
+          <span className="font-semibold text-sm text-foreground truncate">
+            {channel ? `#${channel.name}` : selectedGuildId ? "Select a channel" : "Select a server"}
+          </span>
+          {guilds.length > 0 && (
+            <Badge variant="secondary" className="text-[10px] ml-auto flex items-center gap-1 flex-shrink-0">
+              <Wifi className="w-2.5 h-2.5 text-indigo-400" />
+              Discord
+            </Badge>
+          )}
+        </div>
+
+        {/* Messages area */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-1">
+          {!channel ? (
+            <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
+              <MessageSquare className="w-10 h-10 text-muted-foreground/20" />
+              <p className="text-sm text-muted-foreground/50">
+                {selectedGuildId ? "Pick a channel from the sidebar" : "Pick a server to get started"}
+              </p>
+            </div>
+          ) : loadingMessages ? (
+            <div className="flex items-center gap-2 text-muted-foreground py-8 justify-center">
+              <Loader2 className="animate-spin w-4 h-4" />
+              <span className="text-sm">Loading messages…</span>
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full gap-2">
+              <p className="text-sm text-muted-foreground/50">No messages yet in #{channel.name}</p>
+            </div>
+          ) : (
+            messages.map((msg, idx) => {
+              const prevMsg = messages[idx - 1];
+              const sameAuthor = prevMsg && prevMsg.author.username === msg.author.username;
+              return (
+                <div key={msg.id} className={`flex gap-3 group hover:bg-muted/10 px-2 py-0.5 rounded transition-colors ${!sameAuthor ? 'mt-3' : ''}`}>
+                  {!sameAuthor ? (
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/20 flex items-center justify-center text-xs font-bold text-indigo-300 mt-0.5">
+                      {formatAuthor(msg.author).charAt(0).toUpperCase()}
+                    </div>
+                  ) : (
+                    <div className="w-8 flex-shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    {!sameAuthor && (
+                      <div className="flex items-baseline gap-2 mb-0.5">
+                        <span className="text-sm font-semibold text-foreground">
+                          {formatAuthor(msg.author)}
+                        </span>
+                        {msg.author.bot && (
+                          <span className="text-[0.5rem] bg-indigo-500/20 text-indigo-300 px-1 rounded uppercase tracking-wide">BOT</span>
+                        )}
+                        <span className="text-[0.6rem] text-muted-foreground/40">{formatTime(msg.timestamp)}</span>
+                      </div>
+                    )}
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap break-words text-midground/85">
+                      {msg.content || <span className="italic text-muted-foreground/40">[no text content]</span>}
+                    </p>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Compose area */}
         {channel && (
-          <div className="flex gap-2 pt-2 border-t border-border/30">
-            <textarea
-              value={compose}
-              onChange={(e) => setCompose(e.target.value)}
-              placeholder={`Message #${channel.name}`}
-              rows={2}
-              disabled={sending}
-              className="flex min-h-[48px] w-full border border-input bg-transparent px-2 py-1.5 text-xs shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
-            />
-            <Button
-              size="sm"
-              disabled={!compose.trim() || sending}
-              onClick={handleSend}
-              className="h-10 px-3 shrink-0"
-            >
-              {sending ? <Loader2 className="animate-spin w-3.5 h-3.5" /> : <Send className="w-3.5 h-3.5" />}
-            </Button>
+          <div className="p-3 border-t border-border/30 flex-shrink-0">
+            {error && (
+              <p className="text-xs text-destructive mb-2 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" /> {error}
+              </p>
+            )}
+            <div className="flex gap-2">
+              <textarea
+                value={compose}
+                onChange={(e) => setCompose(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+                placeholder={`Message #${channel.name}  (Enter to send)`}
+                rows={1}
+                disabled={sending}
+                className="flex-1 min-h-[36px] max-h-[120px] border border-input bg-background-elevated/40 rounded px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500/50 resize-none"
+              />
+              <Button
+                size="sm"
+                disabled={!compose.trim() || sending}
+                onClick={handleSend}
+                className="h-9 px-3 shrink-0 bg-indigo-500/80 hover:bg-indigo-500 text-white border-0"
+              >
+                {sending ? <Loader2 className="animate-spin w-4 h-4" /> : <Send className="w-4 h-4" />}
+              </Button>
+            </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

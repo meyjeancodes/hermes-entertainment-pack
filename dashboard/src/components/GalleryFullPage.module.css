@@ -384,6 +384,86 @@
   border-radius: 2px;
 }
 
+/* ── AESTHETIC STUDY FOOTER HERO ──────────────────────────────────────── */
+.aestheticFooter {
+  margin-top: 80px;
+  padding: 0;
+  position: relative;
+}
+
+.aestheticFooterInner {
+  position: relative;
+  width: 100%;
+  height: 65vh;
+  min-height: 420px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.aestheticImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.8s ease;
+}
+
+.aestheticFooterInner:hover .aestheticImage {
+  transform: scale(1.03);
+}
+
+.aestheticOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.92) 0%,
+    rgba(0, 0, 0, 0.45) 40%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+}
+
+.aestheticText {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 64px 48px;
+  text-align: center;
+}
+
+.aestheticLabel {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 16px;
+  margin-bottom: 20px;
+}
+
+.aestheticTitle {
+  font-family: "Playfair Display", "Georgia", serif;
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 400;
+  color: #fff;
+  margin: 0 0 14px 0;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+}
+
+.aestheticSubtitle {
+  font-size: 13px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
 /* ── FOOTER ───────────────────────────────────────────────────────────── */
 .footer {
   max-width: 700px;
