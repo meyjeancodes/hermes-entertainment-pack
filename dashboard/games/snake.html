@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;display:flex;align-items:center;justify-content:center;height:100vh;overflow:hidden;user-select:none}
+canvas{display:block}
+</style></head>
+<body><canvas id="c"></canvas>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const W=window.innerWidth,H=window.innerHeight;
+const SZ=Math.min(Math.floor(W*0.97),Math.floor(H*0.97));
+cv.width=cv.height=SZ;
+const G=20,C=SZ/G;
+let snake,dir,nd,food,score,hi=0,state='wait';
+
+function rnd(){return{x:Math.floor(Math.random()*G),y:Math.floor(Math.random()*G)}}
+function placeFood(){do{food=rnd()}while(snake.some(s=>s.x===food.x&&s.y===food.y))}
+function init(){snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];dir={x:1,y:0};nd={x:1,y:0};score=0;placeFood();state='run'}
+
+function draw(){
+  ctx.fillStyle='#000';ctx.fillRect(0,0,SZ,SZ);
+  // grid
+  ctx.strokeStyle='rgba(0,255,65,.04)';ctx.lineWidth=.5;
+  for(let i=0;i<=G;i++){ctx.beginPath();ctx.moveTo(i*C,0);ctx.lineTo(i*C,SZ);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*C);ctx.lineTo(SZ,i*C);ctx.stroke()}
+  // food
+  ctx.fillStyle='#ff0055';ctx.shadowColor='#ff0055';ctx.shadowBlur=10;
+  ctx.fillRect(food.x*C+2,food.y*C+2,C-4,C-4);ctx.shadowBlur=0;
+  // snake
+  snake.forEach((s,i)=>{
+    const a=i===0?1:Math.max(.25,1-i/snake.length*.7);
+    ctx.fillStyle=`rgba(0,255,65,${a})`;
+    if(i===0){ctx.shadowColor='#00ff41';ctx.shadowBlur=12}
+    ctx.fillRect(s.x*C+1,s.y*C+1,C-2,C-2);ctx.shadowBlur=0;
+  });
+  // HUD (always visible)
+  const fs=Math.max(9,Math.round(SZ*.038));
+  ctx.font=`${fs}px 'Courier New',monospace`;ctx.textAlign='left';
+  ctx.fillStyle='rgba(0,255,65,0.55)';ctx.shadowColor='#00ff41';ctx.shadowBlur=4;
+  ctx.fillText(`SCORE:${score}`,6,fs+4);
+  ctx.textAlign='right';
+  ctx.fillText(`HI:${hi}`,SZ-6,fs+4);
+  ctx.shadowBlur=0;
+  // overlays
+  if(state==='wait'){
+    ctx.fillStyle='rgba(0,0,0,.75)';ctx.fillRect(0,0,SZ,SZ);
+    ctx.fillStyle='#00ff41';ctx.shadowColor='#00ff41';ctx.shadowBlur=12;
+    ctx.font=`bold ${Math.round(SZ*.08)}px 'Courier New'`;ctx.textAlign='center';
+    ctx.fillText('SNAKE',SZ/2,SZ/2-16);
+    ctx.shadowBlur=0;ctx.font=`${Math.round(SZ*.042)}px 'Courier New'`;ctx.fillStyle='rgba(0,255,65,.7)';
+    ctx.fillText('Z · SPACE · CLICK',SZ/2,SZ/2+18);
+  }
+  if(state==='over'){
+    ctx.fillStyle='rgba(0,0,0,.82)';ctx.fillRect(0,0,SZ,SZ);
+    ctx.fillStyle='#ff0055';ctx.shadowColor='#ff0055';ctx.shadowBlur=12;
+    ctx.font=`bold ${Math.round(SZ*.08)}px 'Courier New'`;ctx.textAlign='center';
+    ctx.fillText('GAME OVER',SZ/2,SZ/2-16);
+    ctx.shadowBlur=0;ctx.fillStyle='#00ff41';ctx.font=`${Math.round(SZ*.042)}px 'Courier New'`;
+    ctx.fillText(`SCORE: ${score}`,SZ/2,SZ/2+14);
+    ctx.fillStyle='rgba(0,255,65,.6)';ctx.font=`${Math.round(SZ*.036)}px 'Courier New'`;
+    ctx.fillText('Z · SPACE · CLICK TO RETRY',SZ/2,SZ/2+36);
+  }
+}
+
+let last=0;const SPD=140;
+function step(ts){
+  if(state==='run'&&ts-last>SPD){
+    dir={...nd};
+    const h={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+    if(h.x<0||h.x>=G||h.y<0||h.y>=G||snake.some(s=>s.x===h.x&&s.y===h.y)){
+      state='over';if(score>hi){hi=score}
+    } else {
+      snake.unshift(h);
+      if(h.x===food.x&&h.y===food.y){score++;placeFood()}else snake.pop();
+    }
+    last=ts;
+  }
+  draw();requestAnimationFrame(step);
+}
+requestAnimationFrame(step);
+
+const action=()=>{if(state!=='run')init()};
+document.addEventListener('keydown',e=>{
+  const k=e.key;
+  if((k==='z'||k==='Z'||k===' '||k==='Enter')&&state!=='run'){action();return}
+  if(state!=='run')return;
+  if((k==='ArrowUp'||k==='w')&&dir.y!==1){nd={x:0,y:-1};e.preventDefault()}
+  else if((k==='ArrowDown'||k==='s')&&dir.y!==-1){nd={x:0,y:1};e.preventDefault()}
+  else if((k==='ArrowLeft'||k==='a')&&dir.x!==1){nd={x:-1,y:0};e.preventDefault()}
+  else if((k==='ArrowRight'||k==='d')&&dir.x!==-1){nd={x:1,y:0};e.preventDefault()}
+});
+cv.addEventListener('click',action);
+</script></body></html>

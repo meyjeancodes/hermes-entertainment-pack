@@ -24,14 +24,14 @@ const CHANNELS: Channel[] = [
   { id: "ch6", name: "Aethereon", type: "iframe", src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0", autoplay: true },
   { id: "ch7", name: "Bedrock", type: "iframe", src: "https://www.youtube.com/embed/atzk_NAzTqU?si=8WnD-I0W9idWf9PY&controls=0", autoplay: true },
   { id: "ch8", name: "Local 58", type: "iframe", src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q", autoplay: true },
-  { id: "ch9", name: "Market Tape", type: "iframe",    src: "/trading-tape.html"},
+  { id: "ch9", name: "Bloom Terminal", type: "canvas", color: "#001a00" },
   { id: "ch10", name: "Spotify Visual", type: "iframe", src: "https://open.spotify.com/embed/album/5ht7ItJgpBH7W6vJ5BqpPr" },
 ];
 const GAMEBOY_GAMES = [
-  { id: "g1", name: "Mario Mini",  src: "https://mico27.itch.io/super-mario-bros-mini", icon: "🍄" },
-  { id: "g2", name: "2048",        src: "https://play2048.co",                           icon: "🔢" },
-  { id: "g3", name: "Dino Run",    src: "https://chromedino.com",                        icon: "🦕" },
-  { id: "g4", name: "Flappy Bird", src: "https://flappybird.io",                         icon: "🐦" },
+  { id: "g1", name: "Pong",        src: `${PLUGIN_URL}/games/pong.html`,   icon: "pong" },
+  { id: "g2", name: "Tetris",      src: `${PLUGIN_URL}/games/tetris.html`, icon: "tetris" },
+  { id: "g3", name: "Space Raid",  src: `${PLUGIN_URL}/games/space.html`,  icon: "space" },
+  { id: "g4", name: "Flappy Bird", src: "https://flappybird.io",           icon: "flappy" },
 ];
 
 export default function EntertainmentPage() {
@@ -534,29 +534,27 @@ export default function EntertainmentPage() {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-5 divide-x divide-border">
+            <div className="flex items-center gap-1.5 px-3 py-2.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
               {CHANNELS.map((ch, i) => (
                 <button
                   key={ch.id}
                   onClick={(e) => {
-                    if (e.shiftKey) {
-                      clearChannelProgress(e, ch.id);
-                    } else {
-                      changeChannel(i);
-                    }
+                    if (e.shiftKey) clearChannelProgress(e, ch.id);
+                    else changeChannel(i);
                   }}
-                  title={`${ch.name}`}
-                  className={`group relative flex flex-col items-center justify-center gap-2 p-4 transition-all ${
-                    activeIdx === i ? "bg-primary/5" : "hover:bg-muted/30"
-                  }`}
+                  title={ch.name}
+                  className={`relative flex-shrink-0 flex items-center gap-1.5 px-3 h-8 rounded-full font-mono text-[0.63rem] border transition-all select-none active:scale-95 whitespace-nowrap
+                    ${activeIdx === i
+                      ? "bg-primary/10 text-foreground border-primary/50"
+                      : "bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted hover:text-foreground hover:border-foreground/20"
+                    }`}
                 >
-                  <span className={`text-xl font-mono transition-all ${activeIdx === i ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className={`text-[0.7rem] font-mono tracking-wide text-center leading-tight ${activeIdx === i ? "text-foreground" : "text-muted-foreground/70"}`}>
-                    {ch.name}
-                  </span>
-                  {activeIdx === i && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />}
+                  <ChannelIcon channel={ch} size={11} />
+                  <span className="font-semibold">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="opacity-75">{ch.name}</span>
+                  {activeIdx === i && (
+                    <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(74,222,128,0.9)]" />
+                  )}
                 </button>
               ))}
             </div>
@@ -652,6 +650,52 @@ function ChannelIcon({ channel, size = 16 }: { channel: Channel; size?: number }
       );
   }
 }
+
+/* ─────────────── Game Icons (SVG) ─────────────── */
+
+function GameIcon({ icon, size = 16 }: { icon: string; size?: number }) {
+  const s = size;
+  switch (icon) {
+    case "pong":
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor">
+          <rect x="2" y="7" width="3" height="10" rx="1" />
+          <rect x="19" y="9" width="3" height="6" rx="1" />
+          <circle cx="12" cy="12" r="2" />
+          <line x1="12" y1="2" x2="12" y2="22" stroke="currentColor" strokeWidth="1" strokeDasharray="2 3" />
+        </svg>
+      );
+    case "tetris":
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor">
+          <rect x="2"  y="10" width="6" height="6" rx="1" />
+          <rect x="9"  y="10" width="6" height="6" rx="1" />
+          <rect x="16" y="10" width="6" height="6" rx="1" />
+          <rect x="9"  y="3"  width="6" height="6" rx="1" />
+        </svg>
+      );
+    case "space":
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L8 9H4l4 3.5-1.5 6.5L12 16l5.5 3L16 12.5 20 9h-4z" />
+          <circle cx="12" cy="9" r="1.8" fill="currentColor" opacity="0.5" />
+        </svg>
+      );
+    case "flappy":
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor">
+          <ellipse cx="11" cy="14" rx="5.5" ry="4" />
+          <path d="M16.5 11.5c2-2.5 5-1.5 5 1" stroke="currentColor" fill="none" strokeWidth="2.5" strokeLinecap="round" />
+          <circle cx="9" cy="12.5" r="1.4" fill="white" />
+          <circle cx="9.4" cy="12.5" r="0.7" fill="#222" />
+          <path d="M13.5 16.5l4 2-1.5 1.5z" fill="#f97316" stroke="none" />
+        </svg>
+      );
+    default:
+      return <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8" /></svg>;
+  }
+}
+
 
 /* ─────────────── Channel renderers ─────────────── */
 
@@ -874,6 +918,7 @@ function ChannelRenderer({ channel, isPlaying, volume, isMuted }: { channel: Cha
         case "CORE BREATHWORK": return <CoreBreathworkCanvas canvasId={`canvas-${channel.id}`} />;
         case "NEO NEWSWIRE": return <NeoNewswireCanvas canvasId={`canvas-${channel.id}`} />;
         case "CHAOS MATRIX": return <ChaosMatrixCanvas canvasId={`canvas-${channel.id}`} />;
+        case "Bloom Terminal": return <BloombergCanvas canvasId={`canvas-${channel.id}`} />;
         default: return <FallbackScreen name={channel.name} />;
       }
     case "video":
@@ -1281,6 +1326,277 @@ function ChaosMatrixCanvas({ canvasId }: { canvasId: string }) {
 }
 
 
+// Channel 9 — BLOOM TERMINAL: Bloomberg-style dark market terminal
+function BloombergCanvas({ canvasId }: { canvasId: string }) {
+  useEffect(() => {
+    const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d")!;
+    // Match canvas internal res to container for crisp rendering
+    const cw = canvas.offsetWidth || 800;
+    const ch = canvas.offsetHeight || 450;
+    canvas.width = cw; canvas.height = ch;
+    const w = cw, h = ch;
+
+    // Layout constants
+    const HEADER_H = 38;
+    const IDX_H = 36;
+    const TICKER_H = 30;
+    const PANEL_W = Math.round(w * 0.26); // right panel — all tickers visible
+    const CHART_AREA_X = 0;
+    const CHART_AREA_W = w - PANEL_W - 1;
+    const CHART_AREA_Y = HEADER_H + IDX_H;
+    const CHART_AREA_H = h - CHART_AREA_Y - TICKER_H;
+
+    const indices = [
+      { sym: "DOW",    val: 38547.23, chg: +1.24 },
+      { sym: "S&P",    val:  5432.18, chg: +0.87 },
+      { sym: "NASDAQ", val: 17214.09, chg: +1.13 },
+      { sym: "BTC",    val: 68244.00, chg: +2.41 },
+    ];
+
+    function genPrices(base: number, vol: number, len: number, seed: number) {
+      const out: number[] = [base];
+      for (let i = 1; i < len; i++) {
+        const r = Math.sin(seed * i * 17 + i * 3.7) * vol + Math.sin(seed * i * 7.3) * vol * 0.4;
+        out.push(Math.max(base * 0.75, out[i - 1] + r));
+      }
+      return out;
+    }
+
+    const charts = [
+      { sym: "NVDA", color: "#00ff88", prices: genPrices(940, 14, 180, 1.23) },
+      { sym: "AAPL", color: "#60ccff", prices: genPrices(198,  4, 180, 2.71) },
+      { sym: "TSLA", color: "#ff7744", prices: genPrices(248,  9, 180, 0.91) },
+      { sym: "MSFT", color: "#ffcc44", prices: genPrices(415,  7, 180, 3.14) },
+    ];
+
+    const allTickers = [
+      { sym: "NVDA",  price: 940.55,  chg:  4.2 },
+      { sym: "AAPL",  price: 198.20,  chg:  0.5 },
+      { sym: "MSFT",  price: 415.90,  chg:  1.1 },
+      { sym: "TSLA",  price: 248.40,  chg: -2.8 },
+      { sym: "AMZN",  price: 190.25,  chg:  2.3 },
+      { sym: "GOOGL", price: 175.80,  chg:  1.7 },
+      { sym: "META",  price: 520.35,  chg:  3.2 },
+      { sym: "BTC",   price: 68244.00, chg:  2.4 },
+      { sym: "ETH",   price:  3820.00, chg: -1.1 },
+      { sym: "SPY",   price:  543.20,  chg:  0.9 },
+      { sym: "QQQ",   price:  455.80,  chg:  1.3 },
+    ];
+
+    const headlines = [
+      "NVIDIA Q1 EARNINGS +23% · AI CHIP DEMAND ELEVATED",
+      "FED SIGNALS RATE CUTS Q3 · YIELDS SOFTEN",
+      "APPLE WWDC 2026: AI ACROSS ALL PLATFORMS",
+      "BITCOIN $68K · SPOT ETF INFLOWS HIT WEEKLY RECORD",
+      "TESLA AUTOPILOT V5 LIFTS SHARES · BUY UPGRADE",
+      "S&P 500 ALL-TIME HIGH · TECH LEADS BROAD RALLY",
+      "NOUS HERMES v2 BENCHMARK: +41% OVER BASELINE",
+    ];
+
+    let frame = 0;
+    let rafId: number;
+
+    const draw = () => {
+      ctx.fillStyle = "#010d01";
+      ctx.fillRect(0, 0, w, h);
+
+      // ── HEADER BAR ──
+      ctx.fillStyle = "#001800";
+      ctx.fillRect(0, 0, w, HEADER_H);
+      ctx.strokeStyle = "rgba(0,200,60,0.3)";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, HEADER_H); ctx.lineTo(w, HEADER_H); ctx.stroke();
+
+      ctx.font = "bold 13px 'Courier New', monospace";
+      ctx.fillStyle = "#00ff55";
+      ctx.shadowColor = "#00ff55"; ctx.shadowBlur = 7;
+      ctx.textAlign = "left";
+      ctx.fillText("BLOOM TERMINAL", 10, 24);
+      ctx.shadowBlur = 0;
+
+      // blink dot — slowed down (0.025 vs old 0.08)
+      const blink = Math.sin(frame * 0.025) > 0;
+      ctx.fillStyle = blink ? "#ff3333" : "#771111";
+      ctx.beginPath(); ctx.arc(192, 18, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.font = "8px monospace"; ctx.fillStyle = "#ff5555";
+      ctx.fillText("LIVE", 201, 22);
+
+      const now = new Date();
+      ctx.font = "11px 'Courier New', monospace";
+      ctx.fillStyle = "#44cc66"; ctx.textAlign = "right";
+      ctx.fillText(now.toLocaleTimeString("en-US", { hour12: false }) + " EST", w - 8, 24);
+      ctx.textAlign = "left";
+
+      // ── INDICES ROW ──
+      const ixAvail = CHART_AREA_W; // indices only over chart area
+      const ixW = Math.floor(ixAvail / indices.length);
+      indices.forEach((ix, i) => {
+        const bx = i * ixW + 8;
+        const col = ix.chg >= 0 ? "#00ff55" : "#ff4444";
+        ctx.fillStyle = "rgba(0,24,0,0.8)";
+        ctx.strokeStyle = "rgba(0,90,0,0.3)";
+        ctx.fillRect(bx, HEADER_H + 2, ixW - 10, IDX_H - 4);
+        ctx.strokeRect(bx, HEADER_H + 2, ixW - 10, IDX_H - 4);
+        ctx.font = "bold 8px monospace"; ctx.fillStyle = "#aaffaa";
+        ctx.fillText(ix.sym, bx + 5, HEADER_H + 14);
+        ctx.font = "9px monospace"; ctx.fillStyle = col;
+        const vs = ix.val >= 10000 ? ix.val.toFixed(0) : ix.val.toFixed(2);
+        ctx.fillText(`${vs}  ${ix.chg >= 0 ? "▲" : "▼"}${Math.abs(ix.chg).toFixed(2)}%`, bx + 5, HEADER_H + 28);
+      });
+
+      // ── 4 STOCK CHARTS (2×2) ──
+      const cw2 = Math.floor((CHART_AREA_W - 18) / 2);
+      const ch2 = Math.floor((CHART_AREA_H - 12) / 2);
+      // slowed from 0.12 → 0.028
+      const globalOffset = Math.floor(frame * 0.028);
+
+      charts.forEach((stock, si) => {
+        const col2 = si % 2, row2 = Math.floor(si / 2);
+        const cx2 = CHART_AREA_X + 6 + col2 * (cw2 + 6);
+        const cy2 = CHART_AREA_Y + 4 + row2 * (ch2 + 4);
+        const [r3, g3, b3] = [
+          parseInt(stock.color.slice(1, 3), 16),
+          parseInt(stock.color.slice(3, 5), 16),
+          parseInt(stock.color.slice(5, 7), 16),
+        ];
+
+        ctx.fillStyle = "rgba(0,10,0,0.9)";
+        ctx.fillRect(cx2, cy2, cw2, ch2);
+        ctx.strokeStyle = "rgba(0,60,0,0.5)";
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(cx2, cy2, cw2, ch2);
+
+        // grid lines inside chart
+        ctx.strokeStyle = "rgba(0,80,0,0.08)";
+        for (let gx = cx2 + 30; gx < cx2 + cw2 - 10; gx += 30) { ctx.beginPath(); ctx.moveTo(gx, cy2 + 44); ctx.lineTo(gx, cy2 + ch2 - 4); ctx.stroke(); }
+        for (let gy = cy2 + 48; gy < cy2 + ch2 - 4; gy += 20) { ctx.beginPath(); ctx.moveTo(cx2 + 4, gy); ctx.lineTo(cx2 + cw2 - 4, gy); ctx.stroke(); }
+
+        // label + price
+        ctx.font = "bold 10px 'Courier New', monospace";
+        ctx.fillStyle = stock.color; ctx.shadowColor = stock.color; ctx.shadowBlur = 4;
+        ctx.textAlign = "left";
+        ctx.fillText(stock.sym, cx2 + 5, cy2 + 14);
+        ctx.shadowBlur = 0;
+
+        // slowed from 0.18 → 0.04 so price index advances slowly
+        const pIdx = Math.floor(frame * 0.04) % stock.prices.length;
+        const latest = stock.prices[pIdx];
+        const dayChg = latest - stock.prices[0];
+        const dayPct = (dayChg / stock.prices[0]) * 100;
+        const dayCol = dayChg >= 0 ? "#00ff55" : "#ff4444";
+
+        ctx.font = "9px monospace"; ctx.fillStyle = stock.color;
+        ctx.fillText(`$${latest.toFixed(2)}`, cx2 + 5, cy2 + 26);
+        ctx.font = "8px monospace"; ctx.fillStyle = dayCol;
+        ctx.fillText(`${dayChg >= 0 ? "+" : ""}${dayChg.toFixed(2)} (${dayPct >= 0 ? "+" : ""}${dayPct.toFixed(2)}%)`, cx2 + 5, cy2 + 38);
+
+        // line chart
+        const padX = 5, padT = 44, padB = 5;
+        const iw = cw2 - padX * 2, ih = ch2 - padT - padB;
+        const offset = globalOffset % stock.prices.length;
+        const pts = [...stock.prices.slice(offset), ...stock.prices.slice(0, offset)].slice(-80);
+        const mn = Math.min(...pts), mx2 = Math.max(...pts), rng = mx2 - mn || 1;
+
+        ctx.beginPath();
+        pts.forEach((p, i) => {
+          const px3 = cx2 + padX + (i / (pts.length - 1)) * iw;
+          const py3 = cy2 + padT + ih - ((p - mn) / rng) * ih;
+          i === 0 ? ctx.moveTo(px3, py3) : ctx.lineTo(px3, py3);
+        });
+        ctx.strokeStyle = stock.color; ctx.lineWidth = 1.5;
+        ctx.shadowColor = stock.color; ctx.shadowBlur = 3;
+        ctx.stroke(); ctx.shadowBlur = 0;
+
+        // fill gradient
+        ctx.beginPath();
+        pts.forEach((p, i) => {
+          const px3 = cx2 + padX + (i / (pts.length - 1)) * iw;
+          const py3 = cy2 + padT + ih - ((p - mn) / rng) * ih;
+          i === 0 ? ctx.moveTo(px3, py3) : ctx.lineTo(px3, py3);
+        });
+        ctx.lineTo(cx2 + padX + iw, cy2 + padT + ih);
+        ctx.lineTo(cx2 + padX, cy2 + padT + ih);
+        ctx.closePath();
+        const fg = ctx.createLinearGradient(0, cy2 + padT, 0, cy2 + padT + ih);
+        fg.addColorStop(0, `rgba(${r3},${g3},${b3},0.2)`);
+        fg.addColorStop(1, `rgba(${r3},${g3},${b3},0)`);
+        ctx.fillStyle = fg; ctx.fill();
+      });
+
+      // ── RIGHT PANEL — ALL TICKERS, ALWAYS VISIBLE ──
+      const px0 = w - PANEL_W;
+      ctx.fillStyle = "rgba(0,14,0,0.95)";
+      ctx.fillRect(px0, HEADER_H, PANEL_W, h - HEADER_H);
+      ctx.strokeStyle = "rgba(0,160,0,0.25)";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(px0, HEADER_H); ctx.lineTo(px0, h); ctx.stroke();
+
+      ctx.font = "bold 7px monospace";
+      ctx.fillStyle = "rgba(0,255,65,0.35)";
+      ctx.textAlign = "left";
+      ctx.fillText("WATCHLIST", px0 + 8, HEADER_H + 14);
+
+      const rowH = Math.floor((h - HEADER_H - 18 - TICKER_H) / allTickers.length);
+      allTickers.forEach((t, i) => {
+        const ry = HEADER_H + 20 + i * rowH;
+        const col = t.chg >= 0 ? "#00ff55" : "#ff4444";
+        const isHot = Math.abs(t.chg) > 3;
+        // highlight row
+        if (isHot) {
+          ctx.fillStyle = t.chg > 0 ? "rgba(0,60,0,0.4)" : "rgba(60,0,0,0.4)";
+          ctx.fillRect(px0 + 2, ry - 2, PANEL_W - 4, rowH - 1);
+        }
+        ctx.font = `bold ${Math.max(7, Math.min(9, rowH - 4))}px 'Courier New', monospace`;
+        ctx.fillStyle = "#aaffaa"; ctx.textAlign = "left";
+        ctx.fillText(t.sym, px0 + 7, ry + rowH * 0.55);
+        ctx.font = `${Math.max(7, Math.min(8, rowH - 5))}px monospace`;
+        ctx.fillStyle = "#99ddaa";
+        ctx.fillText(t.price >= 1000 ? t.price.toFixed(0) : t.price.toFixed(2), px0 + 46, ry + rowH * 0.55);
+        ctx.textAlign = "right"; ctx.fillStyle = col;
+        ctx.fillText(`${t.chg >= 0 ? "▲" : "▼"}${Math.abs(t.chg).toFixed(1)}%`, px0 + PANEL_W - 4, ry + rowH * 0.55);
+        ctx.textAlign = "left";
+        // separator
+        ctx.strokeStyle = "rgba(0,80,0,0.15)"; ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.moveTo(px0 + 4, ry + rowH - 1); ctx.lineTo(px0 + PANEL_W - 4, ry + rowH - 1); ctx.stroke();
+      });
+
+      // ── TICKER / HEADLINE BAR (bottom) ──
+      const ty = h - TICKER_H;
+      ctx.fillStyle = "#001400";
+      ctx.fillRect(0, ty, w - PANEL_W, TICKER_H);
+      ctx.strokeStyle = "rgba(0,180,0,0.3)";
+      ctx.beginPath(); ctx.moveTo(0, ty); ctx.lineTo(w - PANEL_W, ty); ctx.stroke();
+
+      // scrolling headline — slowed from 1.2 to 0.35 px/frame
+      const hlIdx = Math.floor(frame / 400) % headlines.length;
+      const scrollX = ((frame * 0.35) % (w * 1.5));
+      ctx.save();
+      ctx.rect(0, ty, w - PANEL_W, TICKER_H);
+      ctx.clip();
+      ctx.font = "9px 'Courier New', monospace";
+      ctx.fillStyle = "#ffee44"; ctx.shadowColor = "#ffee44"; ctx.shadowBlur = 2;
+      ctx.textAlign = "left";
+      ctx.fillText(`▶  ${headlines[hlIdx]}  ·  ${headlines[(hlIdx + 1) % headlines.length]}  ·  ${headlines[(hlIdx + 2) % headlines.length]}`, (w - PANEL_W) - scrollX + 8, ty + 19);
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // Scanlines overlay
+      ctx.fillStyle = "rgba(0,0,0,0.06)";
+      for (let y = 0; y < h; y += 4) ctx.fillRect(0, y, w, 2);
+
+      frame++;
+      rafId = requestAnimationFrame(draw);
+    };
+
+    draw();
+    return () => { cancelAnimationFrame(rafId); };
+  }, [canvasId]);
+  return <canvas id={canvasId} className="absolute inset-0 w-full h-full bg-black" />;
+}
+
+
 /* ─────────────── Nous Boy Section ─────────────── */
 
 function NousBoySection({
@@ -1293,6 +1609,37 @@ function NousBoySection({
   const activeGame = GAMEBOY_GAMES.find(g => g.id === activeGameId) || GAMEBOY_GAMES[0];
   const activeGameIdx = GAMEBOY_GAMES.findIndex(g => g.id === activeGameId);
   const [gbPower, setGbPower] = useState(true);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const sendKey = (key: string, down: boolean) => {
+    try {
+      const doc = iframeRef.current?.contentDocument;
+      if (!doc) return;
+      doc.dispatchEvent(new KeyboardEvent(down ? 'keydown' : 'keyup', { key, bubbles: true, cancelable: true }));
+    } catch {}
+  };
+
+  // Forward physical keyboard to iframe when power is on
+  useEffect(() => {
+    if (!gbPower) return;
+    const GAME_KEYS = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'z', 'Z', 'x', 'X', ' ', 'Enter']);
+    const fwd = (e: KeyboardEvent, down: boolean) => {
+      if (!GAME_KEYS.has(e.key)) return;
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      const doc = iframeRef.current?.contentDocument;
+      if (!doc) return;
+      e.preventDefault();
+      try {
+        doc.dispatchEvent(new KeyboardEvent(down ? 'keydown' : 'keyup', { key: e.key, bubbles: true, cancelable: true }));
+      } catch {}
+    };
+    const dn = (e: KeyboardEvent) => fwd(e, true);
+    const up = (e: KeyboardEvent) => fwd(e, false);
+    window.addEventListener('keydown', dn);
+    window.addEventListener('keyup', up);
+    return () => { window.removeEventListener('keydown', dn); window.removeEventListener('keyup', up); };
+  }, [gbPower]);
 
   return (
     <div className="flex flex-col items-center gap-0 w-full">
@@ -1302,53 +1649,51 @@ function NousBoySection({
         <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">Nous Boy</h2>
         <div className="flex-1 h-px bg-border/30" />
         <span className="text-[0.6rem] font-mono text-muted-foreground/40 uppercase tracking-widest">
-          Click screen · use keyboard
+          Keyboard arrows + Z/X · or use D-pad buttons
         </span>
       </div>
 
       {/* GameBoy console */}
       <div className="flex justify-center mb-6">
-        <div style={{ width: 300 }}>
+        <div style={{ width: 480 }}>
           {/* Body */}
           <div className="relative bg-gradient-to-b from-[#1a1228] via-[#130e1f] to-[#0d0918]
-                          rounded-[28px_28px_20px_20px]
+                          rounded-[32px_32px_24px_24px]
                           border-2 border-purple-900/40
-                          shadow-[0_12px_48px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)]
-                          px-5 pt-5 pb-8">
+                          shadow-[0_16px_60px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)]
+                          px-8 pt-6 pb-11">
 
             {/* Screen housing */}
-            <div className="bg-[#0a0814] rounded-2xl p-3 border border-purple-900/30 mb-5
+            <div className="bg-[#0a0814] rounded-2xl p-4 border border-purple-900/30 mb-6
                             shadow-[inset_0_4px_16px_rgba(0,0,0,0.8)]">
               {/* Status bar */}
               <div className="flex items-center justify-between px-1 mb-2">
                 <div className="flex items-center gap-1.5">
-                  <div className={`w-1.5 h-1.5 rounded-full transition-all
-                    ${gbPower ? 'bg-emerald-400 shadow-[0_0_6px_rgba(74,222,128,0.9)]' : 'bg-slate-700'}`} />
-                  <span className="text-[0.4rem] font-mono text-purple-400/50 tracking-widest uppercase">pwr</span>
+                  <div className={`w-2 h-2 rounded-full transition-all
+                    ${gbPower ? 'bg-emerald-400 shadow-[0_0_8px_rgba(74,222,128,0.9)]' : 'bg-slate-700'}`} />
+                  <span className="text-[0.45rem] font-mono text-purple-400/50 tracking-widest uppercase">pwr</span>
                 </div>
-                <span className="text-[0.5rem] font-mono text-purple-300/40 tracking-[0.4em] uppercase font-semibold">NOUS BOY</span>
+                <span className="text-[0.55rem] font-mono text-purple-300/40 tracking-[0.4em] uppercase font-semibold">NOUS BOY</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[0.4rem] font-mono text-purple-400/50 tracking-widest uppercase">bat</span>
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(74,222,128,0.9)]" />
+                  <span className="text-[0.45rem] font-mono text-purple-400/50 tracking-widest uppercase">bat</span>
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(74,222,128,0.9)]" />
                 </div>
               </div>
 
               {/* Screen */}
               <div className="relative bg-black rounded-xl overflow-hidden border-2 border-purple-950/80
-                              shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]"
+                              shadow-[inset_0_0_24px_rgba(0,0,0,0.8)]"
                    style={{ aspectRatio: '4/3' }}>
                 {gbPower ? (
                   <>
-                    {/* CRT scanlines */}
                     <div className="absolute inset-0 pointer-events-none z-10" style={{
                       backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px)",
                     }} />
-                    {/* Screen glow */}
                     <div className="absolute inset-0 pointer-events-none z-10 rounded-xl"
                          style={{ boxShadow: "inset 0 0 30px rgba(168,85,247,0.06)" }} />
-                    {/* Game iframe */}
                     <iframe
                       key={activeGame.id}
+                      ref={iframeRef}
                       src={activeGame.src}
                       className="absolute inset-0 w-full h-full border-0 z-0"
                       title={activeGame.name}
@@ -1359,89 +1704,116 @@ function NousBoySection({
                   </>
                 ) : (
                   <div className="absolute inset-0 bg-[#030208] flex flex-col items-center justify-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-purple-900/20 border border-purple-900/40 flex items-center justify-center">
-                      <Power className="w-4 h-4 text-purple-400/30" />
+                    <div className="w-10 h-10 rounded-full bg-purple-900/20 border border-purple-900/40 flex items-center justify-center">
+                      <Power className="w-5 h-5 text-purple-400/30" />
                     </div>
-                    <span className="text-[0.45rem] font-mono text-purple-400/30 tracking-widest uppercase">No Signal</span>
+                    <span className="text-[0.5rem] font-mono text-purple-400/30 tracking-widest uppercase">No Signal</span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Controls row */}
-            <div className="flex items-center justify-between px-1">
+            <div className="flex items-center justify-between px-2">
               {/* D-pad */}
-              <div className="relative w-[68px] h-[68px]">
-                <div className="absolute inset-y-0 left-0 right-0 top-1/2 -translate-y-1/2 h-6 bg-[#1a1228] rounded-[3px] border border-purple-900/30 shadow-inner" />
-                <div className="absolute inset-x-0 left-1/2 -translate-x-1/2 top-0 bottom-0 w-6 bg-[#1a1228] rounded-[3px] border border-purple-900/30 shadow-inner" />
-                <div className="absolute inset-0 m-auto w-7 h-7 bg-[#0d0918] rounded-[3px] pointer-events-none" />
-                <span className="absolute top-0.5 left-1/2 -translate-x-1/2 text-[0.4rem] text-purple-400/25 pointer-events-none select-none">▲</span>
-                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 text-[0.4rem] text-purple-400/25 pointer-events-none select-none">▼</span>
-                <span className="absolute left-0.5 top-1/2 -translate-y-1/2 text-[0.4rem] text-purple-400/25 pointer-events-none select-none">◀</span>
-                <span className="absolute right-0.5 top-1/2 -translate-y-1/2 text-[0.4rem] text-purple-400/25 pointer-events-none select-none">▶</span>
+              <div className="relative" style={{ width: 90, height: 90 }}>
+                <div className="absolute inset-y-0 left-0 right-0 top-1/2 -translate-y-1/2 h-8 bg-[#1a1228] rounded-[3px] border border-purple-900/30 shadow-inner" />
+                <div className="absolute inset-x-0 left-1/2 -translate-x-1/2 top-0 bottom-0 w-8 bg-[#1a1228] rounded-[3px] border border-purple-900/30 shadow-inner" />
+                <div className="absolute inset-0 m-auto w-9 h-9 bg-[#0d0918] rounded-[3px] pointer-events-none" />
+                <button
+                  onPointerDown={() => sendKey("ArrowUp", true)}
+                  onPointerUp={() => sendKey("ArrowUp", false)}
+                  onPointerLeave={() => sendKey("ArrowUp", false)}
+                  className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 flex items-center justify-center text-purple-400/50 text-xs select-none z-10 active:text-purple-300">▲</button>
+                <button
+                  onPointerDown={() => sendKey("ArrowDown", true)}
+                  onPointerUp={() => sendKey("ArrowDown", false)}
+                  onPointerLeave={() => sendKey("ArrowDown", false)}
+                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-8 flex items-center justify-center text-purple-400/50 text-xs select-none z-10 active:text-purple-300">▼</button>
+                <button
+                  onPointerDown={() => sendKey("ArrowLeft", true)}
+                  onPointerUp={() => sendKey("ArrowLeft", false)}
+                  onPointerLeave={() => sendKey("ArrowLeft", false)}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-purple-400/50 text-xs select-none z-10 active:text-purple-300">◀</button>
+                <button
+                  onPointerDown={() => sendKey("ArrowRight", true)}
+                  onPointerUp={() => sendKey("ArrowRight", false)}
+                  onPointerLeave={() => sendKey("ArrowRight", false)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-purple-400/50 text-xs select-none z-10 active:text-purple-300">▶</button>
               </div>
 
               {/* Select + Start */}
-              <div className="flex flex-col gap-2 items-center">
+              <div className="flex flex-col gap-2.5 items-center">
                 <button
                   onClick={() => setGbPower(p => !p)}
-                  className="w-12 h-4 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
+                  className="w-16 h-5 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
                              border border-purple-600/40 shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]
-                             text-[0.38rem] font-mono text-purple-200/60 uppercase tracking-wide
+                             text-[0.4rem] font-mono text-purple-200/60 uppercase tracking-wide
                              active:from-purple-800 transition-all hover:border-purple-500/60">
                   SELECT
                 </button>
                 <button
-                  className="w-12 h-4 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
+                  onPointerDown={() => sendKey(" ", true)}
+                  onPointerUp={() => sendKey(" ", false)}
+                  onPointerLeave={() => sendKey(" ", false)}
+                  className="w-16 h-5 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
                              border border-purple-600/40 shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]
-                             text-[0.38rem] font-mono text-purple-200/60 uppercase tracking-wide
+                             text-[0.4rem] font-mono text-purple-200/60 uppercase tracking-wide
                              active:from-purple-800 transition-all hover:border-purple-500/60">
                   START
                 </button>
               </div>
 
               {/* A / B buttons */}
-              <div className="relative w-[68px] h-[56px]">
-                <button className="absolute right-0 top-0 w-9 h-9 rounded-full
-                                   bg-gradient-to-b from-pink-500 to-pink-700
-                                   border-2 border-pink-900/40
-                                   shadow-[0_3px_8px_rgba(0,0,0,0.5),inset_0_1px_2px_rgba(255,255,255,0.25)]
-                                   text-[0.55rem] font-mono font-bold text-pink-100/80 select-none
-                                   active:from-pink-600 transition-all">A</button>
-                <button className="absolute left-0 bottom-0 w-9 h-9 rounded-full
-                                   bg-gradient-to-b from-pink-500 to-pink-700
-                                   border-2 border-pink-900/40
-                                   shadow-[0_3px_8px_rgba(0,0,0,0.5),inset_0_1px_2px_rgba(255,255,255,0.25)]
-                                   text-[0.55rem] font-mono font-bold text-pink-100/80 select-none
-                                   active:from-pink-600 transition-all">B</button>
+              <div className="relative" style={{ width: 104, height: 86 }}>
+                <button
+                  onPointerDown={() => sendKey("z", true)}
+                  onPointerUp={() => sendKey("z", false)}
+                  onPointerLeave={() => sendKey("z", false)}
+                  className="absolute right-0 top-0 w-14 h-14 rounded-full
+                             bg-gradient-to-b from-pink-500 to-pink-700
+                             border-2 border-pink-900/40
+                             shadow-[0_4px_10px_rgba(0,0,0,0.6),inset_0_1px_2px_rgba(255,255,255,0.25)]
+                             text-sm font-mono font-bold text-pink-100/90 select-none
+                             active:from-pink-600 transition-all">A</button>
+                <button
+                  onPointerDown={() => sendKey("x", true)}
+                  onPointerUp={() => sendKey("x", false)}
+                  onPointerLeave={() => sendKey("x", false)}
+                  className="absolute left-0 bottom-0 w-14 h-14 rounded-full
+                             bg-gradient-to-b from-pink-500 to-pink-700
+                             border-2 border-pink-900/40
+                             shadow-[0_4px_10px_rgba(0,0,0,0.6),inset_0_1px_2px_rgba(255,255,255,0.25)]
+                             text-sm font-mono font-bold text-pink-100/90 select-none
+                             active:from-pink-600 transition-all">B</button>
               </div>
             </div>
 
             {/* Speaker + branding */}
-            <div className="flex items-end justify-between mt-4 px-1">
-              <span className="text-[0.38rem] font-mono text-purple-400/20 tracking-[0.5em] uppercase">NOUS RESEARCH</span>
+            <div className="flex items-end justify-between mt-5 px-1">
+              <span className="text-[0.4rem] font-mono text-purple-400/20 tracking-[0.5em] uppercase">NOUS RESEARCH</span>
               <div className="flex gap-0.5 opacity-35">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="w-1 h-3 rounded-full bg-purple-700" />
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="w-1 h-4 rounded-full bg-purple-700" />
                 ))}
               </div>
             </div>
           </div>
 
           {/* Shadow */}
-          <div className="h-3 mx-8 bg-black/40 rounded-full blur-md -mt-1" />
+          <div className="h-4 mx-10 bg-black/40 rounded-full blur-md -mt-1" />
         </div>
       </div>
 
-      {/* Game Guide — matches TV Guide style */}
+      {/* Game Guide */}
       <Card className="w-full max-w-full border-border bg-background-elevated overflow-hidden">
         <CardContent className="p-0">
-          <div className="p-4 border-b border-border">
+          <div className="px-4 py-2.5 border-b border-border">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground shrink-0">Game Guide</h2>
               <div className="flex gap-1.5 shrink-0">
                 {GAMEBOY_GAMES.map((_, i) => (
-                  <div key={i} className={`w-1.5 h-5 rounded-full transition-all
+                  <div key={i} className={`w-1.5 h-4 rounded-full transition-all
                     ${activeGameIdx === i
                       ? 'bg-purple-400 shadow-[0_0_6px_rgba(168,85,247,0.6)]'
                       : 'bg-slate-700'}`} />
@@ -1449,23 +1821,21 @@ function NousBoySection({
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-4 divide-x divide-border">
+          <div className="flex items-center gap-1.5 px-3 py-2.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
             {GAMEBOY_GAMES.map((game, i) => (
               <button
                 key={game.id}
                 onClick={() => setActiveGameId(game.id)}
-                className={`group relative flex flex-col items-center justify-center gap-2 p-4 transition-all
-                  ${activeGameIdx === i ? 'bg-purple-500/5' : 'hover:bg-muted/30'}`}
+                className={`relative flex-shrink-0 flex items-center gap-2 px-3 h-8 rounded-full font-mono text-[0.63rem] border transition-all select-none active:scale-95 whitespace-nowrap
+                  ${activeGameIdx === i
+                    ? 'bg-purple-500/10 text-foreground border-purple-500/50'
+                    : 'bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted hover:text-foreground hover:border-foreground/20'
+                  }`}
               >
-                <span className={`text-2xl transition-transform ${activeGameIdx === i ? 'scale-110' : 'group-hover:scale-105'}`}>
-                  {game.icon}
-                </span>
-                <span className={`text-[0.7rem] font-mono tracking-wide text-center leading-tight
-                  ${activeGameIdx === i ? 'text-foreground' : 'text-muted-foreground/70'}`}>
-                  {game.name}
-                </span>
+                <GameIcon icon={game.icon} size={13} />
+                <span>{game.name}</span>
                 {activeGameIdx === i && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-500" />
+                  <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-purple-400 shadow-[0_0_5px_rgba(168,85,247,0.9)]" />
                 )}
               </button>
             ))}

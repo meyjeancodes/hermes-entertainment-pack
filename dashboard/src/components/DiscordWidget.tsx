@@ -116,9 +116,18 @@ export default function DiscordWidget() {
         setInitializing(false);
       }
     } catch (e: any) {
-      if (e.message.includes("DISCORD_BOT_TOKEN")) {
+      const msg = (e.message || "").toLowerCase();
+      const isConfigIssue =
+        msg.includes("discord_bot_token") ||
+        msg.includes("bot token") ||
+        msg.includes("not configured") ||
+        msg.includes("unauthorized") ||
+        msg.includes("pattern") ||
+        msg.includes("invalid token") ||
+        msg.includes("401");
+      if (isConfigIssue) {
         setConnected(false);
-        setError("Discord bot token not configured");
+        setError("Discord bot not configured");
       } else {
         setError(`Failed to load guilds: ${e.message}`);
       }
@@ -226,11 +235,22 @@ export default function DiscordWidget() {
 
   if (connected === false) {
     return (
-      <Card className="bg-background-base/50 border-current/10">
-        <CardContent className="p-4 flex flex-col items-center gap-3">
-          <WifiOff className="w-8 h-8 text-muted-foreground/50" />
-          <p className="text-sm text-midground/70">Discord bot not connected</p>
-          <p className="text-xs text-muted-foreground text-center">Set DISCORD_BOT_TOKEN in ~/.hermes/.env and restart gateway</p>
+      <Card className="bg-background-base/50 border-current/10 max-w-md mx-auto mt-12">
+        <CardContent className="p-8 flex flex-col items-center gap-4 text-center">
+          <div className="w-16 h-16 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+            <WifiOff className="w-7 h-7 text-indigo-400/60" />
+          </div>
+          <div>
+            <p className="text-base font-semibold text-foreground mb-1">Discord Not Connected</p>
+            <p className="text-sm text-muted-foreground">Add your bot token to Hermes config:</p>
+          </div>
+          <code className="text-xs bg-muted/60 px-4 py-2 rounded font-mono text-foreground border border-border/30 w-full text-left">
+            DISCORD_BOT_TOKEN=your_token_here
+          </code>
+          <p className="text-xs text-muted-foreground/60">Add to ~/.hermes/.env then restart the dashboard</p>
+          <Button size="sm" variant="outline" onClick={handleRefresh} className="gap-2">
+            <RefreshCw className="w-3 h-3" /> Retry Connection
+          </Button>
         </CardContent>
       </Card>
     );

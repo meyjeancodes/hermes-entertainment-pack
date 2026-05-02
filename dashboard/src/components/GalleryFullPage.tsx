@@ -293,6 +293,7 @@ export default function GalleryFullPage() {
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
   const [visibleCards, setVisibleCards] = useState<Set<string>>(new Set());
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -377,11 +378,34 @@ export default function GalleryFullPage() {
           <div className={styles.gridHeader}>
             <h2 className={styles.gridTitle}>SELECTED WORKS</h2>
             <p className={styles.gridSubtitle}>ISSUE 001 — PAGE 02</p>
+            {/* View toggle */}
+            <div className="absolute top-0 right-0 flex items-center gap-1 mt-4">
+              <button
+                onClick={() => setViewMode('grid')}
+                title="Grid view"
+                className={`p-2 rounded transition-colors ${viewMode === 'grid' ? 'text-white' : 'text-white/30 hover:text-white/60'}`}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                title="List view"
+                className={`p-2 rounded transition-colors ${viewMode === 'list' ? 'text-white' : 'text-white/30 hover:text-white/60'}`}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="3" y="4" width="18" height="3" rx="1"/><rect x="3" y="10.5" width="18" height="3" rx="1"/>
+                  <rect x="3" y="17" width="18" height="3" rx="1"/>
+                </svg>
+              </button>
+            </div>
           </div>
 
-          <div className={styles.cardsStack}>
+          <div className={viewMode === 'grid' ? styles.cardsStack : styles.cardsStackList}>
             {GALLERY_IMAGES.filter(img => img.type === 'card' && img.id !== '14').map((img, idx) => (
-                  <article key={img.id} ref={el => { cardRefs.current[idx] = el; }} data-card-id={img.id} className={`${styles.card} ${styles[`card--${img.orientation}`]} ${visibleCards.has(img.id) ? styles.visible : ''}`}>
+                  <article key={img.id} ref={el => { cardRefs.current[idx] = el; }} data-card-id={img.id} style={{ transitionDelay: `${(idx % 4) * 80}ms` }} className={`${styles.card} ${styles[`card--${img.orientation}`]} ${styles.fadeInUp} ${visibleCards.has(img.id) ? styles.visible : ''}`}>
                 <div className={styles.cardImageWrapper}>
                   <img
                     src={img.url}
@@ -398,7 +422,7 @@ export default function GalleryFullPage() {
                 <div className={styles.cardMeta}>
                   <h3 className={styles.cardTitle}>{img.title}</h3>
                   <p className={styles.cardSubtitle}>{img.subtitle}</p>
-                  <span className={styles.cardNumber}>0{img.id}</span>
+                  <span className={styles.cardNumber}>{String(idx + 1).padStart(3, '0')}</span>
                 </div>
               </article>
             ))}
@@ -435,20 +459,20 @@ export default function GalleryFullPage() {
       {/* Full-screen image modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/92 backdrop-blur-md p-4"
           onClick={() => setSelectedImage(null)}
         >
           <button
-            className="absolute top-4 right-4 z-10 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
+            className="absolute top-5 right-5 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-black/80 border border-white/30 text-white hover:bg-white/20 hover:border-white/60 transition-all shadow-xl"
             onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
             aria-label="Close"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
           <img
             src={selectedImage}
             alt="Full size gallery image"
-            className="max-w-full max-h-full object-contain rounded shadow-2xl"
+            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />
         </div>
