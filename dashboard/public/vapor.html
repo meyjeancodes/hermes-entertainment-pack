@@ -149,7 +149,7 @@ function frame(ts){
   }
 
   // Horizontal scrolling lines
-  const scrollProg=(t*0.38)%1;
+  const scrollProg=(t*0.13)%1;
   const nh=16;
   for(let i=0;i<=nh;i++){
     const p=((i/nh)+scrollProg)%1;
@@ -180,10 +180,10 @@ function frame(ts){
     const fi=i/bars;
     // Fake but natural-looking spectrum
     const bh=maxBH*Math.max(0.04,
-      0.38*Math.abs(Math.sin(t*3.9+fi*7.5))+
-      0.28*Math.abs(Math.sin(t*5.3+fi*5.1+1.1))+
-      0.20*Math.abs(Math.sin(t*2.1+fi*11.3))+
-      0.14*Math.abs(Math.sin(t*8.1+fi*3.3+2.2))
+      0.38*Math.abs(Math.sin(t*1.4+fi*7.5))+
+      0.28*Math.abs(Math.sin(t*1.9+fi*5.1+1.1))+
+      0.20*Math.abs(Math.sin(t*0.75+fi*11.3))+
+      0.14*Math.abs(Math.sin(t*2.8+fi*3.3+2.2))
     );
     const x=bx0+i*bw;
     const barG=ctx.createLinearGradient(x,byBase-bh,x,byBase);

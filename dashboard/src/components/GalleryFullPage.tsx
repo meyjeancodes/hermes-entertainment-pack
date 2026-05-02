@@ -429,8 +429,6 @@ export default function GalleryFullPage() {
           </div>
         </section>
 
-        {/* Curator note removed per Task 2 */}
-
         {/* ── AESTHETIC STUDY / MOOD BOARD — FOOTER HERO ── */}
         {(() => {
           const aestheticImg = GALLERY_IMAGES.find(img => img.id === "14")!;
