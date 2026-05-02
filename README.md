@@ -60,22 +60,26 @@ A canvas-rendered Bloomberg Terminal clone with:
 
 ---
 
-## Setup
-
-### Prerequisites
-
-- Hermes Agent running (`hermes dashboard`)
-- Node 18+ and npm
-
-### Install
+## Install
 
 ```bash
-cd dashboard
+git clone https://github.com/meyjeancodes/hermes-entertainment-pack.git \
+  ~/.hermes/plugins/entertainment
+```
+
+That's it. The built bundle is committed — no build step needed. Restart `hermes dashboard` if it's already running and the Entertainment tab will appear.
+
+The plugin lives in `~/.hermes/plugins/` which `hermes update` never touches, so it survives agent updates automatically.
+
+### Build from source (optional)
+
+Only needed if you modify the source:
+
+```bash
+cd ~/.hermes/plugins/entertainment/dashboard
 npm install
 npm run build
 ```
-
-The built `dashboard/dist/index.js` is committed to this repo for plug-and-play install — no build step required if you just want to use it.
 
 ### Discord
 
