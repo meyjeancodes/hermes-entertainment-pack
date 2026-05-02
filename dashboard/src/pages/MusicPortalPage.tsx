@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './MusicPortalPage.module.css';
-import { SpotifyFullPage } from '@/components/SpotifyFullPage';
 import { PLUGIN_URL } from '@/lib/plugin';
 
 const TRACKS = [
@@ -119,10 +118,16 @@ export default function MusicPortalPage() {
         </button>
       </div>
 
-      {/* Spotify player */}
+      {/* Vapor FM player — same engine as Channel 10 */}
       <div className={styles.playerSection} ref={playerRef}>
-        <p className={styles.playerLabel}>— NOW STREAMING —</p>
-        <SpotifyFullPage />
+        <p className={styles.playerLabel}>— LIVE ON VAPOR FM · CHANNEL 10 —</p>
+        <iframe
+          src={`${PLUGIN_URL}/public/vapor.html`}
+          className={styles.vaporPlayer}
+          title="Vapor FM"
+          allow="autoplay"
+          sandbox="allow-scripts allow-same-origin"
+        />
       </div>
 
       {/* Fine print */}
