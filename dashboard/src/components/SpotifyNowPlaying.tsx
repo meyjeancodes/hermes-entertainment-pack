@@ -45,22 +45,22 @@ export function SpotifyNowPlaying() {
   if (error === "auth_required") {
     return (
       <Card className="bg-background-base/50 border-current/10 overflow-hidden">
-        <CardContent className="py-4 px-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#1DB954] flex items-center justify-center">
+        <CardContent className="py-4 px-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-full bg-[#1DB954] flex items-center justify-center shrink-0">
               <svg viewBox="0 0 24 24" className="w-5 h-5 text-black" fill="currentColor">
                 <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 8.7 15.24 8.88 17.6 11.18c.361.48.54.9.54 1.44z"/>
               </svg>
             </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground">Connect Spotify</p>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-foreground">Spotify not connected</p>
               <p className="text-xs text-midground/70">
-                Run <code className="bg-muted px-1 rounded text-[10px]">hermes auth spotify</code> to link your account
+                Run <code className="bg-muted px-1 rounded text-[10px]">hermes auth spotify</code> then click Retry
               </p>
             </div>
           </div>
-          <Button size="sm" className="bg-[#1DB954] hover:bg-[#1ed760] text-black font-bold border-0">
-            RUN
+          <Button size="sm" onClick={fetchState} className="bg-[#1DB954] hover:bg-[#1ed760] text-black font-bold border-0 shrink-0">
+            Retry
           </Button>
         </CardContent>
       </Card>
