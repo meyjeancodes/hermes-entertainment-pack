@@ -22,7 +22,7 @@ const CHANNELS: Channel[] = [
   { id: "ch4", name: "Weather Retro", type: "iframe", src: "https://weather.com/retro/" },
   { id: "ch5", name: "Nature", type: "iframe", src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0", autoplay: true },
   { id: "ch6", name: "Aethereon", type: "iframe", src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0", autoplay: true },
-  { id: "ch7", name: "Bedrock", type: "iframe", src: "https://www.youtube.com/embed/atzk_NAzTqU?si=8WnD-I0W9idWf9PY&controls=0", autoplay: true },
+  { id: "ch7", name: "Artemis", type: "iframe", src: "https://www.youtube.com/embed/live_stream?channel=UCLA_DiR1FfKNvjuUpBHmylQ&controls=0", autoplay: true },
   { id: "ch8", name: "Local 58", type: "iframe", src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q", autoplay: true },
   { id: "ch9", name: "Bloom Terminal", type: "canvas", color: "#001a00" },
   { id: "ch10", name: "Spotify Visual", type: "iframe", src: "https://open.spotify.com/embed/album/5ht7ItJgpBH7W6vJ5BqpPr" },
@@ -615,7 +615,7 @@ function ChannelIcon({ channel, size = 16 }: { channel: Channel; size?: number }
           <circle cx="12" cy="12" r="3" fill={color} opacity="0.3" />
         </svg>
       );
-    case "ch7": // CORE BREATHWORK
+    case "ch7": // ARTEMIS / NASA
       return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5">
           <path d="M12 21c5.5 0 10-4.5 10-10S17.5 1 12 1 2 5.5 2 11s4.5 10 10 10z" strokeLinecap="round" />
