@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;overflow:hidden;width:100vw;height:100vh}
+canvas{display:block}
+</style></head>
+<body><canvas id="c"></canvas>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+cv.width=window.innerWidth;cv.height=window.innerHeight;
+const W=cv.width,H=cv.height;
+
+// Stars
+const STARS=Array.from({length:220},()=>({
+  x:Math.random()*W,y:Math.random()*H,
+  r:Math.random()*1.4+0.2,
+  a:Math.random()*0.6+0.3,
+  spd:Math.random()*0.03+0.004,
+  off:Math.random()*Math.PI*2
+}));
+
+// Earth
+const EX=W*0.28,EY=H*0.74,ER=Math.min(W,H)*0.19;
+// Moon
+const MX=W*0.8,MY=H*0.18,MR=Math.min(W,H)*0.058;
+
+// Orbit bezier control point
+const CP={x:W*0.52,y:H*0.08};
+
+function orbitPt(t){
+  const p0={x:EX,y:EY-ER*0.9};
+  const p2={x:MX,y:MY+MR*0.8};
+  const u=1-t;
+  return{x:u*u*p0.x+2*u*t*CP.x+t*t*p2.x,
+         y:u*u*p0.y+2*u*t*CP.y+t*t*p2.y};
+}
+
+let craftT=0.15;
+const TRAIL=22;
+const trailPts=[];
+
+function draw(ts){
+  const sec=ts*0.001;
+  ctx.fillStyle='#00000a';ctx.fillRect(0,0,W,H);
+
+  // Stars
+  STARS.forEach(s=>{
+    const a=s.a*(0.45+0.55*Math.sin(sec*s.spd*60+s.off));
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${a})`;ctx.fill();
+  });
+
+  // Orbit path dashed
+  ctx.save();ctx.setLineDash([4,10]);
+  ctx.strokeStyle='rgba(168,85,247,0.22)';ctx.lineWidth=1;
+  ctx.beginPath();
+  const p0={x:EX,y:EY-ER*0.9};
+  ctx.moveTo(p0.x,p0.y);
+  ctx.quadraticCurveTo(CP.x,CP.y,MX,MY+MR*0.8);
+  ctx.stroke();ctx.restore();
+
+  // Earth atmosphere glow
+  const atm=ctx.createRadialGradient(EX,EY,ER*0.85,EX,EY,ER*1.55);
+  atm.addColorStop(0,'rgba(60,140,255,0.28)');
+  atm.addColorStop(0.5,'rgba(20,60,180,0.1)');
+  atm.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.beginPath();ctx.arc(EX,EY,ER*1.55,0,Math.PI*2);
+  ctx.fillStyle=atm;ctx.fill();
+
+  // Earth body
+  const eb=ctx.createRadialGradient(EX-ER*0.28,EY-ER*0.28,0,EX,EY,ER);
+  eb.addColorStop(0,'#5599ff');
+  eb.addColorStop(0.38,'#2255cc');
+  eb.addColorStop(0.72,'#173aaa');
+  eb.addColorStop(1,'#0a1a55');
+  ctx.beginPath();ctx.arc(EX,EY,ER,0,Math.PI*2);ctx.fillStyle=eb;ctx.fill();
+
+  // Continents
+  ctx.save();ctx.beginPath();ctx.arc(EX,EY,ER,0,Math.PI*2);ctx.clip();
+  ctx.fillStyle='rgba(45,155,75,0.6)';
+  [[EX-ER*0.32,EY-ER*0.08,ER*0.19,ER*0.28,-0.25],
+   [EX+0.04*ER,EY-0.04*ER,ER*0.11,ER*0.34,0.18],
+   [EX+ER*0.28,EY-ER*0.17,ER*0.24,ER*0.19,0.1]
+  ].forEach(([cx,cy,rx,ry,rot])=>{
+    ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,rot,0,Math.PI*2);ctx.fill();
+  });
+  // Night side terminator
+  const ter=ctx.createLinearGradient(EX+ER*0.15,EY-ER,EX+ER,EY+ER*0.5);
+  ter.addColorStop(0,'rgba(0,0,15,0)');ter.addColorStop(1,'rgba(0,0,15,0.72)');
+  ctx.beginPath();ctx.arc(EX,EY,ER,0,Math.PI*2);ctx.fillStyle=ter;ctx.fill();
+  ctx.restore();
+
+  // Moon glow
+  const mg=ctx.createRadialGradient(MX,MY,MR*0.4,MX,MY,MR*2.2);
+  mg.addColorStop(0,'rgba(210,205,190,0.12)');mg.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.beginPath();ctx.arc(MX,MY,MR*2.2,0,Math.PI*2);ctx.fillStyle=mg;ctx.fill();
+
+  // Moon body
+  const mb=ctx.createRadialGradient(MX-MR*0.22,MY-MR*0.22,0,MX,MY,MR);
+  mb.addColorStop(0,'#d8d3c5');mb.addColorStop(0.55,'#aeaa98');mb.addColorStop(1,'#807a6e');
+  ctx.beginPath();ctx.arc(MX,MY,MR,0,Math.PI*2);ctx.fillStyle=mb;ctx.fill();
+  // Moon shadow
+  const ms=ctx.createLinearGradient(MX+MR*0.1,MY-MR,MX+MR,MY+MR);
+  ms.addColorStop(0,'rgba(0,0,10,0)');ms.addColorStop(1,'rgba(0,0,10,0.55)');
+  ctx.beginPath();ctx.arc(MX,MY,MR,0,Math.PI*2);ctx.fillStyle=ms;ctx.fill();
+
+  // Spacecraft trail
+  trailPts.push({...orbitPt(craftT)});
+  if(trailPts.length>TRAIL)trailPts.shift();
+  trailPts.forEach((p,i)=>{
+    const a=(i/TRAIL)*0.8;
+    const r=(i/TRAIL)*3.5;
+    ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(192,132,252,${a})`;ctx.fill();
+  });
+
+  // Spacecraft dot
+  const cp=orbitPt(craftT);
+  ctx.shadowColor='#a855f7';ctx.shadowBlur=18;
+  ctx.beginPath();ctx.arc(cp.x,cp.y,4.5,0,Math.PI*2);
+  ctx.fillStyle='#e9d5ff';ctx.fill();ctx.shadowBlur=0;
+
+  craftT=(craftT+0.00055)%1;
+
+  // ── HUD ──
+  const fs=n=>Math.round(H*n);
+
+  // Mission name
+  ctx.font=`900 ${fs(0.058)}px "Courier New",monospace`;
+  ctx.fillStyle='rgba(242,239,232,0.9)';
+  ctx.shadowColor='rgba(168,85,247,0.5)';ctx.shadowBlur=22;
+  ctx.textAlign='left';ctx.fillText('ARTEMIS II',22,fs(0.072));
+  ctx.shadowBlur=0;
+
+  ctx.font=`${fs(0.022)}px "Courier New",monospace`;
+  ctx.fillStyle='rgba(168,85,247,0.75)';
+  ctx.fillText('CREWED LUNAR FLYBY · SLS BLOCK 1 CREW',22,fs(0.072)+fs(0.034));
+
+  // Crew
+  ctx.font=`${fs(0.018)}px "Courier New",monospace`;
+  ctx.fillStyle='rgba(242,239,232,0.38)';
+  ctx.fillText('CREW: 4  ·  DESTINATION: LUNAR FREE RETURN  ·  STATUS: NOMINAL',22,H-fs(0.056));
+
+  // Clock + footer
+  const now=new Date();
+  ctx.font=`${fs(0.017)}px "Courier New",monospace`;
+  ctx.fillStyle='rgba(242,239,232,0.28)';
+  ctx.fillText(`MISSION CLOCK: ${now.toISOString().slice(11,19)} UTC`,22,H-fs(0.028));
+  ctx.textAlign='right';
+  ctx.fillText('NASA · JOHNSON SPACE CENTER · HOUSTON TX',W-22,H-fs(0.028));
+
+  // Blinking status dot
+  const blink=Math.floor(sec*2)%2===0;
+  ctx.beginPath();ctx.arc(W-22,fs(0.04),4,0,Math.PI*2);
+  ctx.fillStyle=blink?'rgba(74,222,128,0.9)':'rgba(74,222,128,0.15)';ctx.fill();
+  ctx.font=`${fs(0.016)}px "Courier New",monospace`;
+  ctx.fillStyle='rgba(74,222,128,0.6)';
+  ctx.fillText('LIVE',W-32,fs(0.044));
+
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+</script></body></html>

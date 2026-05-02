@@ -22,10 +22,10 @@ const CHANNELS: Channel[] = [
   { id: "ch4", name: "Weather Retro", type: "iframe", src: "https://weather.com/retro/" },
   { id: "ch5", name: "Nature", type: "iframe", src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0", autoplay: true },
   { id: "ch6", name: "Aethereon", type: "iframe", src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0", autoplay: true },
-  { id: "ch7", name: "Artemis", type: "iframe", src: "https://www.youtube.com/embed/live_stream?channel=UCLA_DiR1FfKNvjuUpBHmylQ&controls=0", autoplay: true },
+  { id: "ch7", name: "Artemis", type: "iframe", src: `${PLUGIN_URL}/public/artemis.html`, autoplay: true },
   { id: "ch8", name: "Local 58", type: "iframe", src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q", autoplay: true },
   { id: "ch9", name: "Bloom Terminal", type: "canvas", color: "#001a00" },
-  { id: "ch10", name: "Spotify Visual", type: "iframe", src: "https://open.spotify.com/embed/album/5ht7ItJgpBH7W6vJ5BqpPr" },
+  { id: "ch10", name: "Vapor FM", type: "iframe", src: `${PLUGIN_URL}/public/vapor.html` },
 ];
 const GAMEBOY_GAMES = [
   { id: "g1", name: "Pong",        src: `${PLUGIN_URL}/games/pong.html`,   icon: "pong" },
