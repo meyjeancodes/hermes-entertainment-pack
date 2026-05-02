@@ -247,33 +247,34 @@ export default function EntertainmentPage() {
         Entertainment
       </h1>
 
-      {/* TV UNIT — larger widescreen with enhanced retro styling */}
+      {/* TV UNIT */}
       <div className="flex flex-col items-center gap-10">
         <Card className="overflow-hidden border-border bg-background-elevated relative w-full max-w-3xl mx-auto">
           <CardContent className="p-0">
-            <div className="relative px-2 md:px-3 lg:px-4">
-              {/* Wood base — wider, richer gradient */}
-              <div className="absolute -bottom-4 left-20 right-20 h-6 bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 rounded-xl blur-[2px] shadow-lg" />
-              <div className="absolute -bottom-2 left-24 right-24 h-1 bg-amber-700/60 rounded-full" />
-
+            <div className="relative px-2 md:px-3 lg:px-4 pb-6">
                 {/* Hide YouTube large play button overlay */}
                 <style>{`.ytp-large-play-button { display: none !important; }`}</style>
-                  {/* TV housing — glass morphism */}
-                <div className="relative bg-white/5 backdrop-blur-2xl rounded-3xl p-2 md:p-3 lg:p-4 shadow-[0_0_80px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.1)] border border-white/10">
-                  {/* Top specular highlight */}
-                  <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-full" />
 
-                {/* Brand badge — NOUS branding */}
-                <div className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-700 border-2 border-emerald-900/30 shadow-inner shadow-emerald-500/20" />
-                  <span className="text-[0.65rem] font-mono text-slate-200 tracking-[0.5em] uppercase drop-shadow-[0_2px_3px_rgba(0,0,0,0.9)] font-semibold">
-                    NOUS
-                  </span>
-                </div>
+                {/* ── TV HOUSING — classic late-80s CRT plastic ── */}
+                <div className="relative rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.8),inset_0_2px_0_rgba(255,255,255,0.08)]"
+                     style={{ background: 'linear-gradient(160deg,#28211a 0%,#1c1710 60%,#141009 100%)', padding: '14px 14px 20px' }}>
 
-                  {/* CRT bezel frame */}
-                  <div className="relative bg-black/65 backdrop-blur-sm rounded-2xl p-6 shadow-[inset_0_4px_20px_rgba(0,0,0,0.9)] border border-white/6">
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+                  {/* Top accent strip */}
+                  <div className="absolute top-0 left-8 right-8 h-[2px] rounded-full opacity-30"
+                       style={{ background: 'linear-gradient(90deg,transparent,#c8a96e,transparent)' }} />
+
+                  {/* Brand badge */}
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                    <div className={`w-2.5 h-2.5 rounded-full transition-all ${powerOn ? 'bg-emerald-400 shadow-[0_0_10px_#4ade80]' : 'bg-red-600 shadow-[0_0_6px_#dc2626]'}`} />
+                    <span className="text-[0.6rem] font-mono tracking-[0.5em] uppercase font-bold" style={{ color: '#c8a96e' }}>NOUS</span>
+                  </div>
+
+                  {/* CRT bezel — deeply recessed */}
+                  <div className="relative rounded-[16px] mt-3 shadow-[inset_0_4px_20px_rgba(0,0,0,0.95),inset_0_0_0_2px_rgba(0,0,0,0.8)]"
+                       style={{ background: '#080604', padding: '20px' }}>
+                    {/* Subtle phosphor glow around screen */}
+                    <div className="absolute inset-0 rounded-[16px] pointer-events-none"
+                         style={{ boxShadow: powerOn ? 'inset 0 0 40px rgba(74,222,128,0.06)' : 'none' }} />
 
                   {/* Screen — 16:9 widescreen */}
                   <div className="relative bg-black rounded overflow-hidden" style={{ aspectRatio: "16/9" }}>
@@ -346,125 +347,94 @@ export default function EntertainmentPage() {
                     )}
                   </div>
 
-                  {/* Control panel — bottom bezel, full-width horizontal button row */}
-                  {/* Frame divider — subtle bezel lip depth */}
-                  <div className="w-full h-px bg-gradient-to-r from-slate-800/0 via-slate-600 to-slate-800/0 shadow-[0_1px_2px_rgba(0,0,0,0.4)] mb-3" />
-                  <div className="mt-4 bg-black/40 backdrop-blur-md rounded-2xl px-6 py-5 border border-white/8 shadow-[inset_0_3px_10px_rgba(0,0,0,0.5)]">
-                    {/* Single row: all controls evenly spaced left → right */}
-                    <div className="flex items-center justify-around gap-3 w-full">
+                  </div>{/* close CRT bezel */}
+
+                  {/* ── Control panel — solid dark amber/wood style ── */}
+                  <div className="mt-3 rounded-[12px] px-4 py-4 shadow-[inset_0_2px_8px_rgba(0,0,0,0.6)]"
+                       style={{ background: 'linear-gradient(180deg,#1c1710 0%,#141009 100%)', borderTop: '1px solid rgba(200,169,110,0.12)' }}>
+                    {/* Transport row */}
+                    <div className="flex items-center justify-around gap-2 w-full mb-3">
                       {/* Power */}
                       <button onClick={togglePower} title="Power"
-                        className={`relative flex-shrink-0 w-10 h-10 flex items-center justify-center border rounded-full shadow-lg active:scale-95 transition-all select-none backdrop-blur-sm
-                          ${powerOn
-                            ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-400 shadow-[0_0_20px_rgba(74,222,128,0.3)]"
-                            : "bg-white/8 border-white/15 text-white/50 hover:bg-white/15 hover:text-white/70"
-                          }`}>
-                        <div className={`absolute bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full z-10 transition-all
-                          ${powerOn
-                            ? "bg-emerald-500/90 shadow-[0_0_14px_rgba(74,222,128,1)]"
-                            : "bg-red-500/70 shadow-[0_0_8px_rgba(220,38,38,0.6)]"
-                          }`} />
-                        <Power className="w-5 h-5" />
+                        className={`relative flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full border-2 shadow-[0_4px_8px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.1)] active:scale-95 active:shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-all select-none
+                          ${powerOn ? 'border-emerald-600 text-emerald-400' : 'border-[#3a3020] text-[#8a7a5a]'}`}
+                        style={{ background: powerOn ? 'linear-gradient(180deg,#1a3a1a,#0d220d)' : 'linear-gradient(180deg,#2a2318,#1a1510)' }}>
+                        <div className={`absolute bottom-1.5 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full transition-all ${powerOn ? 'bg-emerald-400 shadow-[0_0_10px_#4ade80]' : 'bg-red-700 shadow-[0_0_5px_#991b1b]'}`} />
+                        <Power className="w-4 h-4" />
                       </button>
 
-                      {/* Divider */}
-                      <div className="w-px h-10 bg-white/10 flex-shrink-0" />
+                      <div className="w-px h-8 opacity-20" style={{ background: '#c8a96e' }} />
 
                       {/* Rewind */}
-                      <button onClick={handleRewind} title="Rewind"
-                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center border border-white/12 bg-white/6 hover:bg-white/14 hover:border-white/22 text-white/60 hover:text-white/90 backdrop-blur-sm shadow-md active:scale-95 transition-all select-none rounded-full">
-                        <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
-                          <polygon points="4,12 10,6 10,18" />
-                          <polygon points="10,12 16,6 16,18" />
-                        </svg>
+                      <button onClick={handleRewind} title="Prev channel"
+                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full border border-[#3a3020] active:scale-95 transition-all select-none hover:border-[#6a5a3a]"
+                        style={{ background: 'linear-gradient(180deg,#2a2318,#1a1510)', color: '#c8a96e' }}>
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="4,12 10,6 10,18"/><polygon points="10,12 16,6 16,18"/></svg>
                       </button>
-
-                      {/* Play/Pause — slightly larger, central */}
+                      {/* Play/Pause */}
                       <button onClick={handlePlayPause} title={isPlaying ? "Pause" : "Play"}
-                        className="flex-shrink-0 w-12 h-12 flex items-center justify-center border border-white/18 bg-white/10 hover:bg-white/18 hover:border-white/30 text-white/80 hover:text-white backdrop-blur-sm shadow-lg active:scale-95 transition-all select-none rounded-full">
+                        className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full border-2 active:scale-95 transition-all select-none shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)]"
+                        style={{ background: 'linear-gradient(180deg,#3a3020,#1e1a10)', borderColor: '#6a5a3a', color: '#e8d8a8' }}>
                         {isPlaying ? (
-                          <svg viewBox="0 0 24 24" className="w-6 h-6 text-slate-200" fill="currentColor">
-                            <rect x="6" y="4" width="4" height="16" />
-                            <rect x="14" y="4" width="4" height="16" />
-                          </svg>
+                          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
                         ) : (
-                          <svg viewBox="0 0 24 24" className="w-6 h-6 text-slate-200" fill="currentColor">
-                            <polygon points="6,4 20,12 6,20" />
-                          </svg>
+                          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
                         )}
                       </button>
-
                       {/* Next */}
-                      <button onClick={handleNext} title="Next"
-                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center border border-white/12 bg-white/6 hover:bg-white/14 hover:border-white/22 text-white/60 hover:text-white/90 backdrop-blur-sm shadow-md active:scale-95 transition-all select-none rounded-full">
-                        <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
-                          <polygon points="20,12 14,6 14,18" />
-                          <polygon points="14,12 8,6 8,18" />
-                        </svg>
+                      <button onClick={handleNext} title="Next channel"
+                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full border border-[#3a3020] active:scale-95 transition-all select-none hover:border-[#6a5a3a]"
+                        style={{ background: 'linear-gradient(180deg,#2a2318,#1a1510)', color: '#c8a96e' }}>
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="20,12 14,6 14,18"/><polygon points="14,12 8,6 8,18"/></svg>
                       </button>
 
-                      {/* Divider */}
-                      <div className="w-px h-10 bg-white/10 flex-shrink-0" />
+                      <div className="w-px h-8 opacity-20" style={{ background: '#c8a96e' }} />
 
-                      {/* Volume Down */}
+                      {/* Vol- */}
                       <button onClick={() => adjustVolume(-10)} title="Volume Down"
-                        className="w-10 h-10 flex items-center justify-center border border-white/12 bg-white/6 hover:bg-white/14 text-white/60 hover:text-white/90 backdrop-blur-sm hover:scale-105 shadow-md active:scale-95 transition-all select-none rounded-full">
-                        <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
-                            <polygon points="4,12 10,6 10,18" />
-                        </svg>
+                        className="w-9 h-9 flex items-center justify-center rounded-full border border-[#3a3020] active:scale-95 transition-all select-none hover:border-[#6a5a3a]"
+                        style={{ background: 'linear-gradient(180deg,#2a2318,#1a1510)', color: '#c8a96e' }}>
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="4,12 10,6 10,18"/></svg>
                       </button>
-
                       {/* Mute */}
                       <button onClick={toggleMute} title={isMuted ? 'Unmute' : 'Mute'}
-                        className={`w-10 h-10 flex items-center justify-center border rounded-full shadow-lg active:scale-95 hover:scale-105 transition-all select-none backdrop-blur-sm
-                          ${isMuted
-                            ? 'bg-red-500/25 border-red-400/60 text-red-400 shadow-[0_0_16px_rgba(239,68,68,0.4)]'
-                            : 'bg-white/6 border-white/12 text-white/60 hover:bg-white/14 hover:text-white/90'
-                          }`}>
+                        className="w-9 h-9 flex items-center justify-center rounded-full border-2 active:scale-95 transition-all select-none"
+                        style={{ background: isMuted ? 'linear-gradient(180deg,#3a0808,#1e0404)' : 'linear-gradient(180deg,#2a2318,#1a1510)', borderColor: isMuted ? '#7a2020' : '#3a3020', color: isMuted ? '#f87171' : '#c8a96e' }}>
                         {isMuted ? (
-                          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
-                            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-                          </svg>
+                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
                         ) : (
-                          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
-                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                          </svg>
+                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                         )}
                       </button>
-
-                      {/* Volume Up */}
+                      {/* Vol+ */}
                       <button onClick={() => adjustVolume(10)} title="Volume Up"
-                        className="w-10 h-10 flex items-center justify-center border border-white/12 bg-white/6 hover:bg-white/14 text-white/60 hover:text-white/90 backdrop-blur-sm hover:scale-105 shadow-md active:scale-95 transition-all select-none rounded-full">
-                        <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
-                            <polygon points="20,12 14,6 14,18" />
-                        </svg>
+                        className="w-9 h-9 flex items-center justify-center rounded-full border border-[#3a3020] active:scale-95 transition-all select-none hover:border-[#6a5a3a]"
+                        style={{ background: 'linear-gradient(180deg,#2a2318,#1a1510)', color: '#c8a96e' }}>
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="20,12 14,6 14,18"/></svg>
                       </button>
                     </div>
 
-                    {/* Row 2: Pill-shaped channel buttons with SVG icons */}
-                    <div className="flex items-center justify-center gap-2.5 pt-2 border-t border-border">
+                    {/* Channel pills */}
+                    <div className="flex items-center justify-center gap-2 flex-wrap">
                       {CHANNELS.map((ch, i) => (
                         <button
                           key={ch.id}
                           onClick={() => changeChannel(i)}
-                          className={`relative flex items-center gap-1.5 font-mono text-xs transition-all border-2 select-none active:scale-95 px-2.5 h-8 rounded-full
-                            ${activeIdx === i
-                              ? "bg-primary text-primary-foreground border-primary shadow-lg"
-                              : "bg-muted text-muted-foreground border-border hover:bg-muted/80 hover:border-foreground/30"
-                            }`}
-                        >
-                          {/* Small channel icon */}
-                          <ChannelIcon channel={ch} size={14} />
+                          className="relative flex items-center gap-1 font-mono text-[0.6rem] active:scale-95 transition-all select-none rounded-full px-2 h-7 border"
+                          style={{
+                            background: activeIdx === i ? 'linear-gradient(180deg,#5a4a2a,#3a3018)' : 'linear-gradient(180deg,#2a2318,#1a1510)',
+                            borderColor: activeIdx === i ? '#c8a96e' : '#3a3020',
+                            color: activeIdx === i ? '#e8d8a8' : '#8a7a5a',
+                          }}>
+                          <ChannelIcon channel={ch} size={11} />
                           {String(i + 1).padStart(2, "0")}
-                          {activeIdx === i && (
-                            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(74,222,128,0.9)]" />
-                          )}
+                          {activeIdx === i && <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: '#c8a96e' }} />}
                         </button>
                       ))}
                     </div>
-                  </div>
-                </div>
-              </div>
+                  </div>{/* close control panel */}
+
+                </div>{/* close TV housing */}
             </div>
           </CardContent>
         </Card>
@@ -1651,179 +1621,167 @@ function NousBoySection({
         </span>
       </div>
 
-      {/* GameBoy console */}
+      {/* GameBoy console — classic DMG-01 style */}
       <div className="flex justify-center mb-6">
-        <div style={{ width: 580 }}>
-          {/* Body — frosted glass */}
-          <div className="relative
-                          bg-gradient-to-b from-white/8 via-white/5 to-white/4
-                          backdrop-blur-2xl
-                          rounded-[40px_40px_32px_32px]
-                          border border-white/12
-                          shadow-[0_24px_80px_rgba(0,0,0,0.75),inset_0_1px_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(255,255,255,0.04)]
-                          px-10 pt-7 pb-12">
-            {/* Top specular */}
-            <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
+        <div style={{ width: 560 }}>
+          {/* Body — solid classic Game Boy gray */}
+          <div className="relative rounded-[32px_32px_24px_24px] px-8 pt-5 pb-8"
+               style={{
+                 background: 'linear-gradient(170deg, #c8c4bc 0%, #b0aca4 40%, #9a9690 100%)',
+                 boxShadow: '0 20px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.2)',
+               }}>
 
-            {/* Screen housing */}
-            <div className="bg-black/70 backdrop-blur-sm rounded-2xl p-3 border border-white/8 mb-6
-                            shadow-[inset_0_4px_20px_rgba(0,0,0,0.95)]">
-              {/* Status bar */}
-              <div className="flex items-center justify-between px-1 mb-2">
-                <div className="flex items-center gap-1.5">
-                  <div className={`w-2 h-2 rounded-full transition-all
-                    ${gbPower ? 'bg-emerald-400 shadow-[0_0_8px_rgba(74,222,128,0.9)]' : 'bg-white/20'}`} />
-                  <span className="text-[0.45rem] font-mono text-white/30 tracking-widest uppercase">pwr</span>
-                </div>
-                <span className="text-[0.55rem] font-mono text-white/35 tracking-[0.4em] uppercase font-semibold">NOUS BOY</span>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[0.45rem] font-mono text-white/30 tracking-widest uppercase">bat</span>
-                  <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(74,222,128,0.9)]" />
-                </div>
+            {/* Top bar: NOUS BOY label + power LED + power toggle */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                {/* Power switch */}
+                <button onClick={() => setGbPower(p => !p)} title="Power"
+                  className="flex items-center gap-1.5 rounded-sm px-2 py-1 active:scale-95 transition-all select-none border"
+                  style={{
+                    background: gbPower ? 'linear-gradient(180deg,#2a6a2a,#184818)' : 'linear-gradient(180deg,#4a2020,#2a1010)',
+                    borderColor: gbPower ? '#3a8a3a' : '#6a2020',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)',
+                  }}>
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${gbPower ? 'bg-[#4ade80] shadow-[0_0_8px_#4ade80]' : 'bg-[#ef4444] shadow-[0_0_6px_#dc2626]'}`} />
+                  <span className="text-[0.42rem] font-mono font-bold uppercase tracking-widest" style={{ color: gbPower ? '#86efac' : '#fca5a5' }}>PWR</span>
+                </button>
+              </div>
+              <span className="text-[0.55rem] font-mono font-bold tracking-[0.35em] uppercase" style={{ color: '#4a4642', textShadow: '0 1px 0 rgba(255,255,255,0.3)' }}>NOUS BOY</span>
+              <div className="text-[0.42rem] font-mono" style={{ color: '#8a8480' }}>™</div>
+            </div>
+
+            {/* Screen housing — dark olive bezel */}
+            <div className="rounded-2xl p-3 mb-5 shadow-[inset_0_3px_12px_rgba(0,0,0,0.7),0_2px_4px_rgba(0,0,0,0.3)]"
+                 style={{ background: 'linear-gradient(180deg,#2e2d28 0%,#3a3932 100%)', border: '2px solid #1e1d18' }}>
+              {/* Screen label strip */}
+              <div className="flex justify-center mb-1.5">
+                <span className="text-[0.38rem] font-mono tracking-[0.5em] uppercase" style={{ color: '#6a6a5a' }}>DOT MATRIX WITH STEREO SOUND</span>
               </div>
 
               {/* Screen */}
-              <div className="relative bg-black rounded-xl overflow-hidden border-2 border-purple-950/80
-                              shadow-[inset_0_0_24px_rgba(0,0,0,0.8)]"
-                   style={{ aspectRatio: '4/3' }}>
+              <div className="relative rounded-lg overflow-hidden shadow-[inset_0_2px_10px_rgba(0,0,0,0.9)]"
+                   style={{ aspectRatio: '4/3', background: '#0d1a0d', border: '3px solid #1a1a14' }}>
+                {/* CRT scanlines */}
+                <div className="absolute inset-0 pointer-events-none z-10" style={{
+                  backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.18) 3px,rgba(0,0,0,0.18) 4px)',
+                }} />
+                {/* Green phosphor tint on border */}
+                <div className="absolute inset-0 pointer-events-none z-10 rounded-lg"
+                     style={{ boxShadow: gbPower ? 'inset 0 0 20px rgba(74,222,128,0.08)' : 'none' }} />
                 {gbPower ? (
-                  <>
-                    <div className="absolute inset-0 pointer-events-none z-10" style={{
-                      backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px)",
-                    }} />
-                    <div className="absolute inset-0 pointer-events-none z-10 rounded-xl"
-                         style={{ boxShadow: "inset 0 0 30px rgba(168,85,247,0.06)" }} />
-                    <iframe
-                      key={activeGame.id}
-                      ref={iframeRef}
-                      src={activeGame.src}
-                      className="absolute inset-0 w-full h-full border-0 z-0"
-                      title={activeGame.name}
-                      allow="fullscreen; gamepad; autoplay"
-                      loading="lazy"
-                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
-                    />
-                  </>
+                  <iframe
+                    key={activeGame.id}
+                    ref={iframeRef}
+                    src={activeGame.src}
+                    className="absolute inset-0 w-full h-full border-0 z-0"
+                    title={activeGame.name}
+                    allow="fullscreen; gamepad; autoplay"
+                    loading="lazy"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
+                  />
                 ) : (
-                  <div className="absolute inset-0 bg-[#030208] flex flex-col items-center justify-center gap-2">
-                    <div className="w-10 h-10 rounded-full bg-purple-900/20 border border-purple-900/40 flex items-center justify-center">
-                      <Power className="w-5 h-5 text-purple-400/30" />
-                    </div>
-                    <span className="text-[0.5rem] font-mono text-purple-400/30 tracking-widest uppercase">No Signal</span>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2"
+                       style={{ background: '#0d1a0d' }}>
+                    <Power className="w-6 h-6" style={{ color: '#2a4a2a' }} />
+                    <span className="text-[0.45rem] font-mono tracking-widest uppercase" style={{ color: '#2a4a2a' }}>POWER OFF</span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Controls row */}
-            <div className="flex items-center justify-between px-2 gap-2">
+            <div className="flex items-center justify-between">
 
-              {/* D-pad — clean grid cross with SVG chevrons */}
-              <div style={{ display: 'grid', gridTemplateColumns: '40px 40px 40px', gridTemplateRows: '40px 40px 40px', gap: '3px' }}>
-                {/* Row 1 */}
+              {/* D-pad — dark charcoal cross */}
+              <div style={{ display: 'grid', gridTemplateColumns: '38px 38px 38px', gridTemplateRows: '38px 38px 38px', gap: '2px' }}>
                 <div />
-                <button
-                  onPointerDown={() => sendKey("ArrowUp", true)}
-                  onPointerUp={() => sendKey("ArrowUp", false)}
-                  onPointerLeave={() => sendKey("ArrowUp", false)}
-                  className="rounded-t-xl bg-white/10 border border-white/14 hover:bg-primary/20 hover:border-primary/40 active:bg-primary/35 active:scale-95 flex items-center justify-center select-none transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/65"><polyline points="18 15 12 9 6 15"/></svg>
+                <button onPointerDown={() => sendKey("ArrowUp", true)} onPointerUp={() => sendKey("ArrowUp", false)} onPointerLeave={() => sendKey("ArrowUp", false)}
+                  className="flex items-center justify-center select-none active:scale-95 transition-all"
+                  style={{ background: 'linear-gradient(180deg,#4a4845,#3a3835)', borderRadius: '6px 6px 0 0', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 8l-6 6 1.4 1.4 4.6-4.6 4.6 4.6L18 14z"/></svg>
                 </button>
                 <div />
-                {/* Row 2 */}
-                <button
-                  onPointerDown={() => sendKey("ArrowLeft", true)}
-                  onPointerUp={() => sendKey("ArrowLeft", false)}
-                  onPointerLeave={() => sendKey("ArrowLeft", false)}
-                  className="rounded-l-xl bg-white/10 border border-white/14 hover:bg-primary/20 hover:border-primary/40 active:bg-primary/35 active:scale-95 flex items-center justify-center select-none transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/65"><polyline points="15 18 9 12 15 6"/></svg>
+                <button onPointerDown={() => sendKey("ArrowLeft", true)} onPointerUp={() => sendKey("ArrowLeft", false)} onPointerLeave={() => sendKey("ArrowLeft", false)}
+                  className="flex items-center justify-center select-none active:scale-95 transition-all"
+                  style={{ background: 'linear-gradient(90deg,#4a4845,#3a3835)', borderRadius: '6px 0 0 6px', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
                 </button>
-                <div className="bg-black/30 border border-white/8 rounded-sm flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-full bg-white/12" />
+                <div className="flex items-center justify-center" style={{ background: '#3a3835', border: '1px solid #2a2825', borderRadius: '3px' }}>
+                  <div className="w-2 h-2 rounded-full" style={{ background: '#2a2825' }} />
                 </div>
-                <button
-                  onPointerDown={() => sendKey("ArrowRight", true)}
-                  onPointerUp={() => sendKey("ArrowRight", false)}
-                  onPointerLeave={() => sendKey("ArrowRight", false)}
-                  className="rounded-r-xl bg-white/10 border border-white/14 hover:bg-primary/20 hover:border-primary/40 active:bg-primary/35 active:scale-95 flex items-center justify-center select-none transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/65"><polyline points="9 18 15 12 9 6"/></svg>
+                <button onPointerDown={() => sendKey("ArrowRight", true)} onPointerUp={() => sendKey("ArrowRight", false)} onPointerLeave={() => sendKey("ArrowRight", false)}
+                  className="flex items-center justify-center select-none active:scale-95 transition-all"
+                  style={{ background: 'linear-gradient(270deg,#4a4845,#3a3835)', borderRadius: '0 6px 6px 0', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
                 </button>
-                {/* Row 3 */}
                 <div />
-                <button
-                  onPointerDown={() => sendKey("ArrowDown", true)}
-                  onPointerUp={() => sendKey("ArrowDown", false)}
-                  onPointerLeave={() => sendKey("ArrowDown", false)}
-                  className="rounded-b-xl bg-white/10 border border-white/14 hover:bg-primary/20 hover:border-primary/40 active:bg-primary/35 active:scale-95 flex items-center justify-center select-none transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/65"><polyline points="6 9 12 15 18 9"/></svg>
+                <button onPointerDown={() => sendKey("ArrowDown", true)} onPointerUp={() => sendKey("ArrowDown", false)} onPointerLeave={() => sendKey("ArrowDown", false)}
+                  className="flex items-center justify-center select-none active:scale-95 transition-all"
+                  style={{ background: 'linear-gradient(0deg,#4a4845,#3a3835)', borderRadius: '0 0 6px 6px', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
                 </button>
                 <div />
               </div>
 
-              {/* SELECT + START — pill buttons */}
-              <div className="flex flex-col gap-3 items-center">
+              {/* SELECT + START — angled gray pills */}
+              <div className="flex flex-col gap-3 items-center" style={{ transform: 'rotate(-20deg)' }}>
                 <button
-                  onClick={() => setGbPower(p => !p)}
-                  className="h-5 px-6 rounded-full bg-white/8 border border-white/12
-                             text-[0.48rem] font-mono text-white/45 uppercase tracking-[0.2em]
-                             hover:bg-primary/15 hover:border-primary/30 hover:text-white/70
-                             active:scale-95 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                  onPointerDown={() => sendKey("Shift", true)}
+                  onPointerUp={() => sendKey("Shift", false)}
+                  onPointerLeave={() => sendKey("Shift", false)}
+                  className="select-none active:scale-95 transition-all"
+                  style={{ background: 'linear-gradient(180deg,#7a7870,#5a5852)', border: '1px solid #4a4840', borderRadius: '20px', padding: '4px 18px', fontSize: '0.42rem', fontFamily: 'monospace', fontWeight: 'bold', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c0bdb8', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15)' }}>
                   SELECT
                 </button>
                 <button
                   onPointerDown={() => sendKey(" ", true)}
                   onPointerUp={() => sendKey(" ", false)}
                   onPointerLeave={() => sendKey(" ", false)}
-                  className="h-5 px-6 rounded-full bg-white/8 border border-white/12
-                             text-[0.48rem] font-mono text-white/45 uppercase tracking-[0.2em]
-                             hover:bg-primary/15 hover:border-primary/30 hover:text-white/70
-                             active:scale-95 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                  className="select-none active:scale-95 transition-all"
+                  style={{ background: 'linear-gradient(180deg,#7a7870,#5a5852)', border: '1px solid #4a4840', borderRadius: '20px', padding: '4px 18px', fontSize: '0.42rem', fontFamily: 'monospace', fontWeight: 'bold', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c0bdb8', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15)' }}>
                   START
                 </button>
               </div>
 
-              {/* A / B buttons — glass with pink accent */}
-              <div className="relative" style={{ width: 130, height: 108 }}>
+              {/* A / B — dark wine red circles */}
+              <div className="relative" style={{ width: 130, height: 104 }}>
                 <button
                   onPointerDown={() => sendKey("z", true)}
                   onPointerUp={() => sendKey("z", false)}
                   onPointerLeave={() => sendKey("z", false)}
-                  className="absolute right-0 top-0 w-16 h-16 rounded-full
-                             bg-pink-500/70 backdrop-blur-sm
-                             border border-pink-300/25
-                             shadow-[0_6px_20px_rgba(236,72,153,0.35),inset_0_1px_0_rgba(255,255,255,0.25)]
-                             text-base font-mono font-bold text-white/90 select-none
-                             hover:bg-pink-400/75 active:shadow-[0_2px_8px_rgba(236,72,153,0.25)] active:scale-95 transition-all">
+                  className="absolute right-0 top-0 w-16 h-16 rounded-full flex items-center justify-center select-none transition-all active:scale-95"
+                  style={{ background: 'linear-gradient(145deg,#8b1a2a,#6b0e1e)', border: '2px solid #4a0c14', boxShadow: '0 5px 14px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2)', fontSize: '1rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#f0c8d0' }}>
                   A
                 </button>
                 <button
                   onPointerDown={() => sendKey("x", true)}
                   onPointerUp={() => sendKey("x", false)}
                   onPointerLeave={() => sendKey("x", false)}
-                  className="absolute left-0 bottom-0 w-16 h-16 rounded-full
-                             bg-pink-700/60 backdrop-blur-sm
-                             border border-pink-500/20
-                             shadow-[0_6px_20px_rgba(190,24,93,0.3),inset_0_1px_0_rgba(255,255,255,0.15)]
-                             text-base font-mono font-bold text-white/80 select-none
-                             hover:bg-pink-600/65 active:shadow-[0_2px_8px_rgba(190,24,93,0.2)] active:scale-95 transition-all">
+                  className="absolute left-0 bottom-0 w-16 h-16 rounded-full flex items-center justify-center select-none transition-all active:scale-95"
+                  style={{ background: 'linear-gradient(145deg,#7a1828,#5a0c1a)', border: '2px solid #3a0a12', boxShadow: '0 5px 14px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15)', fontSize: '1rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#e0b8c8' }}>
                   B
                 </button>
               </div>
             </div>
 
             {/* Speaker + branding */}
-            <div className="flex items-end justify-between mt-5 px-1">
-              <span className="text-[0.4rem] font-mono text-white/20 tracking-[0.5em] uppercase">NOUS RESEARCH</span>
-              <div className="flex gap-0.5 opacity-25">
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <div key={i} className="w-[3px] rounded-full bg-white/60" style={{ height: i % 3 === 1 ? '18px' : i % 3 === 0 ? '12px' : '15px' }} />
+            <div className="flex items-end justify-between mt-5">
+              <span className="text-[0.38rem] font-mono tracking-[0.4em] uppercase" style={{ color: '#6a6662' }}>NOUS RESEARCH</span>
+              {/* Speaker holes — classic circular pattern */}
+              <div className="flex gap-1">
+                {Array.from({ length: 6 }).map((_, col) => (
+                  <div key={col} className="flex flex-col gap-1">
+                    {Array.from({ length: 4 }).map((_, row) => (
+                      <div key={row} className="w-1.5 h-1.5 rounded-full" style={{ background: '#8a8680', boxShadow: 'inset 0 1px 1px rgba(0,0,0,0.5)' }} />
+                    ))}
+                  </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Shadow */}
-          <div className="h-5 mx-12 bg-black/50 rounded-full blur-lg -mt-2" />
+          {/* Drop shadow */}
+          <div className="h-4 mx-10 rounded-full -mt-2" style={{ background: 'rgba(0,0,0,0.4)', filter: 'blur(12px)' }} />
         </div>
       </div>
 
