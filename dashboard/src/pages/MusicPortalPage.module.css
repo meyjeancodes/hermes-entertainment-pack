@@ -1,10 +1,11 @@
 /* MusicPortalPage — Retro infomercial / 1-800 CALL NOW aesthetic */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
 .page {
   min-height: 100vh;
   background: #080810;
   color: #f2efe8;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Space Mono', 'Courier New', monospace;
   position: relative;
   overflow-x: hidden;
 }
@@ -105,6 +106,9 @@
     0 0 80px rgba(168, 85, 247, 0.08),
     inset 0 0 40px rgba(0, 0, 0, 0.5);
   border-radius: 3px;
+  perspective: 900px;
+  transform-style: preserve-3d;
+  animation: showcase-rotate 12s linear infinite;
 }
 
 .coverImg {
@@ -114,6 +118,7 @@
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: 1px;
+  backface-visibility: visible;
 }
 
 .collectorsBadge {
@@ -214,11 +219,12 @@
 }
 
 .headline {
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  font-weight: 900;
-  line-height: 1.05;
+  font-family: 'Bebas Neue', 'Impact', sans-serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1.0;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   color: #f2efe8;
   margin: 0;
 }
@@ -381,9 +387,10 @@
 }
 
 .phoneNumber {
-  font-size: clamp(1.8rem, 5vw, 3.2rem);
-  font-weight: 900;
-  letter-spacing: 0.08em;
+  font-family: 'Bebas Neue', 'Impact', sans-serif;
+  font-size: clamp(2.4rem, 6vw, 4.4rem);
+  font-weight: 400;
+  letter-spacing: 0.1em;
   color: #f2efe8;
   line-height: 1;
   animation: glow-pulse 3s ease-in-out infinite alternate;
@@ -428,7 +435,7 @@
 .playerSection {
   max-width: 960px;
   margin: 0 auto;
-  padding: 2rem 2rem 3rem;
+  padding: 2rem 2rem 0;
   scroll-margin-top: 40px;
 }
 
@@ -448,6 +455,30 @@
   border-radius: 3px;
   background: #0d0014;
   display: block;
+}
+
+/* ── SPOTIFY NOW PLAYING SECTION ─────────────────────── */
+
+.spotifySection {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 2rem 3rem;
+}
+
+.spotifyLabel {
+  text-align: center;
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(242, 239, 232, 0.25);
+  margin: 0 0 1rem;
+}
+
+.spotifyDivider {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(to bottom, transparent, rgba(30, 215, 96, 0.3), transparent);
+  margin: 0 auto 1.5rem;
 }
 
 /* ── FINE PRINT ──────────────────────────────────────── */
@@ -479,6 +510,11 @@
 @keyframes spin-slow {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+@keyframes showcase-rotate {
+  0%   { transform: perspective(900px) rotateY(0deg); }
+  100% { transform: perspective(900px) rotateY(360deg); }
 }
 
 @keyframes glow-pulse {
