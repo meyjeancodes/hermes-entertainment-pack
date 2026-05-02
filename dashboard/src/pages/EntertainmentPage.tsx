@@ -22,7 +22,7 @@ const CHANNELS: Channel[] = [
   { id: "ch4", name: "Weather Retro", type: "iframe", src: "https://weather.com/retro/" },
   { id: "ch5", name: "Nature", type: "iframe", src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0", autoplay: true },
   { id: "ch6", name: "Aethereon", type: "iframe", src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0", autoplay: true },
-  { id: "ch7", name: "Artemis", type: "iframe", src: `${PLUGIN_URL}/public/artemis.html`, autoplay: true },
+  { id: "ch7", name: "NASA Live", type: "iframe", src: "https://www.youtube.com/embed/sWasdbDVNvc?controls=0&autoplay=1&mute=1", autoplay: true },
   { id: "ch8", name: "Local 58", type: "iframe", src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q", autoplay: true },
   { id: "ch9", name: "Bloom Terminal", type: "canvas", color: "#001a00" },
   { id: "ch10", name: "Vapor FM", type: "iframe", src: `${PLUGIN_URL}/public/vapor.html` },
@@ -1190,18 +1190,18 @@ function NeoNewswireCanvas({ canvasId }: { canvasId: string }) {
     const ctx = canvas.getContext("2d")!;
     const w = canvas.width = 800, h = canvas.height = 600;
 
-    // Mock stock data
+    // Stock data (May 2026)
     const tickers = [
-      { sym: "BTC", price: 68200, change: 2.4 },
-      { sym: "ETH", price: 3820, change: -1.1 },
-      { sym: "NVDA", price: 940, change: 4.2 },
-      { sym: "TSLA", price: 248, change: -2.8 },
-      { sym: "AAPL", price: 198, change: 0.5 },
-      { sym: "GME", price: 42, change: 18.7 },
-      { sym: "AMC", price: 6.2, change: 12.3 },
-      { sym: "PLTR", price: 24, change: 5.1 },
-      { sym: "SOFI", price: 9.3, change: -0.7 },
-      { sym: "HOOD", price: 18.5, change: 3.2 },
+      { sym: "BTC",  price: 96400,  change:  3.1 },
+      { sym: "ETH",  price: 2380,   change: -0.8 },
+      { sym: "NVDA", price: 138.40, change:  5.6 },
+      { sym: "TSLA", price: 312.70, change: -1.4 },
+      { sym: "AAPL", price: 228.90, change:  0.9 },
+      { sym: "PLTR", price: 92.30,  change:  7.2 },
+      { sym: "META", price: 682.50, change:  2.8 },
+      { sym: "MSFT", price: 441.20, change:  1.3 },
+      { sym: "AMZN", price: 223.60, change:  1.8 },
+      { sym: "HOOD", price: 51.40,  change:  4.5 },
     ];
 
     let frame = 0;
@@ -1365,34 +1365,34 @@ function BloombergCanvas({ canvasId }: { canvasId: string }) {
     }
 
     const charts = [
-      { sym: "NVDA", color: "#00ff88", prices: genPrices(940, 14, 180, 1.23) },
-      { sym: "AAPL", color: "#60ccff", prices: genPrices(198,  4, 180, 2.71) },
-      { sym: "TSLA", color: "#ff7744", prices: genPrices(248,  9, 180, 0.91) },
-      { sym: "MSFT", color: "#ffcc44", prices: genPrices(415,  7, 180, 3.14) },
+      { sym: "NVDA", color: "#00ff88", prices: genPrices(138.40, 6, 180, 1.23) },
+      { sym: "AAPL", color: "#60ccff", prices: genPrices(228.90, 3, 180, 2.71) },
+      { sym: "TSLA", color: "#ff7744", prices: genPrices(312.70, 9, 180, 0.91) },
+      { sym: "PLTR", color: "#ffcc44", prices: genPrices( 92.30, 8, 180, 3.14) },
     ];
 
     const allTickers = [
-      { sym: "NVDA",  price: 940.55,  chg:  4.2 },
-      { sym: "AAPL",  price: 198.20,  chg:  0.5 },
-      { sym: "MSFT",  price: 415.90,  chg:  1.1 },
-      { sym: "TSLA",  price: 248.40,  chg: -2.8 },
-      { sym: "AMZN",  price: 190.25,  chg:  2.3 },
-      { sym: "GOOGL", price: 175.80,  chg:  1.7 },
-      { sym: "META",  price: 520.35,  chg:  3.2 },
-      { sym: "BTC",   price: 68244.00, chg:  2.4 },
-      { sym: "ETH",   price:  3820.00, chg: -1.1 },
-      { sym: "SPY",   price:  543.20,  chg:  0.9 },
-      { sym: "QQQ",   price:  455.80,  chg:  1.3 },
+      { sym: "NVDA",  price: 138.40,  chg:  5.6 },
+      { sym: "AAPL",  price: 228.90,  chg:  0.9 },
+      { sym: "MSFT",  price: 441.20,  chg:  1.3 },
+      { sym: "TSLA",  price: 312.70,  chg: -1.4 },
+      { sym: "AMZN",  price: 223.60,  chg:  1.8 },
+      { sym: "GOOGL", price: 193.50,  chg:  2.1 },
+      { sym: "META",  price: 682.50,  chg:  2.8 },
+      { sym: "BTC",   price: 96400.00, chg:  3.1 },
+      { sym: "ETH",   price:  2380.00, chg: -0.8 },
+      { sym: "SPY",   price:   572.40, chg:  1.1 },
+      { sym: "QQQ",   price:   491.80, chg:  1.6 },
     ];
 
     const headlines = [
-      "NVIDIA Q1 EARNINGS +23% · AI CHIP DEMAND ELEVATED",
-      "FED SIGNALS RATE CUTS Q3 · YIELDS SOFTEN",
-      "APPLE WWDC 2026: AI ACROSS ALL PLATFORMS",
-      "BITCOIN $68K · SPOT ETF INFLOWS HIT WEEKLY RECORD",
-      "TESLA AUTOPILOT V5 LIFTS SHARES · BUY UPGRADE",
-      "S&P 500 ALL-TIME HIGH · TECH LEADS BROAD RALLY",
-      "NOUS HERMES v2 BENCHMARK: +41% OVER BASELINE",
+      "NVIDIA BLACKWELL ULTRA SHIPS · DATA CENTER REV +38% YoY",
+      "BITCOIN CROSSES $96K · INSTITUTIONAL ACCUMULATION ACCELERATES",
+      "PALANTIR AIP CONTRACTS +210% · GOVT DEALS DRIVE SURGE",
+      "FED HOLDS RATES · POWELL SIGNALS CUTS POSSIBLE IN Q3 2026",
+      "APPLE WWDC 2026: ON-DEVICE AI ACROSS ALL PLATFORMS",
+      "META AI STUDIO HITS 2B USERS · ZUCKERBERG TARGETS AGI BY 2027",
+      "NOUS HERMES v3 BENCHMARK: +61% OVER ALL OPEN-SOURCE BASELINES",
     ];
 
     let frame = 0;
