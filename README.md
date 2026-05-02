@@ -1,181 +1,149 @@
 # Hermes Entertainment Pack
 
-A retro-futuristic entertainment dashboard featuring TV, music, gaming, and social integrations.
-
-## Features
-
-### 📺 Retro TV
-- 10 broadcast channels with unique identities
-- Channels 5–8 autoplay with sound when selected
-- Smooth CRT effects (scanlines, vignette, power-on sweep)
-- Hidden YouTube play button overlay for clean look
-- Full-width design with snug sidewall fit
-- NOUS branding badge positioned below control panel
-
-**Channels:**
-1. **STATIC** – Analog noise
-2. **NOUS NETWORK** – Proprietary video loop
-3. **MUSIC SCENE** – YouTube music video
-4. **WEATHER RETRO** – Vintage weather
-5. **NATURE** – Autoplay
-6. **AETHEReon** – Autoplay
-7. **BEDROCK** – Autoplay
-8. **LOCAL 58** – Autoplay
-9. **MARKET TAPE** – Trading visualizer
-10. **SPOTIFY VISUAL** – Album art carousel
-
-Controls: Power ON/OFF, volume knob, channel pills.
+A retro-futuristic entertainment plugin for the Hermes Dashboard. Built for the Hermes Hackathon.
 
 ---
 
-### 🎮 Game Guide
-Integrated **Pokemon Agent** controller and interactive **Nous Boy** emulator widget.
+## What's Inside
 
-- Select a ROM from the library (Pokemon Red, Blue, Tetris, Link’s Awakening)
-- **PokemonPage** provides full agent control with live log and dashboard view
-- **Nous Boy** visual widget displays a Game Boy-compatible emulator with power, battery, ROM upload, and controls
+Four tabs, one plugin:
 
-**Controls on Nous Boy:**
-- D-Pad: Arrow keys
-- A: Z / B: X
-- Start: Enter / Select: Shift
-- Power button, battery indicator, cartridge slot aesthetic
+**TV & Games** — A full retro CRT television with 10 channels, plus a Nous Boy handheld gaming console running browser-native games.
 
----
+**Discord** — Live Discord feed embedded in the dashboard. Browse channels, read history, and send messages directly.
 
-### 🖼️ Gallery
-Full-screen lightbox for image viewing:
-- Click any hero or card image to open modal
-- Backdrop blur with close button
-- Curator’s note removed per Task 2
+**Gallery** — A curated art collection with masonry grid and list view. Scroll-reveal animations, lightbox previews.
+
+**Mixtape** — A music portal with Spotify embed widget and visual sleeve artwork.
 
 ---
 
-### 💬 Discord (functional)
-Live Discord feed directly in the dashboard.
-- Guild → channel selector
-- Real-time message history
-- Send messages (requires `DISCORD_BOT_TOKEN`)
-- Looks and feels like Discord
+## TV Channels
 
-**Setup:** Add your bot token to `~/.hermes/.env`:
+| # | Name | Description |
+|---|------|-------------|
+| 1 | Static | Analog noise generator |
+| 2 | Nous Network | Proprietary Nous Research video loop |
+| 3 | Music Scene | YouTube music video |
+| 4 | Weather Retro | Vintage weather broadcast |
+| 5 | Nature | Ambient nature stream (autoplay) |
+| 6 | Aethereon | Ambient visual stream (autoplay) |
+| 7 | Bedrock | Ambient stream (autoplay) |
+| 8 | Local 58 | Creepypasta video series (autoplay) |
+| 9 | Bloom Terminal | Bloomberg-style live trading visualizer |
+| 10 | Spotify Visual | Embedded Spotify album player |
+
+Channel controls: power button, channel pills, volume knob, prev/next arrows. Full CRT effect with scanlines, vignette, and power-on sweep animation.
+
+---
+
+## Nous Boy
+
+A Game Boy-style handheld console built into the dashboard. Runs four browser-native games:
+
+- **Pong** — Classic paddle game, player vs CPU, first to 7 wins
+- **Tetris** — Full Tetris with level progression and next-piece preview
+- **Space Raid** — Retro space shooter
+- **Flappy Bird** — External
+
+Controls: D-pad arrows, A (Z key), B (X key), Start (Enter), Select (Shift). Physical keyboard passthrough works while the console is powered on — no need to click inside the game.
+
+---
+
+## Bloom Terminal (Channel 9)
+
+A canvas-rendered Bloomberg Terminal clone with:
+- Real-time candlestick chart with moving average line
+- Right-panel watchlist showing all 11 tickers simultaneously
+- Scrolling news headline ticker at the bottom
+- Color-coded price movers (green/red)
+
+---
+
+## Setup
+
+### Prerequisites
+
+- Hermes Agent running (`hermes dashboard`)
+- Node 18+ and npm
+
+### Install
+
 ```bash
-DISCORD_BOT_TOKEN=your_discord_bot_token_here
+cd dashboard
+npm install
+npm run build
 ```
 
----
+The built `dashboard/dist/index.js` is committed to this repo for plug-and-play install — no build step required if you just want to use it.
 
-### 🎵 Spotify (reconnected)
-Now playing widget with full playback control.
-- Shows current track, album art, playback state
-- Play, pause, next, previous, shuffle, repeat, volume
-- Uses OAuth PKCE stored in `~/.hermes/auth.json`
+### Discord
 
-**First-time auth:**
+Create a Discord bot with `Read Message History` and `Send Messages` intents, then add it to `~/.hermes/.env`:
+
+```bash
+DISCORD_BOT_TOKEN=your_token_here
+```
+
+Restart Hermes Agent after setting the token.
+
+### Spotify
+
 ```bash
 hermes auth spotify
 ```
-Token auto-refreshes; frontend prompts if auth required.
+
+Completes OAuth PKCE flow. Tokens are stored at `~/.hermes/auth.json` and auto-refresh.
+
+---
+
+## Project Structure
+
+```
+hermes-entertainment-pack/
+├── dashboard/
+│   ├── src/
+│   │   ├── index.tsx               # Plugin entry — tab shell, registers plugin
+│   │   ├── pages/
+│   │   │   ├── EntertainmentPage.tsx   # TV + Nous Boy
+│   │   │   ├── DiscordPage.tsx         # Discord widget
+│   │   │   ├── GalleryPage.tsx         # Gallery wrapper
+│   │   │   └── MusicPortalPage.tsx     # Mixtape / Spotify
+│   │   └── components/
+│   │       ├── GalleryFullPage.tsx     # Masonry grid + lightbox
+│   │       ├── DiscordWidget.tsx       # Discord feed
+│   │       └── SpotifyNowPlaying.tsx   # Now playing bar
+│   └── dist/                       # Pre-built bundle (committed)
+└── games/
+    ├── pong.html
+    ├── tetris.html
+    ├── space.html
+    └── snake.html
+```
+
+---
+
+## Adding Channels
+
+Edit the `CHANNELS` array in `src/pages/EntertainmentPage.tsx`:
+
+```ts
+{ id: "ch11", name: "My Channel", type: "iframe", src: "https://example.com/embed", autoplay: false }
+```
+
+Supported types: `"iframe"`, `"video"`, `"noise"`, `"canvas"`.
 
 ---
 
 ## Tech Stack
 
-- Frontend: React + TypeScript + Vite
-- UI: Tailwind CSS + shadcn/ui components
-- Backend: FastAPI (Hermes Agent on port 9119)
-- Auth: Session token (`window.__HERMES_SESSION_TOKEN__`) for Discord; Spotify OAuth PKCE
-
-## Installation
-
-### Dashboard (frontend)
-
-```bash
-cd dashboard
-npm install
-npm run dev   # or npm run build for production
-```
-
-### Backend (Hermes Agent)
-
-The Hermes Agent must be running with entertainment plugins enabled:
-
-```bash
-cd ~/.hermes/hermes-agent
-hermes dashboard
-```
-
-The backend serves:
-- `/api/spotify/*` — Spotify controller
-- `/api/discord/*` — Discord widget API
-- `/api/pokemon/*` — Pokemon agent lifecycle
-
-## Configuration
-
-### Spotify
-1. Register a Spotify Developer app with redirect URI `http://127.0.0.1:43827/spotify/callback`
-2. Run `hermes auth spotify` to complete OAuth PKCE flow
-3. Tokens saved to `~/.hermes/auth.json` and auto-refreshed
-
-### Discord
-1. Create a Discord Bot, enable `Read Message History`, `Send Messages` intents
-2. Set `DISCORD_BOT_TOKEN` in `~/.hermes/.env`
-3. Restart Hermes Agent
-
-### ROM Management
-Place legally-owned Game Boy ROMs in a directory and reference them in the PokemonPage UI or via API:
-- Default paths: `~/Desktop/pokemon-agent/roms/*.gb`
-- Or set `rom_path` via `/api/pokemon/start` payload
-
-## Project Structure
-
-```
-dashboard/
-├── src/
-│   ├── pages/
-│   │   ├── EntertainmentPage.tsx   # main hub (TV, Game Guide)
-│   │   └── PokemonPage.tsx         # Pokemon agent controls
-│   ├── components/
-│   │   ├── GameBoyWidget.tsx       # Nous Boy emulator widget
-│   │   ├── DiscordWidget.tsx       # Discord feed
-│   │   ├── SpotifyNowPlaying.tsx   # Spotify controller
-│   │   ├── GalleryFullPage.tsx     # Gallery with lightbox
-│   │   └── ...
-│   └── hooks/
-│       └── useSpotifyPlayer.ts     # Spotify state hook
-├── dist/                           # built assets (index.js)
-└── ...
-```
-
-## Adding TV Channels
-
-Edit `src/pages/EntertainmentPage.tsx` → `CHANNELS` array:
-
-```ts
-const CHANNELS: Channel[] = [
-  { id: "ch11", name: "My Channel", type: "iframe", src: "https://example.com/embed", autoplay: false },
-];
-```
-
-Set `autoplay: true` on channels you want to start automatically.
-
-## Styling notes
-
-- TV overall padding: `px-2 md:px-3 lg:px-4` (snug walls)
-- Nous badge: absolute `top-6 left-1/2` centered below control panel
-- YouTube red play button hidden via `.ytp-large-play-button { display: none !important; }`
-- Game Boy body: `w-[400px] h-[600px]` with screen bezel `h-[200px]`
-
-## Known Limitations
-
-- ROM file upload is client-side only; for production, implement server-side ROM storage
-- Discord requires a bot with proper gateway intents; DM support not yet implemented
-- Spotify playback requires an active Premium account for API control
-
-## License
-
-Internal to Nous Research / BlackCat Robotics. Not for public distribution.
+- React + TypeScript + Vite (IIFE lib build)
+- Tailwind CSS
+- Hermes Agent backend (FastAPI, port 9119)
+- Canvas API for Bloom Terminal and game rendering
 
 ---
 
-*Built with Hermes Agent — the autonomous infra that never sleeps.*
+## License
+
+MIT — built for the Hermes Hackathon by BlackCat Robotics.

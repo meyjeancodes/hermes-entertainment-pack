@@ -2,11 +2,18 @@
 node_modules/
 dashboard/node_modules/
 
-# Build outputs (kept dist/ for distribution, but exclude temp build dirs if any)
-dashboard/.tsbuildinfo
+# Build outputs — dist/ is intentionally committed for plug-and-play install
+dashboard/tsconfig.tsbuildinfo
+dashboard/*.tsbuildinfo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
 
 # OS / editor
 .DS_Store
+Thumbs.db
 *.log
 .idea/
 .vscode/

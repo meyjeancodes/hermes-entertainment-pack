@@ -68,9 +68,21 @@ export function SpotifyFullPage() {
   if (error) {
     return (
       <Card className="max-w-2xl mx-auto mt-20 bg-background-base/80 border-current/10">
-        <CardContent className="p-8 flex flex-col items-center gap-4 text-center">
-          <Music className="w-12 h-12 text-destructive" />
-          <p className="text-lg text-destructive">Spotify unavailable</p>
+        <CardContent className="p-8 flex flex-col items-center gap-6 text-center">
+          <div className="w-20 h-20 rounded-full bg-[#1DB954]/10 border border-[#1DB954]/20 flex items-center justify-center">
+            <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1DB954]/60" fill="currentColor">
+              <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 8.7 15.24 8.88 17.6 11.18c.361.48.54.9.54 1.44z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-foreground mb-2">Spotify Not Connected</h2>
+            <p className="text-sm text-midground/70 mb-1">Authenticate your Spotify account to enable playback controls.</p>
+          </div>
+          <div className="w-full bg-muted/30 rounded-lg p-4 border border-border/20 text-left">
+            <p className="text-xs text-muted-foreground mb-2 font-mono uppercase tracking-wider">Run in terminal:</p>
+            <code className="text-sm font-mono text-foreground">hermes auth spotify</code>
+          </div>
+          <p className="text-xs text-muted-foreground/50">Then restart the Hermes dashboard to connect</p>
         </CardContent>
       </Card>
     );
