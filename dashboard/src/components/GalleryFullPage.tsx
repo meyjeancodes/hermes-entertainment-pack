@@ -470,7 +470,7 @@ export default function GalleryFullPage() {
           <img
             src={selectedImage}
             alt="Full size gallery image"
-            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            className="max-w-[90vw] max-h-[90vh] w-auto h-auto object-contain rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />
         </div>

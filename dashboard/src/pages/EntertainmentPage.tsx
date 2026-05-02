@@ -258,10 +258,10 @@ export default function EntertainmentPage() {
 
                 {/* Hide YouTube large play button overlay */}
                 <style>{`.ytp-large-play-button { display: none !important; }`}</style>
-                  {/* TV housing — beefier bezel with depth layers */}
-                <div className="relative bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 rounded-3xl p-2 md:p-3 lg:p-4 shadow-2xl border-2 border-slate-600 ring-1 ring-slate-700/50">
-                  {/* Top vent — more pronounced */}
-                  <div className="absolute top-6 left-1/2 -translate-x-1/2 w-80 h-4 bg-slate-950/90 rounded-full shadow-inner border border-slate-800/50" />
+                  {/* TV housing — glass morphism */}
+                <div className="relative bg-white/5 backdrop-blur-2xl rounded-3xl p-2 md:p-3 lg:p-4 shadow-[0_0_80px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.1)] border border-white/10">
+                  {/* Top specular highlight */}
+                  <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-full" />
 
                 {/* Brand badge — NOUS branding */}
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
@@ -271,11 +271,9 @@ export default function EntertainmentPage() {
                   </span>
                 </div>
 
-                  {/* CRT bezel frame — deeper layers for premium feel */}
-                  <div className="relative bg-slate-950 rounded-2xl p-6 shadow-[inset_0_4px_16px_rgba(0,0,0,0.7),0_6px_20px_rgba(0,0,0,0.4)] border-2 border-slate-700 ring-inset ring-1 ring-slate-800">
-                    <div className="absolute inset-0 rounded-2xl border-4 border-slate-800/70 pointer-events-none shadow-inner" />
-                    <div className="absolute inset-3 rounded-xl border border-slate-700/50 pointer-events-none" />
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-slate-900/20 to-transparent pointer-events-none" />
+                  {/* CRT bezel frame */}
+                  <div className="relative bg-black/65 backdrop-blur-sm rounded-2xl p-6 shadow-[inset_0_4px_20px_rgba(0,0,0,0.9)] border border-white/6">
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
 
                   {/* Screen — 16:9 widescreen */}
                   <div className="relative bg-black rounded overflow-hidden" style={{ aspectRatio: "16/9" }}>
@@ -351,15 +349,15 @@ export default function EntertainmentPage() {
                   {/* Control panel — bottom bezel, full-width horizontal button row */}
                   {/* Frame divider — subtle bezel lip depth */}
                   <div className="w-full h-px bg-gradient-to-r from-slate-800/0 via-slate-600 to-slate-800/0 shadow-[0_1px_2px_rgba(0,0,0,0.4)] mb-3" />
-                  <div className="mt-4 bg-slate-900/95 rounded-2xl px-6 py-5 border border-slate-700/70 shadow-[inset_0_3px_8px_rgba(0,0,0,0.6)]">
+                  <div className="mt-4 bg-black/40 backdrop-blur-md rounded-2xl px-6 py-5 border border-white/8 shadow-[inset_0_3px_10px_rgba(0,0,0,0.5)]">
                     {/* Single row: all controls evenly spaced left → right */}
                     <div className="flex items-center justify-around gap-3 w-full">
                       {/* Power */}
                       <button onClick={togglePower} title="Power"
-                        className={`relative flex-shrink-0 w-10 h-10 flex items-center justify-center border-2 rounded-full shadow-lg active:scale-95 transition-all select-none
+                        className={`relative flex-shrink-0 w-10 h-10 flex items-center justify-center border rounded-full shadow-lg active:scale-95 transition-all select-none backdrop-blur-sm
                           ${powerOn
-                            ? "bg-emerald-600/85 border-emerald-500 hover:bg-emerald-500 text-emerald-50"
-                            : "bg-slate-700 border-slate-600 hover:bg-slate-600 text-slate-300"
+                            ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-400 shadow-[0_0_20px_rgba(74,222,128,0.3)]"
+                            : "bg-white/8 border-white/15 text-white/50 hover:bg-white/15 hover:text-white/70"
                           }`}>
                         <div className={`absolute bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full z-10 transition-all
                           ${powerOn
@@ -370,11 +368,11 @@ export default function EntertainmentPage() {
                       </button>
 
                       {/* Divider */}
-                      <div className="w-px h-10 bg-slate-600 flex-shrink-0" />
+                      <div className="w-px h-10 bg-white/10 flex-shrink-0" />
 
                       {/* Rewind */}
                       <button onClick={handleRewind} title="Rewind"
-                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center border-2 border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-500 shadow-lg active:scale-95 transition-all select-none rounded-full">
+                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center border border-white/12 bg-white/6 hover:bg-white/14 hover:border-white/22 text-white/60 hover:text-white/90 backdrop-blur-sm shadow-md active:scale-95 transition-all select-none rounded-full">
                         <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
                           <polygon points="4,12 10,6 10,18" />
                           <polygon points="10,12 16,6 16,18" />
@@ -383,7 +381,7 @@ export default function EntertainmentPage() {
 
                       {/* Play/Pause — slightly larger, central */}
                       <button onClick={handlePlayPause} title={isPlaying ? "Pause" : "Play"}
-                        className="flex-shrink-0 w-12 h-12 flex items-center justify-center border-2 border-slate-600 bg-slate-700 hover:bg-slate-600 shadow-lg active:scale-95 transition-all select-none rounded-full">
+                        className="flex-shrink-0 w-12 h-12 flex items-center justify-center border border-white/18 bg-white/10 hover:bg-white/18 hover:border-white/30 text-white/80 hover:text-white backdrop-blur-sm shadow-lg active:scale-95 transition-all select-none rounded-full">
                         {isPlaying ? (
                           <svg viewBox="0 0 24 24" className="w-6 h-6 text-slate-200" fill="currentColor">
                             <rect x="6" y="4" width="4" height="16" />
@@ -398,7 +396,7 @@ export default function EntertainmentPage() {
 
                       {/* Next */}
                       <button onClick={handleNext} title="Next"
-                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center border-2 border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-500 shadow-lg active:scale-95 transition-all select-none rounded-full">
+                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center border border-white/12 bg-white/6 hover:bg-white/14 hover:border-white/22 text-white/60 hover:text-white/90 backdrop-blur-sm shadow-md active:scale-95 transition-all select-none rounded-full">
                         <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
                           <polygon points="20,12 14,6 14,18" />
                           <polygon points="14,12 8,6 8,18" />
@@ -406,11 +404,11 @@ export default function EntertainmentPage() {
                       </button>
 
                       {/* Divider */}
-                      <div className="w-px h-10 bg-slate-600 flex-shrink-0" />
+                      <div className="w-px h-10 bg-white/10 flex-shrink-0" />
 
                       {/* Volume Down */}
                       <button onClick={() => adjustVolume(-10)} title="Volume Down"
-                        className="w-10 h-10 flex items-center justify-center border-2 border-slate-600 bg-slate-700 hover:bg-slate-600 hover:scale-105 shadow-lg active:scale-95 transition-all select-none rounded-full">
+                        className="w-10 h-10 flex items-center justify-center border border-white/12 bg-white/6 hover:bg-white/14 text-white/60 hover:text-white/90 backdrop-blur-sm hover:scale-105 shadow-md active:scale-95 transition-all select-none rounded-full">
                         <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
                             <polygon points="4,12 10,6 10,18" />
                         </svg>
@@ -418,10 +416,10 @@ export default function EntertainmentPage() {
 
                       {/* Mute */}
                       <button onClick={toggleMute} title={isMuted ? 'Unmute' : 'Mute'}
-                        className={`w-10 h-10 flex items-center justify-center border-2 rounded-full shadow-lg active:scale-95 hover:scale-105 transition-all select-none
+                        className={`w-10 h-10 flex items-center justify-center border rounded-full shadow-lg active:scale-95 hover:scale-105 transition-all select-none backdrop-blur-sm
                           ${isMuted
-                            ? 'bg-red-500/90 border-red-400 text-white shadow-[0_0_12px_rgba(239,68,68,1)]'
-                            : 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600'
+                            ? 'bg-red-500/25 border-red-400/60 text-red-400 shadow-[0_0_16px_rgba(239,68,68,0.4)]'
+                            : 'bg-white/6 border-white/12 text-white/60 hover:bg-white/14 hover:text-white/90'
                           }`}>
                         {isMuted ? (
                           <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
@@ -436,7 +434,7 @@ export default function EntertainmentPage() {
 
                       {/* Volume Up */}
                       <button onClick={() => adjustVolume(10)} title="Volume Up"
-                        className="w-10 h-10 flex items-center justify-center border-2 border-slate-600 bg-slate-700 hover:bg-slate-600 hover:scale-105 shadow-lg active:scale-95 transition-all select-none rounded-full">
+                        className="w-10 h-10 flex items-center justify-center border border-white/12 bg-white/6 hover:bg-white/14 text-white/60 hover:text-white/90 backdrop-blur-sm hover:scale-105 shadow-md active:scale-95 transition-all select-none rounded-full">
                         <svg viewBox="0 0 24 24" className="w-5 h-5 text-slate-200" fill="currentColor">
                             <polygon points="20,12 14,6 14,18" />
                         </svg>
@@ -1656,26 +1654,30 @@ function NousBoySection({
       {/* GameBoy console */}
       <div className="flex justify-center mb-6">
         <div style={{ width: 580 }}>
-          {/* Body */}
-          <div className="relative bg-gradient-to-b from-[#1a1228] via-[#130e1f] to-[#0d0918]
-                          rounded-[36px_36px_28px_28px]
-                          border-2 border-purple-900/40
-                          shadow-[0_16px_60px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)]
+          {/* Body — frosted glass */}
+          <div className="relative
+                          bg-gradient-to-b from-white/8 via-white/5 to-white/4
+                          backdrop-blur-2xl
+                          rounded-[40px_40px_32px_32px]
+                          border border-white/12
+                          shadow-[0_24px_80px_rgba(0,0,0,0.75),inset_0_1px_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(255,255,255,0.04)]
                           px-10 pt-7 pb-12">
+            {/* Top specular */}
+            <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
 
             {/* Screen housing */}
-            <div className="bg-[#0a0814] rounded-2xl p-4 border border-purple-900/30 mb-6
-                            shadow-[inset_0_4px_16px_rgba(0,0,0,0.8)]">
+            <div className="bg-black/70 backdrop-blur-sm rounded-2xl p-3 border border-white/8 mb-6
+                            shadow-[inset_0_4px_20px_rgba(0,0,0,0.95)]">
               {/* Status bar */}
               <div className="flex items-center justify-between px-1 mb-2">
                 <div className="flex items-center gap-1.5">
                   <div className={`w-2 h-2 rounded-full transition-all
-                    ${gbPower ? 'bg-emerald-400 shadow-[0_0_8px_rgba(74,222,128,0.9)]' : 'bg-slate-700'}`} />
-                  <span className="text-[0.45rem] font-mono text-purple-400/50 tracking-widest uppercase">pwr</span>
+                    ${gbPower ? 'bg-emerald-400 shadow-[0_0_8px_rgba(74,222,128,0.9)]' : 'bg-white/20'}`} />
+                  <span className="text-[0.45rem] font-mono text-white/30 tracking-widest uppercase">pwr</span>
                 </div>
-                <span className="text-[0.55rem] font-mono text-purple-300/40 tracking-[0.4em] uppercase font-semibold">NOUS BOY</span>
+                <span className="text-[0.55rem] font-mono text-white/35 tracking-[0.4em] uppercase font-semibold">NOUS BOY</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[0.45rem] font-mono text-purple-400/50 tracking-widest uppercase">bat</span>
+                  <span className="text-[0.45rem] font-mono text-white/30 tracking-widest uppercase">bat</span>
                   <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(74,222,128,0.9)]" />
                 </div>
               </div>
@@ -1714,87 +1716,107 @@ function NousBoySection({
             </div>
 
             {/* Controls row */}
-            <div className="flex items-center justify-between px-3">
-              {/* D-pad */}
-              <div className="relative" style={{ width: 114, height: 114 }}>
-                <div className="absolute inset-y-0 left-0 right-0 top-1/2 -translate-y-1/2 h-10 bg-[#1a1228] rounded-[4px] border border-purple-900/30 shadow-inner" />
-                <div className="absolute inset-x-0 left-1/2 -translate-x-1/2 top-0 bottom-0 w-10 bg-[#1a1228] rounded-[4px] border border-purple-900/30 shadow-inner" />
-                <div className="absolute inset-0 m-auto w-11 h-11 bg-[#0d0918] rounded-[3px] pointer-events-none" />
+            <div className="flex items-center justify-between px-2 gap-2">
+
+              {/* D-pad — clean grid cross with SVG chevrons */}
+              <div style={{ display: 'grid', gridTemplateColumns: '40px 40px 40px', gridTemplateRows: '40px 40px 40px', gap: '3px' }}>
+                {/* Row 1 */}
+                <div />
                 <button
                   onPointerDown={() => sendKey("ArrowUp", true)}
                   onPointerUp={() => sendKey("ArrowUp", false)}
                   onPointerLeave={() => sendKey("ArrowUp", false)}
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10 flex items-center justify-center text-purple-400/60 text-sm select-none z-10 active:text-purple-200 hover:text-purple-300 transition-colors">▲</button>
-                <button
-                  onPointerDown={() => sendKey("ArrowDown", true)}
-                  onPointerUp={() => sendKey("ArrowDown", false)}
-                  onPointerLeave={() => sendKey("ArrowDown", false)}
-                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-10 flex items-center justify-center text-purple-400/60 text-sm select-none z-10 active:text-purple-200 hover:text-purple-300 transition-colors">▼</button>
+                  className="rounded-t-xl bg-white/10 border border-white/14 hover:bg-primary/20 hover:border-primary/40 active:bg-primary/35 active:scale-95 flex items-center justify-center select-none transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/65"><polyline points="18 15 12 9 6 15"/></svg>
+                </button>
+                <div />
+                {/* Row 2 */}
                 <button
                   onPointerDown={() => sendKey("ArrowLeft", true)}
                   onPointerUp={() => sendKey("ArrowLeft", false)}
                   onPointerLeave={() => sendKey("ArrowLeft", false)}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-purple-400/60 text-sm select-none z-10 active:text-purple-200 hover:text-purple-300 transition-colors">◀</button>
+                  className="rounded-l-xl bg-white/10 border border-white/14 hover:bg-primary/20 hover:border-primary/40 active:bg-primary/35 active:scale-95 flex items-center justify-center select-none transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/65"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <div className="bg-black/30 border border-white/8 rounded-sm flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-full bg-white/12" />
+                </div>
                 <button
                   onPointerDown={() => sendKey("ArrowRight", true)}
                   onPointerUp={() => sendKey("ArrowRight", false)}
                   onPointerLeave={() => sendKey("ArrowRight", false)}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-purple-400/60 text-sm select-none z-10 active:text-purple-200 hover:text-purple-300 transition-colors">▶</button>
+                  className="rounded-r-xl bg-white/10 border border-white/14 hover:bg-primary/20 hover:border-primary/40 active:bg-primary/35 active:scale-95 flex items-center justify-center select-none transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/65"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                {/* Row 3 */}
+                <div />
+                <button
+                  onPointerDown={() => sendKey("ArrowDown", true)}
+                  onPointerUp={() => sendKey("ArrowDown", false)}
+                  onPointerLeave={() => sendKey("ArrowDown", false)}
+                  className="rounded-b-xl bg-white/10 border border-white/14 hover:bg-primary/20 hover:border-primary/40 active:bg-primary/35 active:scale-95 flex items-center justify-center select-none transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/65"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div />
               </div>
 
-              {/* Select + Start */}
+              {/* SELECT + START — pill buttons */}
               <div className="flex flex-col gap-3 items-center">
                 <button
                   onClick={() => setGbPower(p => !p)}
-                  className="w-20 h-6 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
-                             border border-purple-600/40 shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]
-                             text-[0.5rem] font-mono text-purple-200/70 uppercase tracking-widest
-                             active:from-purple-800 transition-all hover:border-purple-500/60 hover:text-purple-200/90">
+                  className="h-5 px-6 rounded-full bg-white/8 border border-white/12
+                             text-[0.48rem] font-mono text-white/45 uppercase tracking-[0.2em]
+                             hover:bg-primary/15 hover:border-primary/30 hover:text-white/70
+                             active:scale-95 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
                   SELECT
                 </button>
                 <button
                   onPointerDown={() => sendKey(" ", true)}
                   onPointerUp={() => sendKey(" ", false)}
                   onPointerLeave={() => sendKey(" ", false)}
-                  className="w-20 h-6 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
-                             border border-purple-600/40 shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]
-                             text-[0.5rem] font-mono text-purple-200/70 uppercase tracking-widest
-                             active:from-purple-800 transition-all hover:border-purple-500/60 hover:text-purple-200/90">
+                  className="h-5 px-6 rounded-full bg-white/8 border border-white/12
+                             text-[0.48rem] font-mono text-white/45 uppercase tracking-[0.2em]
+                             hover:bg-primary/15 hover:border-primary/30 hover:text-white/70
+                             active:scale-95 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
                   START
                 </button>
               </div>
 
-              {/* A / B buttons */}
+              {/* A / B buttons — glass with pink accent */}
               <div className="relative" style={{ width: 130, height: 108 }}>
                 <button
                   onPointerDown={() => sendKey("z", true)}
                   onPointerUp={() => sendKey("z", false)}
                   onPointerLeave={() => sendKey("z", false)}
                   className="absolute right-0 top-0 w-16 h-16 rounded-full
-                             bg-gradient-to-b from-pink-500 to-pink-700
-                             border-2 border-pink-900/40
-                             shadow-[0_5px_14px_rgba(0,0,0,0.65),inset_0_1px_3px_rgba(255,255,255,0.25)]
-                             text-base font-mono font-bold text-pink-100/90 select-none
-                             active:from-pink-600 active:shadow-[0_2px_8px_rgba(0,0,0,0.65)] transition-all">A</button>
+                             bg-pink-500/70 backdrop-blur-sm
+                             border border-pink-300/25
+                             shadow-[0_6px_20px_rgba(236,72,153,0.35),inset_0_1px_0_rgba(255,255,255,0.25)]
+                             text-base font-mono font-bold text-white/90 select-none
+                             hover:bg-pink-400/75 active:shadow-[0_2px_8px_rgba(236,72,153,0.25)] active:scale-95 transition-all">
+                  A
+                </button>
                 <button
                   onPointerDown={() => sendKey("x", true)}
                   onPointerUp={() => sendKey("x", false)}
                   onPointerLeave={() => sendKey("x", false)}
                   className="absolute left-0 bottom-0 w-16 h-16 rounded-full
-                             bg-gradient-to-b from-pink-500 to-pink-700
-                             border-2 border-pink-900/40
-                             shadow-[0_5px_14px_rgba(0,0,0,0.65),inset_0_1px_3px_rgba(255,255,255,0.25)]
-                             text-base font-mono font-bold text-pink-100/90 select-none
-                             active:from-pink-600 active:shadow-[0_2px_8px_rgba(0,0,0,0.65)] transition-all">B</button>
+                             bg-pink-700/60 backdrop-blur-sm
+                             border border-pink-500/20
+                             shadow-[0_6px_20px_rgba(190,24,93,0.3),inset_0_1px_0_rgba(255,255,255,0.15)]
+                             text-base font-mono font-bold text-white/80 select-none
+                             hover:bg-pink-600/65 active:shadow-[0_2px_8px_rgba(190,24,93,0.2)] active:scale-95 transition-all">
+                  B
+                </button>
               </div>
             </div>
 
             {/* Speaker + branding */}
             <div className="flex items-end justify-between mt-5 px-1">
-              <span className="text-[0.4rem] font-mono text-purple-400/20 tracking-[0.5em] uppercase">NOUS RESEARCH</span>
-              <div className="flex gap-0.5 opacity-35">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="w-1 h-4 rounded-full bg-purple-700" />
+              <span className="text-[0.4rem] font-mono text-white/20 tracking-[0.5em] uppercase">NOUS RESEARCH</span>
+              <div className="flex gap-0.5 opacity-25">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <div key={i} className="w-[3px] rounded-full bg-white/60" style={{ height: i % 3 === 1 ? '18px' : i % 3 === 0 ? '12px' : '15px' }} />
                 ))}
               </div>
             </div>
