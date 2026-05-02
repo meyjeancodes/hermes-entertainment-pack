@@ -53,7 +53,7 @@ export function useSpotifyPlayer(options: UseSpotifyPlayerOptions = {}) {
   // Poll now-playing endpoint
   const fetchState = useCallback(async () => {
     try {
-      const res = await authenticatedFetch("/api/spotify/now-playing");
+      const res = await authenticatedFetch("/api/plugins/hermes-entertainment-pack/spotify/now-playing");
       if (!res.ok) {
         const err = await res.json();
         if (res.status === 401) setError("auth_required");
@@ -95,41 +95,41 @@ export function useSpotifyPlayer(options: UseSpotifyPlayerOptions = {}) {
 
   // Individual controls (callable by UI)
   const play = useCallback(
-    () => callSpotifyControl("/api/spotify/play", "playPause"),
+    () => callSpotifyControl("/api/plugins/hermes-entertainment-pack/spotify/play", "playPause"),
     [callSpotifyControl]
   );
   const pause = useCallback(
-    () => callSpotifyControl("/api/spotify/pause", "playPause"),
+    () => callSpotifyControl("/api/plugins/hermes-entertainment-pack/spotify/pause", "playPause"),
     [callSpotifyControl]
   );
   const togglePlayPause = useCallback(
     () =>
       callSpotifyControl(
-        `/api/spotify/${state?.playing ? "pause" : "play"}`,
+        `/api/plugins/hermes-entertainment-pack/spotify/${state?.playing ? "pause" : "play"}`,
         "playPause"
       ),
     [callSpotifyControl, state?.playing]
   );
   const next = useCallback(
-    () => callSpotifyControl("/api/spotify/next", "next"),
+    () => callSpotifyControl("/api/plugins/hermes-entertainment-pack/spotify/next", "next"),
     [callSpotifyControl]
   );
   const previous = useCallback(
-    () => callSpotifyControl("/api/spotify/previous", "previous"),
+    () => callSpotifyControl("/api/plugins/hermes-entertainment-pack/spotify/previous", "previous"),
     [callSpotifyControl]
   );
   const toggleShuffle = useCallback(
-    () => callSpotifyControl("/api/spotify/shuffle", "shuffle"),
+    () => callSpotifyControl("/api/plugins/hermes-entertainment-pack/spotify/shuffle", "shuffle"),
     [callSpotifyControl]
   );
   const toggleRepeat = useCallback(
-    () => callSpotifyControl("/api/spotify/repeat", "repeat"),
+    () => callSpotifyControl("/api/plugins/hermes-entertainment-pack/spotify/repeat", "repeat"),
     [callSpotifyControl]
   );
   const setVolumeAndSend = useCallback(
     (newVolume: number) => {
       setVolume(newVolume);
-      callSpotifyControl("/api/spotify/volume", "volume", {
+      callSpotifyControl("/api/plugins/hermes-entertainment-pack/spotify/volume", "volume", {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ volume: newVolume }),
       });
