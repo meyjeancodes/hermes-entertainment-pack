@@ -1,6 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './MusicPortalPage.module.css';
 import { PLUGIN_URL } from '@/lib/plugin';
+import { SpotifyNowPlaying } from '@/components/SpotifyNowPlaying';
+
+const StarIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginBottom: '2px' }}>
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  </svg>
+);
+
+const LightningIcon = () => (
+  <svg width="9" height="12" viewBox="0 0 24 24" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle' }}>
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </svg>
+);
+
+const WarnIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" style={{ display: 'inline', verticalAlign: 'middle', marginRight: '5px' }}>
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+  </svg>
+);
 
 const TRACKS = [
   { n: '01', title: 'Neural Drift', duration: '3:42' },
@@ -54,10 +73,10 @@ export default function MusicPortalPage() {
               className={styles.coverImg}
             />
             <div className={styles.collectorsBadge}>COLLECTOR'S EDITION</div>
-            <div className={styles.limitedBadge}>★ LIMITED ★</div>
+            <div className={styles.limitedBadge}><StarIcon /> LIMITED <StarIcon /></div>
           </div>
           <p className={styles.tapeBrand}>HERMES TYPE-IV CHROME · 90 MIN</p>
-          <p className={styles.tapeWarning}>⚠ REWIND BEFORE PLAYING</p>
+          <p className={styles.tapeWarning}><WarnIcon /> REWIND BEFORE PLAYING</p>
         </div>
 
         {/* Right: Ad copy */}
@@ -66,7 +85,7 @@ export default function MusicPortalPage() {
             <span>NOT<br />SOLD<br />IN STORES!</span>
           </div>
 
-          <p className={styles.asSeenOn}>★ AS HEARD ON THE HERMES DASHBOARD ★</p>
+          <p className={styles.asSeenOn}><StarIcon /> AS HEARD ON THE HERMES DASHBOARD <StarIcon /></p>
 
           <h1 className={styles.headline}>
             INTRODUCING<br />
@@ -110,7 +129,9 @@ export default function MusicPortalPage() {
       {/* CTA section */}
       <div className={styles.ctaSection}>
         <div className={styles.ctaDivider} />
-        <p className={styles.operatorsTag}>⚡ OPERATORS STANDING BY 24/7 ⚡</p>
+        <p className={styles.operatorsTag}>
+          <LightningIcon /> OPERATORS STANDING BY 24/7 <LightningIcon />
+        </p>
         <div className={styles.phoneNumber}>1-800-HERMES-1</div>
         <p className={styles.phoneSubtext}>CALL OR STREAM NOW — IT'S FREE</p>
         <button className={styles.orderBtn} onClick={scrollToPlayer}>
@@ -118,7 +139,7 @@ export default function MusicPortalPage() {
         </button>
       </div>
 
-      {/* Vapor FM player — same engine as Channel 10 */}
+      {/* Vapor FM player */}
       <div className={styles.playerSection} ref={playerRef}>
         <p className={styles.playerLabel}>— LIVE ON VAPOR FM · CHANNEL 10 —</p>
         <iframe
@@ -130,13 +151,20 @@ export default function MusicPortalPage() {
         />
       </div>
 
+      {/* Spotify Now Playing */}
+      <div className={styles.spotifySection}>
+        <div className={styles.spotifyDivider} />
+        <p className={styles.spotifyLabel}>— YOUR SPOTIFY · NOW PLAYING —</p>
+        <SpotifyNowPlaying />
+      </div>
+
       {/* Fine print */}
       <div className={styles.finePrint}>
         *Free with active Hermes installation. Offer valid while vibes last.
         Hermes Broadcasting Network is not responsible for lost productivity, existential contemplation,
         uncontrollable head-bobbing, or spontaneous dancing. Track listing curated by autonomous agents.
         Results may vary. Not available in stores. Must be 18+ to feel this deeply.
-        Batteries not included. Void where prohibited by reality. ™ &amp; © Hermes Broadcasting Network.
+        Batteries not included. Void where prohibited by reality. TM &amp; © Hermes Broadcasting Network.
         All rights reserved. Some rights reversed.
       </div>
     </div>

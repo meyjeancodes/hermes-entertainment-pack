@@ -12,10 +12,13 @@ const W=window.innerWidth,H=window.innerHeight;
 cv.width=W;cv.height=H;
 
 const COLS=10,ROWS=20;
-const SZ=Math.min(Math.floor(H/ROWS),Math.floor(W*0.62/COLS));
+// Fixed right panel; board gets everything else
+const SIDE_W=Math.max(80, Math.min(100, W*0.22));
+const BOARD_W=W-SIDE_W-16;
+const SZ=Math.min(Math.floor(H*0.96/ROWS),Math.floor(BOARD_W/COLS));
 const BW=COLS*SZ,BH=ROWS*SZ;
-const BX=Math.floor((W*0.62-BW)/2),BY=Math.floor((H-BH)/2);
-const PANEL_X=Math.round(BX+BW+8),PANEL_W=W-PANEL_X-4;
+const BX=Math.floor((BOARD_W-BW)/2),BY=Math.floor((H-BH)/2);
+const PANEL_X=BX+BW+10,PANEL_W=W-PANEL_X-4;
 
 const PIECES=[[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[1,1,0],[0,1,1]],[[0,1,1],[1,1,0]]];
 const COLS_P=['#00ffff','#ffff00','#aa00ff','#ff7700','#0055ff','#ff0055','#00ff55'];
@@ -75,7 +78,7 @@ function drawPanel(){
     ctx.font=`${fs}px 'Courier New',monospace`;
     ctx.fillStyle='rgba(0,255,65,0.45)';
     ctx.fillText('NEXT',px2,ny);
-    const ps=Math.min(Math.floor((PANEL_W-16)/4),Math.floor((BH-ny-16)/4));
+    const ps=Math.min(14,Math.floor((PANEL_W-16)/4),Math.floor((BH-ny-16)/4));
     if(ps>3){
       const nox=PANEL_X+(PANEL_W-(next.shape[0].length*ps))/2;
       const noy=ny+6;

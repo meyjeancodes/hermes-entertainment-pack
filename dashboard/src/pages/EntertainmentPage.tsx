@@ -1655,13 +1655,13 @@ function NousBoySection({
 
       {/* GameBoy console */}
       <div className="flex justify-center mb-6">
-        <div style={{ width: 480 }}>
+        <div style={{ width: 580 }}>
           {/* Body */}
           <div className="relative bg-gradient-to-b from-[#1a1228] via-[#130e1f] to-[#0d0918]
-                          rounded-[32px_32px_24px_24px]
+                          rounded-[36px_36px_28px_28px]
                           border-2 border-purple-900/40
                           shadow-[0_16px_60px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)]
-                          px-8 pt-6 pb-11">
+                          px-10 pt-7 pb-12">
 
             {/* Screen housing */}
             <div className="bg-[#0a0814] rounded-2xl p-4 border border-purple-900/30 mb-6
@@ -1714,78 +1714,78 @@ function NousBoySection({
             </div>
 
             {/* Controls row */}
-            <div className="flex items-center justify-between px-2">
+            <div className="flex items-center justify-between px-3">
               {/* D-pad */}
-              <div className="relative" style={{ width: 90, height: 90 }}>
-                <div className="absolute inset-y-0 left-0 right-0 top-1/2 -translate-y-1/2 h-8 bg-[#1a1228] rounded-[3px] border border-purple-900/30 shadow-inner" />
-                <div className="absolute inset-x-0 left-1/2 -translate-x-1/2 top-0 bottom-0 w-8 bg-[#1a1228] rounded-[3px] border border-purple-900/30 shadow-inner" />
-                <div className="absolute inset-0 m-auto w-9 h-9 bg-[#0d0918] rounded-[3px] pointer-events-none" />
+              <div className="relative" style={{ width: 114, height: 114 }}>
+                <div className="absolute inset-y-0 left-0 right-0 top-1/2 -translate-y-1/2 h-10 bg-[#1a1228] rounded-[4px] border border-purple-900/30 shadow-inner" />
+                <div className="absolute inset-x-0 left-1/2 -translate-x-1/2 top-0 bottom-0 w-10 bg-[#1a1228] rounded-[4px] border border-purple-900/30 shadow-inner" />
+                <div className="absolute inset-0 m-auto w-11 h-11 bg-[#0d0918] rounded-[3px] pointer-events-none" />
                 <button
                   onPointerDown={() => sendKey("ArrowUp", true)}
                   onPointerUp={() => sendKey("ArrowUp", false)}
                   onPointerLeave={() => sendKey("ArrowUp", false)}
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 flex items-center justify-center text-purple-400/50 text-xs select-none z-10 active:text-purple-300">▲</button>
+                  className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10 flex items-center justify-center text-purple-400/60 text-sm select-none z-10 active:text-purple-200 hover:text-purple-300 transition-colors">▲</button>
                 <button
                   onPointerDown={() => sendKey("ArrowDown", true)}
                   onPointerUp={() => sendKey("ArrowDown", false)}
                   onPointerLeave={() => sendKey("ArrowDown", false)}
-                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-8 flex items-center justify-center text-purple-400/50 text-xs select-none z-10 active:text-purple-300">▼</button>
+                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-10 flex items-center justify-center text-purple-400/60 text-sm select-none z-10 active:text-purple-200 hover:text-purple-300 transition-colors">▼</button>
                 <button
                   onPointerDown={() => sendKey("ArrowLeft", true)}
                   onPointerUp={() => sendKey("ArrowLeft", false)}
                   onPointerLeave={() => sendKey("ArrowLeft", false)}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-purple-400/50 text-xs select-none z-10 active:text-purple-300">◀</button>
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-purple-400/60 text-sm select-none z-10 active:text-purple-200 hover:text-purple-300 transition-colors">◀</button>
                 <button
                   onPointerDown={() => sendKey("ArrowRight", true)}
                   onPointerUp={() => sendKey("ArrowRight", false)}
                   onPointerLeave={() => sendKey("ArrowRight", false)}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-purple-400/50 text-xs select-none z-10 active:text-purple-300">▶</button>
+                  className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-purple-400/60 text-sm select-none z-10 active:text-purple-200 hover:text-purple-300 transition-colors">▶</button>
               </div>
 
               {/* Select + Start */}
-              <div className="flex flex-col gap-2.5 items-center">
+              <div className="flex flex-col gap-3 items-center">
                 <button
                   onClick={() => setGbPower(p => !p)}
-                  className="w-16 h-5 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
+                  className="w-20 h-6 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
                              border border-purple-600/40 shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]
-                             text-[0.4rem] font-mono text-purple-200/60 uppercase tracking-wide
-                             active:from-purple-800 transition-all hover:border-purple-500/60">
+                             text-[0.5rem] font-mono text-purple-200/70 uppercase tracking-widest
+                             active:from-purple-800 transition-all hover:border-purple-500/60 hover:text-purple-200/90">
                   SELECT
                 </button>
                 <button
                   onPointerDown={() => sendKey(" ", true)}
                   onPointerUp={() => sendKey(" ", false)}
                   onPointerLeave={() => sendKey(" ", false)}
-                  className="w-16 h-5 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
+                  className="w-20 h-6 rounded-full bg-gradient-to-b from-purple-700 to-purple-900
                              border border-purple-600/40 shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]
-                             text-[0.4rem] font-mono text-purple-200/60 uppercase tracking-wide
-                             active:from-purple-800 transition-all hover:border-purple-500/60">
+                             text-[0.5rem] font-mono text-purple-200/70 uppercase tracking-widest
+                             active:from-purple-800 transition-all hover:border-purple-500/60 hover:text-purple-200/90">
                   START
                 </button>
               </div>
 
               {/* A / B buttons */}
-              <div className="relative" style={{ width: 104, height: 86 }}>
+              <div className="relative" style={{ width: 130, height: 108 }}>
                 <button
                   onPointerDown={() => sendKey("z", true)}
                   onPointerUp={() => sendKey("z", false)}
                   onPointerLeave={() => sendKey("z", false)}
-                  className="absolute right-0 top-0 w-14 h-14 rounded-full
+                  className="absolute right-0 top-0 w-16 h-16 rounded-full
                              bg-gradient-to-b from-pink-500 to-pink-700
                              border-2 border-pink-900/40
-                             shadow-[0_4px_10px_rgba(0,0,0,0.6),inset_0_1px_2px_rgba(255,255,255,0.25)]
-                             text-sm font-mono font-bold text-pink-100/90 select-none
-                             active:from-pink-600 transition-all">A</button>
+                             shadow-[0_5px_14px_rgba(0,0,0,0.65),inset_0_1px_3px_rgba(255,255,255,0.25)]
+                             text-base font-mono font-bold text-pink-100/90 select-none
+                             active:from-pink-600 active:shadow-[0_2px_8px_rgba(0,0,0,0.65)] transition-all">A</button>
                 <button
                   onPointerDown={() => sendKey("x", true)}
                   onPointerUp={() => sendKey("x", false)}
                   onPointerLeave={() => sendKey("x", false)}
-                  className="absolute left-0 bottom-0 w-14 h-14 rounded-full
+                  className="absolute left-0 bottom-0 w-16 h-16 rounded-full
                              bg-gradient-to-b from-pink-500 to-pink-700
                              border-2 border-pink-900/40
-                             shadow-[0_4px_10px_rgba(0,0,0,0.6),inset_0_1px_2px_rgba(255,255,255,0.25)]
-                             text-sm font-mono font-bold text-pink-100/90 select-none
-                             active:from-pink-600 transition-all">B</button>
+                             shadow-[0_5px_14px_rgba(0,0,0,0.65),inset_0_1px_3px_rgba(255,255,255,0.25)]
+                             text-base font-mono font-bold text-pink-100/90 select-none
+                             active:from-pink-600 active:shadow-[0_2px_8px_rgba(0,0,0,0.65)] transition-all">B</button>
               </div>
             </div>
 
@@ -1801,7 +1801,7 @@ function NousBoySection({
           </div>
 
           {/* Shadow */}
-          <div className="h-4 mx-10 bg-black/40 rounded-full blur-md -mt-1" />
+          <div className="h-5 mx-12 bg-black/50 rounded-full blur-lg -mt-2" />
         </div>
       </div>
 
