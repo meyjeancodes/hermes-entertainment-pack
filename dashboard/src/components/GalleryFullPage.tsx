@@ -457,24 +457,46 @@ export default function GalleryFullPage() {
       {/* Full-screen image modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/92 p-10"
+          style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.93)' }}
           onClick={() => setSelectedImage(null)}
         >
-          <img
-            src={selectedImage}
-            alt="Full size gallery image"
-            className="max-w-[82vw] max-h-[82vh] w-auto h-auto object-contain rounded-lg shadow-2xl"
+          {/* Contained image box — X sits outside the image, anchored to this wrapper */}
+          <div
+            style={{ position: 'relative' }}
             onClick={(e) => e.stopPropagation()}
-          />
-          {/* X rendered AFTER image so it's above it in stacking order */}
-          <button
-            className="absolute top-4 right-4 flex items-center justify-center w-11 h-11 rounded-full text-white transition-all shadow-xl hover:scale-110 active:scale-95"
-            style={{ background: 'rgba(0,0,0,0.88)', border: '1.5px solid rgba(255,255,255,0.35)', zIndex: 60 }}
-            onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
-            aria-label="Close"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
+            <img
+              src={selectedImage}
+              alt="Full size"
+              style={{
+                display: 'block',
+                maxWidth: 'min(68vw, 960px)',
+                maxHeight: '72vh',
+                width: 'auto',
+                height: 'auto',
+                objectFit: 'contain',
+                borderRadius: 6,
+                boxShadow: '0 30px 90px rgba(0,0,0,0.85)',
+              }}
+            />
+            {/* X button — outside top-right corner of image */}
+            <button
+              onClick={() => setSelectedImage(null)}
+              aria-label="Close"
+              style={{
+                position: 'absolute', top: -18, right: -18,
+                width: 36, height: 36, borderRadius: '50%',
+                background: 'rgba(0,0,0,0.92)', border: '1.5px solid rgba(255,255,255,0.4)',
+                color: 'white', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.6)',
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
         </div>
       )}
     </div>
