@@ -1709,10 +1709,10 @@ function NousBoySection({
             </div>
 
             {/* Controls row */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-5">
 
               {/* D-pad — dark charcoal cross */}
-              <div style={{ display: 'grid', gridTemplateColumns: '38px 38px 38px', gridTemplateRows: '38px 38px 38px', gap: '2px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '38px 38px 38px', gridTemplateRows: '38px 38px 38px', gap: '2px', flexShrink: 0 }}>
                 <div />
                 <button onPointerDown={() => sendKey("ArrowUp", true)} onPointerUp={() => sendKey("ArrowUp", false)} onPointerLeave={() => sendKey("ArrowUp", false)}
                   className="flex items-center justify-center select-none active:scale-95 transition-all"
@@ -1742,25 +1742,29 @@ function NousBoySection({
                 <div />
               </div>
 
-              {/* SELECT + START — angled gray pills */}
-              <div className="flex flex-col gap-3 items-center" style={{ transform: 'rotate(-20deg)' }}>
-                <button
-                  onPointerDown={() => sendKey("Shift", true)}
-                  onPointerUp={() => sendKey("Shift", false)}
-                  onPointerLeave={() => sendKey("Shift", false)}
-                  className="select-none active:scale-95 transition-all"
-                  style={{ background: 'linear-gradient(180deg,#7a7870,#5a5852)', border: '1px solid #4a4840', borderRadius: '20px', padding: '4px 18px', fontSize: '0.42rem', fontFamily: 'monospace', fontWeight: 'bold', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c0bdb8', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15)' }}>
-                  SELECT
-                </button>
-                <button
-                  onPointerDown={() => sendKey(" ", true)}
-                  onPointerUp={() => sendKey(" ", false)}
-                  onPointerLeave={() => sendKey(" ", false)}
-                  className="select-none active:scale-95 transition-all"
-                  style={{ background: 'linear-gradient(180deg,#7a7870,#5a5852)', border: '1px solid #4a4840', borderRadius: '20px', padding: '4px 18px', fontSize: '0.42rem', fontFamily: 'monospace', fontWeight: 'bold', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c0bdb8', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15)' }}>
-                  START
-                </button>
+              {/* SELECT + START — circular, angled, close to D-pad */}
+              <div className="flex flex-col gap-2.5 items-center" style={{ transform: 'rotate(-20deg)', flexShrink: 0 }}>
+                {[
+                  { label: 'SEL', key: 'Shift', down: true },
+                  { label: 'STA', key: ' ', down: true },
+                ].map(({ label, key }) => (
+                  <div key={label} className="flex flex-col items-center gap-0.5">
+                    <button
+                      onPointerDown={() => sendKey(key, true)}
+                      onPointerUp={() => sendKey(key, false)}
+                      onPointerLeave={() => sendKey(key, false)}
+                      className="select-none active:scale-90 transition-all rounded-full flex items-center justify-center"
+                      style={{ width: 32, height: 32, background: 'linear-gradient(180deg,#7a7870,#5a5852)', border: '1px solid #4a4840', boxShadow: '0 2px 5px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18)', color: '#c0bdb8' }}
+                    >
+                      <span style={{ fontSize: '0.38rem', fontFamily: 'monospace', fontWeight: 900, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{label}</span>
+                    </button>
+                    <span style={{ fontSize: '0.32rem', fontFamily: 'monospace', color: '#7a7672', letterSpacing: '0.12em', textTransform: 'uppercase' }}>{label === 'SEL' ? 'SELECT' : 'START'}</span>
+                  </div>
+                ))}
               </div>
+
+              {/* Spacer pushes A/B to the right */}
+              <div className="flex-1" />
 
               {/* A / B — wine red, compact diagonal like real DMG */}
               <div className="relative" style={{ width: 96, height: 76 }}>
