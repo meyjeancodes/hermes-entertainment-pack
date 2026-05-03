@@ -174,7 +174,8 @@ export function SpotifyNowPlaying() {
             <input
               type="range" min="0" max="100" value={volume}
               onChange={(e) => setVolume(parseInt(e.target.value))}
-              onMouseUp={() => setVolumeAndSend(volume)}
+              onMouseUp={(e) => setVolumeAndSend(parseInt((e.target as HTMLInputElement).value))}
+              onTouchEnd={(e) => setVolumeAndSend(parseInt((e.target as HTMLInputElement).value))}
               style={S.volSlider}
             />
             <span style={S.volPct}>{volume}%</span>

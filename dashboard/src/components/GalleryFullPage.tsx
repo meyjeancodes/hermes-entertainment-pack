@@ -457,12 +457,16 @@ export default function GalleryFullPage() {
       {/* Full-screen image modal */}
       {selectedImage && (
         <div
-          style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.93)' }}
+          style={{
+            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+            zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(0,0,0,0.93)',
+          }}
           onClick={() => setSelectedImage(null)}
         >
-          {/* Contained image box — X sits outside the image, anchored to this wrapper */}
+          {/* Centered image container — X anchored to this */}
           <div
-            style={{ position: 'relative' }}
+            style={{ position: 'relative', margin: 'auto' }}
             onClick={(e) => e.stopPropagation()}
           >
             <img
@@ -470,8 +474,8 @@ export default function GalleryFullPage() {
               alt="Full size"
               style={{
                 display: 'block',
-                maxWidth: 'min(68vw, 960px)',
-                maxHeight: '72vh',
+                maxWidth: 'min(66vw, 880px)',
+                maxHeight: '70vh',
                 width: 'auto',
                 height: 'auto',
                 objectFit: 'contain',
@@ -479,20 +483,19 @@ export default function GalleryFullPage() {
                 boxShadow: '0 30px 90px rgba(0,0,0,0.85)',
               }}
             />
-            {/* X button — outside top-right corner of image */}
             <button
               onClick={() => setSelectedImage(null)}
               aria-label="Close"
               style={{
-                position: 'absolute', top: -18, right: -18,
-                width: 36, height: 36, borderRadius: '50%',
-                background: 'rgba(0,0,0,0.92)', border: '1.5px solid rgba(255,255,255,0.4)',
+                position: 'absolute', top: -16, right: -16,
+                width: 34, height: 34, borderRadius: '50%',
+                background: 'rgba(0,0,0,0.95)', border: '1.5px solid rgba(255,255,255,0.45)',
                 color: 'white', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.6)',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.7)',
               }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
