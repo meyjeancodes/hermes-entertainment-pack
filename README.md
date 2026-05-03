@@ -168,15 +168,6 @@ Edit the `CHANNELS` array in `src/pages/EntertainmentPage.tsx`:
 
 Supported types: `"iframe"`, `"video"`, `"noise"`, `"canvas"`.
 
-### Add a Game
-
-Edit `GAMEBOY_GAMES` in the same file:
-
-```ts
-{ id: "g5", name: "Snake", src: `${PLUGIN_URL}/games/snake.html`, icon: "snake" }
-```
-
-Drop the HTML file in `dashboard/games/` and add a matching icon case to the `GameIcon` component.
 
 ---
 
