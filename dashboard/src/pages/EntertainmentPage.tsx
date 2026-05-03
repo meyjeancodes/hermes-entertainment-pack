@@ -1708,53 +1708,55 @@ function NousBoySection({
               </div>
             </div>
 
-            {/* Controls row */}
-            <div className="flex items-center gap-5">
+            {/* Controls row — 3-column grid: D-pad | SELECT+START | A+B */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 0 }}>
 
-              {/* D-pad — dark charcoal cross */}
-              <div style={{ display: 'grid', gridTemplateColumns: '38px 38px 38px', gridTemplateRows: '38px 38px 38px', gap: '2px', flexShrink: 0 }}>
-                <div />
-                <button onPointerDown={() => sendKey("ArrowUp", true)} onPointerUp={() => sendKey("ArrowUp", false)} onPointerLeave={() => sendKey("ArrowUp", false)}
-                  className="flex items-center justify-center select-none active:scale-95 transition-all"
-                  style={{ background: 'linear-gradient(180deg,#4a4845,#3a3835)', borderRadius: '6px 6px 0 0', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 8l-6 6 1.4 1.4 4.6-4.6 4.6 4.6L18 14z"/></svg>
-                </button>
-                <div />
-                <button onPointerDown={() => sendKey("ArrowLeft", true)} onPointerUp={() => sendKey("ArrowLeft", false)} onPointerLeave={() => sendKey("ArrowLeft", false)}
-                  className="flex items-center justify-center select-none active:scale-95 transition-all"
-                  style={{ background: 'linear-gradient(90deg,#4a4845,#3a3835)', borderRadius: '6px 0 0 6px', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
-                </button>
-                <div className="flex items-center justify-center" style={{ background: '#3a3835', border: '1px solid #2a2825', borderRadius: '3px' }}>
-                  <div className="w-2 h-2 rounded-full" style={{ background: '#2a2825' }} />
+              {/* D-pad — left column, centred within its cell */}
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '38px 38px 38px', gridTemplateRows: '38px 38px 38px', gap: '2px' }}>
+                  <div />
+                  <button onPointerDown={() => sendKey("ArrowUp", true)} onPointerUp={() => sendKey("ArrowUp", false)} onPointerLeave={() => sendKey("ArrowUp", false)}
+                    className="flex items-center justify-center select-none active:scale-95 transition-all"
+                    style={{ background: 'linear-gradient(180deg,#4a4845,#3a3835)', borderRadius: '6px 6px 0 0', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 8l-6 6 1.4 1.4 4.6-4.6 4.6 4.6L18 14z"/></svg>
+                  </button>
+                  <div />
+                  <button onPointerDown={() => sendKey("ArrowLeft", true)} onPointerUp={() => sendKey("ArrowLeft", false)} onPointerLeave={() => sendKey("ArrowLeft", false)}
+                    className="flex items-center justify-center select-none active:scale-95 transition-all"
+                    style={{ background: 'linear-gradient(90deg,#4a4845,#3a3835)', borderRadius: '6px 0 0 6px', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
+                  </button>
+                  <div className="flex items-center justify-center" style={{ background: '#3a3835', border: '1px solid #2a2825', borderRadius: '3px' }}>
+                    <div className="w-2 h-2 rounded-full" style={{ background: '#2a2825' }} />
+                  </div>
+                  <button onPointerDown={() => sendKey("ArrowRight", true)} onPointerUp={() => sendKey("ArrowRight", false)} onPointerLeave={() => sendKey("ArrowRight", false)}
+                    className="flex items-center justify-center select-none active:scale-95 transition-all"
+                    style={{ background: 'linear-gradient(270deg,#4a4845,#3a3835)', borderRadius: '0 6px 6px 0', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+                  </button>
+                  <div />
+                  <button onPointerDown={() => sendKey("ArrowDown", true)} onPointerUp={() => sendKey("ArrowDown", false)} onPointerLeave={() => sendKey("ArrowDown", false)}
+                    className="flex items-center justify-center select-none active:scale-95 transition-all"
+                    style={{ background: 'linear-gradient(0deg,#4a4845,#3a3835)', borderRadius: '0 0 6px 6px', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+                  </button>
+                  <div />
                 </div>
-                <button onPointerDown={() => sendKey("ArrowRight", true)} onPointerUp={() => sendKey("ArrowRight", false)} onPointerLeave={() => sendKey("ArrowRight", false)}
-                  className="flex items-center justify-center select-none active:scale-95 transition-all"
-                  style={{ background: 'linear-gradient(270deg,#4a4845,#3a3835)', borderRadius: '0 6px 6px 0', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
-                </button>
-                <div />
-                <button onPointerDown={() => sendKey("ArrowDown", true)} onPointerUp={() => sendKey("ArrowDown", false)} onPointerLeave={() => sendKey("ArrowDown", false)}
-                  className="flex items-center justify-center select-none active:scale-95 transition-all"
-                  style={{ background: 'linear-gradient(0deg,#4a4845,#3a3835)', borderRadius: '0 0 6px 6px', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
-                </button>
-                <div />
               </div>
 
-              {/* SELECT + START — circular, angled, close to D-pad */}
-              <div className="flex flex-col gap-2.5 items-center" style={{ transform: 'rotate(-20deg)', flexShrink: 0 }}>
+              {/* SELECT + START — centre column, truly centred */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center', transform: 'rotate(-20deg)' }}>
                 {[
-                  { label: 'SEL', key: 'Shift', down: true },
-                  { label: 'STA', key: ' ', down: true },
+                  { label: 'SEL', key: 'Shift' },
+                  { label: 'STA', key: ' ' },
                 ].map(({ label, key }) => (
-                  <div key={label} className="flex flex-col items-center gap-0.5">
+                  <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <button
                       onPointerDown={() => sendKey(key, true)}
                       onPointerUp={() => sendKey(key, false)}
                       onPointerLeave={() => sendKey(key, false)}
-                      className="select-none active:scale-90 transition-all rounded-full flex items-center justify-center"
-                      style={{ width: 32, height: 32, background: 'linear-gradient(180deg,#7a7870,#5a5852)', border: '1px solid #4a4840', boxShadow: '0 2px 5px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18)', color: '#c0bdb8' }}
+                      className="select-none active:scale-90 transition-all"
+                      style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(180deg,#7a7870,#5a5852)', border: '1px solid #4a4840', boxShadow: '0 2px 5px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18)', color: '#c0bdb8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
                       <span style={{ fontSize: '0.38rem', fontFamily: 'monospace', fontWeight: 900, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{label}</span>
                     </button>
@@ -1763,27 +1765,26 @@ function NousBoySection({
                 ))}
               </div>
 
-              {/* Spacer pushes A/B to the right */}
-              <div className="flex-1" />
-
-              {/* A / B — wine red, compact diagonal like real DMG */}
-              <div className="relative" style={{ width: 96, height: 80 }}>
-                <button
-                  onPointerDown={() => sendKey("z", true)}
-                  onPointerUp={() => sendKey("z", false)}
-                  onPointerLeave={() => sendKey("z", false)}
-                  className="absolute right-0 top-0 flex items-center justify-center select-none transition-all active:scale-95"
-                  style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(145deg,#8b1a2a,#6b0e1e)', border: '2px solid #4a0c14', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2)', fontSize: '0.9rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#f0c8d0' }}>
-                  A
-                </button>
-                <button
-                  onPointerDown={() => sendKey("x", true)}
-                  onPointerUp={() => sendKey("x", false)}
-                  onPointerLeave={() => sendKey("x", false)}
-                  className="absolute left-0 bottom-0 flex items-center justify-center select-none transition-all active:scale-95"
-                  style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(145deg,#7a1828,#5a0c1a)', border: '2px solid #3a0a12', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15)', fontSize: '0.9rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#e0b8c8' }}>
-                  B
-                </button>
+              {/* A / B — right column, centred within its cell */}
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ position: 'relative', width: 92, height: 80 }}>
+                  <button
+                    onPointerDown={() => sendKey("z", true)}
+                    onPointerUp={() => sendKey("z", false)}
+                    onPointerLeave={() => sendKey("z", false)}
+                    className="absolute right-0 top-0 flex items-center justify-center select-none transition-all active:scale-95"
+                    style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(145deg,#8b1a2a,#6b0e1e)', border: '2px solid #4a0c14', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2)', fontSize: '0.9rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#f0c8d0' }}>
+                    A
+                  </button>
+                  <button
+                    onPointerDown={() => sendKey("x", true)}
+                    onPointerUp={() => sendKey("x", false)}
+                    onPointerLeave={() => sendKey("x", false)}
+                    className="absolute left-0 bottom-0 flex items-center justify-center select-none transition-all active:scale-95"
+                    style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(145deg,#7a1828,#5a0c1a)', border: '2px solid #3a0a12', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15)', fontSize: '0.9rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#e0b8c8' }}>
+                    B
+                  </button>
+                </div>
               </div>
             </div>
 
