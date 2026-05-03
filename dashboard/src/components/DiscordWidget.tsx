@@ -93,7 +93,7 @@ export default function DiscordWidget() {
     setError(null);
     try {
 
-      const res = await authenticatedFetch("/api/discord/guilds");
+      const res = await authenticatedFetch("/api/plugins/hermes-entertainment-pack/discord/guilds");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       let guildList: Guild[] = [];
@@ -140,7 +140,7 @@ export default function DiscordWidget() {
     setInitializing(true);
     setError(null);
     try {
-      const res = await authenticatedFetch(`/api/discord/channels?guild_id=${encodeURIComponent(guildId)}`);
+      const res = await authenticatedFetch(`/api/plugins/hermes-entertainment-pack/discord/channels?guild_id=${encodeURIComponent(guildId)}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       let chanList: Channel[] = [];
@@ -173,7 +173,7 @@ export default function DiscordWidget() {
     setLoadingMessages(true);
     setMessages([]);
     try {
-      const res = await authenticatedFetch(`/api/discord/messages?channel_id=${encodeURIComponent(channelId)}&limit=50`);
+      const res = await authenticatedFetch(`/api/plugins/hermes-entertainment-pack/discord/messages?channel_id=${encodeURIComponent(channelId)}&limit=50`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       let msgList: Message[] = [];
@@ -198,7 +198,7 @@ export default function DiscordWidget() {
     setSending(true);
     setError(null);
     try {
-      const res = await authenticatedFetch("/api/discord/send", {
+      const res = await authenticatedFetch("/api/plugins/hermes-entertainment-pack/discord/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ channel_id: channel.id, content: compose.trim() }),
@@ -245,9 +245,9 @@ export default function DiscordWidget() {
             <p className="text-sm text-muted-foreground">Add your bot token to Hermes config:</p>
           </div>
           <code className="text-xs bg-muted/60 px-4 py-2 rounded font-mono text-foreground border border-border/30 w-full text-left">
-            DISCORD_BOT_TOKEN=your_token_here
+            hermes auth discord
           </code>
-          <p className="text-xs text-muted-foreground/60">Add to ~/.hermes/.env then restart the dashboard</p>
+          <p className="text-xs text-muted-foreground/60">Run the command above, then click Retry</p>
           <Button size="sm" variant="outline" onClick={handleRefresh} className="gap-2">
             <RefreshCw className="w-3 h-3" /> Retry Connection
           </Button>
