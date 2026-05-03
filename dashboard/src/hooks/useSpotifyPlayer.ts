@@ -119,13 +119,22 @@ export function useSpotifyPlayer(options: UseSpotifyPlayerOptions = {}) {
     [callSpotifyControl]
   );
   const toggleShuffle = useCallback(
-    () => callSpotifyControl("/api/plugins/hermes-entertainment-pack/spotify/shuffle", "shuffle"),
-    [callSpotifyControl]
+    () => callSpotifyControl(
+      "/api/plugins/hermes-entertainment-pack/spotify/shuffle",
+      "shuffle",
+      { body: JSON.stringify({ state: !(state?.shuffle_state ?? false) }) }
+    ),
+    [callSpotifyControl, state?.shuffle_state]
   );
-  const toggleRepeat = useCallback(
-    () => callSpotifyControl("/api/plugins/hermes-entertainment-pack/spotify/repeat", "repeat"),
-    [callSpotifyControl]
-  );
+  const toggleRepeat = useCallback(() => {
+    const cur = state?.repeat_state ?? "off";
+    const next = cur === "off" ? "context" : cur === "context" ? "track" : "off";
+    return callSpotifyControl(
+      "/api/plugins/hermes-entertainment-pack/spotify/repeat",
+      "repeat",
+      { body: JSON.stringify({ state: next }) }
+    );
+  }, [callSpotifyControl, state?.repeat_state]);
   const setVolumeAndSend = useCallback(
     (newVolume: number) => {
       setVolume(newVolume);

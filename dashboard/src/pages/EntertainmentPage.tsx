@@ -1767,21 +1767,21 @@ function NousBoySection({
               <div className="flex-1" />
 
               {/* A / B — wine red, compact diagonal like real DMG */}
-              <div className="relative" style={{ width: 96, height: 76 }}>
+              <div className="relative" style={{ width: 96, height: 80 }}>
                 <button
                   onPointerDown={() => sendKey("z", true)}
                   onPointerUp={() => sendKey("z", false)}
                   onPointerLeave={() => sendKey("z", false)}
-                  className="absolute right-0 top-0 w-12 h-12 rounded-full flex items-center justify-center select-none transition-all active:scale-95"
-                  style={{ background: 'linear-gradient(145deg,#8b1a2a,#6b0e1e)', border: '2px solid #4a0c14', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2)', fontSize: '0.9rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#f0c8d0' }}>
+                  className="absolute right-0 top-0 flex items-center justify-center select-none transition-all active:scale-95"
+                  style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(145deg,#8b1a2a,#6b0e1e)', border: '2px solid #4a0c14', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2)', fontSize: '0.9rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#f0c8d0' }}>
                   A
                 </button>
                 <button
                   onPointerDown={() => sendKey("x", true)}
                   onPointerUp={() => sendKey("x", false)}
                   onPointerLeave={() => sendKey("x", false)}
-                  className="absolute left-0 bottom-0 w-12 h-12 rounded-full flex items-center justify-center select-none transition-all active:scale-95"
-                  style={{ background: 'linear-gradient(145deg,#7a1828,#5a0c1a)', border: '2px solid #3a0a12', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15)', fontSize: '0.9rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#e0b8c8' }}>
+                  className="absolute left-0 bottom-0 flex items-center justify-center select-none transition-all active:scale-95"
+                  style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(145deg,#7a1828,#5a0c1a)', border: '2px solid #3a0a12', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15)', fontSize: '0.9rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#e0b8c8' }}>
                   B
                 </button>
               </div>
@@ -1842,6 +1842,29 @@ function NousBoySection({
                 )}
               </button>
             ))}
+          </div>
+          {/* Per-game controls reference */}
+          <div className="px-4 pb-3 pt-1 border-t border-border/20">
+            {activeGame.id === 'g1' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Pong</span> · ↑↓ Move paddle · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> Serve · A button = serve
+              </p>
+            )}
+            {activeGame.id === 'g2' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Tetris</span> · ← → Move · ↑ or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>X</kbd> Rotate · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> Hard drop · A = drop · B = rotate
+              </p>
+            )}
+            {activeGame.id === 'g3' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Space Raid</span> · ← → ↑ ↓ Move ship · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> Shoot · A button = shoot
+              </p>
+            )}
+            {activeGame.id === 'g4' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Flappy Bird</span> · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> or Click to flap · Opens at flappybird.io
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
