@@ -185,6 +185,40 @@ async def spotify_volume(payload: VolumePayload):
         raise HTTPException(status_code=502, detail={"message": str(exc)})
 
 
+@router.get("/spotify/recently-played")
+async def spotify_recently_played(limit: int = 8):
+    try:
+        client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    try:
+        data = client.get_recently_played(limit=limit)
+    except SpotifyAuthRequiredError:
+        raise HTTPException(status_code=401, detail={"error": "auth_required"})
+    except SpotifyAPIError as exc:
+        raise HTTPException(status_code=502, detail={"message": str(exc)})
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail={"message": str(exc)})
+    items = (data or {}).get("items", [])
+    seen: set = set()
+    result = []
+    for item in items:
+        track = item.get("track") or {}
+        name = track.get("name", "")
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        artists = [a.get("name", "") for a in track.get("artists", [])]
+        result.append({
+            "name": name,
+            "artists": artists,
+            "album": (track.get("album") or {}).get("name", ""),
+            "duration_ms": track.get("duration_ms", 0),
+            "played_at": item.get("played_at", ""),
+        })
+    return result
+
+
 # ── Discord passthrough endpoints ─────────────────────────────────────────────
 
 import json as _json
