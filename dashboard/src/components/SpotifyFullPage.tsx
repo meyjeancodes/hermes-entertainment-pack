@@ -120,7 +120,7 @@ export function SpotifyFullPage() {
         {/* Dark tint overlay */}
         <div className="absolute inset-0 bg-black/60" />
         {/* Retro purple gradient overlay */}
-        <div className="absolute inset-0 opacity-20" style={{ background: "radial-gradient(ellipse at 50% 0%, #a855f7 0%, transparent 70%)" }} />
+        <div className="absolute inset-0 opacity-20" style={{ background: "radial-gradient(ellipse at 50% 0%, #38bdf8 0%, transparent 70%)" }} />
       </div>
 
       {/* Album Art - Large Hero (with retro CRT scanlines overlay) */}

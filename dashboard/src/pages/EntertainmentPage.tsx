@@ -385,7 +385,7 @@ export default function EntertainmentPage() {
                       {/* Play/Pause — larger pill */}
                       <button onClick={handlePlayPause} title={isPlaying ? "Pause" : "Play"}
                         className="flex-shrink-0 flex items-center gap-2 px-5 h-10 rounded-full border-2 active:scale-95 transition-all select-none"
-                        style={{ background: 'rgba(168,85,247,0.18)', borderColor: 'rgba(168,85,247,0.45)', color: '#d8b4fe', boxShadow: '0 0 18px rgba(168,85,247,0.2)' }}>
+                        style={{ background: 'rgba(56,189,248,0.18)', borderColor: 'rgba(56,189,248,0.45)', color: '#bae6fd', boxShadow: '0 0 18px rgba(56,189,248,0.2)' }}>
                         {isPlaying ? (
                           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
                         ) : (
@@ -438,15 +438,15 @@ export default function EntertainmentPage() {
                           onClick={() => changeChannel(i)}
                           className="relative flex items-center gap-1.5 font-mono text-[0.58rem] active:scale-95 transition-all select-none rounded-full px-2.5 h-7 border"
                           style={{
-                            background: activeIdx === i ? 'rgba(168,85,247,0.22)' : 'rgba(255,255,255,0.04)',
-                            borderColor: activeIdx === i ? 'rgba(168,85,247,0.55)' : 'rgba(255,255,255,0.08)',
+                            background: activeIdx === i ? 'rgba(56,189,248,0.22)' : 'rgba(255,255,255,0.04)',
+                            borderColor: activeIdx === i ? 'rgba(56,189,248,0.55)' : 'rgba(255,255,255,0.08)',
                             color: activeIdx === i ? '#e9d5ff' : 'rgba(255,255,255,0.38)',
-                            boxShadow: activeIdx === i ? '0 0 14px rgba(168,85,247,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
+                            boxShadow: activeIdx === i ? '0 0 14px rgba(56,189,248,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
                           }}>
                           <ChannelIcon channel={ch} size={10} />
                           <span>{String(i + 1).padStart(2, "0")}</span>
                           {activeIdx === i && (
-                            <span className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: '#a855f7', boxShadow: '0 0 4px #a855f7' }} />
+                            <span className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: '#38bdf8', boxShadow: '0 0 4px #38bdf8' }} />
                           )}
                         </button>
                       ))}
@@ -1635,7 +1635,7 @@ function NousBoySection({
     <div className="flex flex-col items-center gap-0 w-full">
       {/* Section header */}
       <div className="w-full flex items-center gap-3 pb-4 pt-2">
-        <div className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+        <div className="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]" />
         <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">Nous Boy</h2>
         <div className="flex-1 h-px bg-border/30" />
         <span className="text-[0.6rem] font-mono text-muted-foreground/40 uppercase tracking-widest">
@@ -1822,7 +1822,7 @@ function NousBoySection({
                 {GAMEBOY_GAMES.map((_, i) => (
                   <div key={i} className={`w-1.5 h-4 rounded-full transition-all
                     ${activeGameIdx === i
-                      ? 'bg-purple-400 shadow-[0_0_6px_rgba(168,85,247,0.6)]'
+                      ? 'bg-sky-400 shadow-[0_0_6px_rgba(56,189,248,0.6)]'
                       : 'bg-slate-700'}`} />
                 ))}
               </div>
@@ -1835,14 +1835,14 @@ function NousBoySection({
                 onClick={() => setActiveGameId(game.id)}
                 className={`relative flex-shrink-0 flex items-center gap-2 px-3 h-8 rounded-full font-mono text-[0.63rem] border transition-all select-none active:scale-95 whitespace-nowrap
                   ${activeGameIdx === i
-                    ? 'bg-purple-500/10 text-foreground border-purple-500/50'
+                    ? 'bg-sky-500/10 text-foreground border-sky-500/50'
                     : 'bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted hover:text-foreground hover:border-foreground/20'
                   }`}
               >
                 <GameIcon icon={game.icon} size={13} />
                 <span>{game.name}</span>
                 {activeGameIdx === i && (
-                  <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-purple-400 shadow-[0_0_5px_rgba(168,85,247,0.9)]" />
+                  <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-sky-400 shadow-[0_0_5px_rgba(56,189,248,0.9)]" />
                 )}
               </button>
             ))}
