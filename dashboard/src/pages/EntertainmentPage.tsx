@@ -22,9 +22,9 @@ const CHANNELS: Channel[] = [
   { id: "ch4", name: "Weather Retro", type: "iframe", src: "https://weather.com/retro/" },
   { id: "ch5", name: "Nature", type: "iframe", src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0", autoplay: true },
   { id: "ch6", name: "Aethereon", type: "iframe", src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0", autoplay: true },
-  { id: "ch7", name: "NASA Live", type: "iframe", src: "https://www.youtube.com/embed/sWasdbDVNvc?controls=0&autoplay=1&mute=1", autoplay: true },
+  { id: "ch7", name: "Flight Watch", type: "iframe", src: "https://globe.adsbexchange.com/?lat=39&lon=-30&zoom=3" },
   { id: "ch8", name: "Local 58", type: "iframe", src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q", autoplay: true },
-  { id: "ch9", name: "Bloom Terminal", type: "canvas", color: "#001a00" },
+  { id: "ch9", name: "CNN Teletext", type: "canvas", color: "#000080" },
   { id: "ch10", name: "Vapor FM", type: "iframe", src: `${PLUGIN_URL}/public/vapor.html` },
 ];
 const GAMEBOY_GAMES = [
@@ -602,11 +602,10 @@ function ChannelIcon({ channel, size = 16 }: { channel: Channel; size?: number }
           <circle cx="12" cy="12" r="3" fill={color} opacity="0.3" />
         </svg>
       );
-    case "ch7": // ARTEMIS / NASA
+    case "ch7": // FLIGHT WATCH
       return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5">
-          <path d="M12 21c5.5 0 10-4.5 10-10S17.5 1 12 1 2 5.5 2 11s4.5 10 10 10z" strokeLinecap="round" />
-          <path d="M12 7c2.5 0 4.5 2 4.5 4.5S14.5 16 12 16s-4.5-2-4.5-4.5S9.5 7 12 7z" fill={color} opacity="0.5" />
+        <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
+          <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" />
         </svg>
       );
     case "ch8": // LOCAL58
@@ -617,10 +616,13 @@ function ChannelIcon({ channel, size = 16 }: { channel: Channel; size?: number }
           <path d="M2 8h20" strokeLinecap="round" />
         </svg>
       );
-    case "ch9": // MARKET TAPE
+    case "ch9": // CNN TELETEXT
       return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="2" y="3" width="20" height="15" rx="2" />
+          <line x1="2" y1="8" x2="22" y2="8" />
+          <line x1="6" y1="12" x2="13" y2="12" />
+          <line x1="6" y1="15" x2="10" y2="15" />
         </svg>
       );
     case "ch10": // SPOTIFY VISUAL
@@ -905,6 +907,7 @@ function ChannelRenderer({ channel, isPlaying, volume, isMuted }: { channel: Cha
         case "CORE BREATHWORK": return <CoreBreathworkCanvas canvasId={`canvas-${channel.id}`} />;
         case "NEO NEWSWIRE": return <NeoNewswireCanvas canvasId={`canvas-${channel.id}`} />;
         case "CHAOS MATRIX": return <ChaosMatrixCanvas canvasId={`canvas-${channel.id}`} />;
+        case "CNN Teletext": return <CNNTeletextCanvas />;
         case "Bloom Terminal": return <BloombergCanvas canvasId={`canvas-${channel.id}`} />;
         default: return <FallbackScreen name={channel.name} />;
       }
@@ -1642,9 +1645,9 @@ function NousBoySection({
 
       {/* GameBoy console — classic DMG-01 style */}
       <div className="flex justify-center mb-6">
-        <div style={{ width: 560 }}>
+        <div style={{ width: 480 }}>
           {/* Body — solid classic Game Boy gray */}
-          <div className="relative rounded-[32px_32px_24px_24px] px-8 pt-5 pb-8"
+          <div className="relative rounded-[28px_28px_20px_20px] px-6 pt-4 pb-7"
                style={{
                  background: 'linear-gradient(170deg, #c8c4bc 0%, #b0aca4 40%, #9a9690 100%)',
                  boxShadow: '0 20px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.2)',
@@ -1670,7 +1673,7 @@ function NousBoySection({
             </div>
 
             {/* Screen housing — dark olive bezel */}
-            <div className="rounded-2xl p-3 mb-5 shadow-[inset_0_3px_12px_rgba(0,0,0,0.7),0_2px_4px_rgba(0,0,0,0.3)]"
+            <div className="rounded-2xl p-2.5 mb-4 shadow-[inset_0_3px_12px_rgba(0,0,0,0.7),0_2px_4px_rgba(0,0,0,0.3)]"
                  style={{ background: 'linear-gradient(180deg,#2e2d28 0%,#3a3932 100%)', border: '2px solid #1e1d18' }}>
               {/* Screen label strip */}
               <div className="flex justify-center mb-1.5">
@@ -1713,7 +1716,7 @@ function NousBoySection({
 
               {/* D-pad — left column, centred within its cell */}
               <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '38px 38px 38px', gridTemplateRows: '38px 38px 38px', gap: '2px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '32px 32px 32px', gridTemplateRows: '32px 32px 32px', gap: '2px' }}>
                   <div />
                   <button onPointerDown={() => sendKey("ArrowUp", true)} onPointerUp={() => sendKey("ArrowUp", false)} onPointerLeave={() => sendKey("ArrowUp", false)}
                     className="flex items-center justify-center select-none active:scale-95 transition-all"
@@ -1745,7 +1748,7 @@ function NousBoySection({
               </div>
 
               {/* SELECT + START — centre column, truly centred */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center', transform: 'rotate(-20deg)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center', transform: 'rotate(-20deg)' }}>
                 {[
                   { label: 'SEL', key: 'Shift' },
                   { label: 'STA', key: ' ' },
@@ -1756,7 +1759,7 @@ function NousBoySection({
                       onPointerUp={() => sendKey(key, false)}
                       onPointerLeave={() => sendKey(key, false)}
                       className="select-none active:scale-90 transition-all"
-                      style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(180deg,#7a7870,#5a5852)', border: '1px solid #4a4840', boxShadow: '0 2px 5px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18)', color: '#c0bdb8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      style={{ width: 26, height: 26, borderRadius: '50%', background: 'linear-gradient(180deg,#7a7870,#5a5852)', border: '1px solid #4a4840', boxShadow: '0 2px 5px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18)', color: '#c0bdb8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
                       <span style={{ fontSize: '0.38rem', fontFamily: 'monospace', fontWeight: 900, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{label}</span>
                     </button>
@@ -1767,13 +1770,13 @@ function NousBoySection({
 
               {/* A / B — right column, centred within its cell */}
               <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{ position: 'relative', width: 92, height: 80 }}>
+                <div style={{ position: 'relative', width: 78, height: 68 }}>
                   <button
                     onPointerDown={() => sendKey("z", true)}
                     onPointerUp={() => sendKey("z", false)}
                     onPointerLeave={() => sendKey("z", false)}
                     className="absolute right-0 top-0 flex items-center justify-center select-none transition-all active:scale-95"
-                    style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(145deg,#8b1a2a,#6b0e1e)', border: '2px solid #4a0c14', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2)', fontSize: '0.9rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#f0c8d0' }}>
+                    style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(145deg,#8b1a2a,#6b0e1e)', border: '2px solid #4a0c14', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2)', fontSize: '0.75rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#f0c8d0' }}>
                     A
                   </button>
                   <button
@@ -1781,7 +1784,7 @@ function NousBoySection({
                     onPointerUp={() => sendKey("x", false)}
                     onPointerLeave={() => sendKey("x", false)}
                     className="absolute left-0 bottom-0 flex items-center justify-center select-none transition-all active:scale-95"
-                    style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(145deg,#7a1828,#5a0c1a)', border: '2px solid #3a0a12', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15)', fontSize: '0.9rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#e0b8c8' }}>
+                    style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(145deg,#7a1828,#5a0c1a)', border: '2px solid #3a0a12', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15)', fontSize: '0.75rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#e0b8c8' }}>
                     B
                   </button>
                 </div>
@@ -1789,7 +1792,7 @@ function NousBoySection({
             </div>
 
             {/* Speaker + branding */}
-            <div className="flex items-end justify-between mt-5">
+            <div className="flex items-end justify-between mt-4">
               <span className="text-[0.38rem] font-mono tracking-[0.4em] uppercase" style={{ color: '#6a6662' }}>NOUS RESEARCH</span>
               {/* Speaker holes — classic circular pattern */}
               <div className="flex gap-1">
@@ -1869,6 +1872,188 @@ function NousBoySection({
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+/* ─────────────── CNN Teletext ─────────────── */
+
+const CNN_TICKER = "BREAKING: AI MODELS SURPASS HUMAN BENCHMARKS IN REASONING  ●  S&P 500 CLOSES AT RECORD HIGH  ●  FED HOLDS RATES STEADY — SIGNALS CUTS AHEAD  ●  SPACEX LAUNCHES 23 STARLINK SATELLITES  ●  NVIDIA UNVEILS NEXT-GEN AI CHIP — SHARES SURGE 9%  ●  BITCOIN TOPS $90,000 ON INSTITUTIONAL DEMAND  ●  NOUS RESEARCH RELEASES HERMES-3 OPEN-SOURCE MODEL  ●  ";
+
+const CNN_FALLBACK: Record<string, string[]> = {
+  top: [
+    "GLOBAL AI SAFETY SUMMIT REACHES LANDMARK AGREEMENT ON STANDARDS",
+    "FEDERAL RESERVE HOLDS RATES AS INFLATION EASES TO 2.4%",
+    "UN SECURITY COUNCIL VOTES ON MIDDLE EAST CEASEFIRE RESOLUTION",
+    "MAJOR CYBERATTACK DISRUPTS INFRASTRUCTURE ACROSS THREE NATIONS",
+    "RECORD HEATWAVE GRIPS SOUTHERN EUROPE — TEMPERATURES HIT 47°C",
+    "INTERNATIONAL SPACE STATION CREW COMPLETES HISTORIC SPACEWALK",
+  ],
+  business: [
+    "S&P 500 HITS ALL-TIME HIGH AS EARNINGS SEASON BEATS EXPECTATIONS",
+    "FEDERAL RESERVE SIGNALS RATE CUTS AS INFLATION COOLS TO 2.4%",
+    "OIL PRICES SLIDE ON OPEC DISPUTE — BRENT CRUDE AT $78/BBL",
+    "AMAZON ANNOUNCES $5B INVESTMENT IN NEW DATA CENTER EXPANSION",
+    "SEMICONDUCTOR SECTOR SURGES ON STRONG AI CHIP DEMAND OUTLOOK",
+    "GLOBAL TRADE VOLUMES RISE 3.2% IN Q1 DESPITE TARIFF UNCERTAINTY",
+  ],
+  tech: [
+    "GOOGLE UNVEILS GEMINI ULTRA 2 — BREAKTHROUGH MULTIMODAL REASONING",
+    "OPENAI RELEASES NEW MODEL WITH EXTENDED 200K CONTEXT WINDOW",
+    "APPLE SILICON M4 DELIVERS 40% PERFORMANCE BOOST OVER PRIOR GEN",
+    "QUANTUM MILESTONE: IBM ACHIEVES STABLE 1000-QUBIT PROCESSOR",
+    "EU FINALIZES AI ACT ENFORCEMENT — FINES UP TO 7% OF REVENUE",
+    "STARTUP RAISES $500M TO DEPLOY HUMANOID ROBOTS IN WAREHOUSES",
+  ],
+};
+
+const CNN_PAGES = [
+  { num: 100, title: "HEADLINE NEWS", cat: "top",      accent: "#FFD700" },
+  { num: 200, title: "WORLD REPORT",  cat: "top",      accent: "#00FFFF" },
+  { num: 300, title: "MARKETS",       cat: "business", accent: "#00FF7F" },
+  { num: 400, title: "TECHNOLOGY",    cat: "tech",     accent: "#FF8C00" },
+];
+
+const CNN_INIT_PRICES = [
+  { s: "S&P 500",  p: 5847.32,  c:  0.74 },
+  { s: "NASDAQ",   p: 18943.21, c:  1.12 },
+  { s: "DOW",      p: 42318.65, c:  0.31 },
+  { s: "BTC/USD",  p: 89542.10, c:  2.41 },
+  { s: "ETH/USD",  p: 3284.55,  c:  1.87 },
+  { s: "NVIDIA",   p: 142.86,   c:  3.24 },
+  { s: "APPLE",    p: 213.42,   c:  0.55 },
+  { s: "TESLA",    p: 248.77,   c: -1.32 },
+];
+
+function CNNTeletextCanvas() {
+  const [pidx, setPidx] = useState(0);
+  const [now, setNow] = useState(new Date());
+  const [dot, setDot] = useState(true);
+  const [news, setNews] = useState<Record<string, string[]>>(CNN_FALLBACK);
+  const [prices, setPrices] = useState(CNN_INIT_PRICES);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const tickRef = useRef<HTMLSpanElement>(null);
+  const raf = useRef(0);
+  const pg = CNN_PAGES[pidx];
+
+  useEffect(() => { const iv = setInterval(() => setNow(new Date()), 1000); return () => clearInterval(iv); }, []);
+  useEffect(() => { const iv = setInterval(() => setDot(d => !d), 550); return () => clearInterval(iv); }, []);
+  useEffect(() => { const iv = setInterval(() => setPidx(i => (i + 1) % CNN_PAGES.length), 12000); return () => clearInterval(iv); }, []);
+  useEffect(() => {
+    const iv = setInterval(() => setPrices(prev => prev.map(p => ({
+      ...p, p: p.p * (1 + (Math.random() - 0.499) * 0.0025),
+      c: parseFloat((p.c + (Math.random() - 0.5) * 0.06).toFixed(2)),
+    }))), 2800);
+    return () => clearInterval(iv);
+  }, []);
+
+  // Ticker via RAF — no state updates, direct DOM
+  useEffect(() => {
+    const el = tickRef.current; const wrap = wrapRef.current;
+    if (!el || !wrap) return;
+    let pos = 0;
+    const loop = () => {
+      pos += 0.9;
+      if (pos > el.offsetWidth + wrap.clientWidth) pos = 0;
+      el.style.transform = `translateX(${wrap.clientWidth - pos}px)`;
+      raf.current = requestAnimationFrame(loop);
+    };
+    raf.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf.current);
+  }, []);
+
+  useEffect(() => {
+    (['top', 'business', 'tech'] as const).forEach(async cat => {
+      try {
+        const tok = (window as any).__HERMES_SESSION_TOKEN__;
+        const h: Record<string, string> = tok ? { 'X-Hermes-Session-Token': tok } : {};
+        const r = await fetch(`/api/plugins/hermes-entertainment-pack/teletext/news?category=${cat}`, { headers: h });
+        if (r.ok) { const d = await r.json(); if (d.headlines?.length >= 3) setNews(prev => ({ ...prev, [cat]: d.headlines })); }
+      } catch {}
+    });
+  }, []);
+
+  const lines = news[pg.cat] ?? CNN_FALLBACK[pg.cat] ?? [];
+  const ts = now.toLocaleTimeString('en-US', { hour12: false });
+  const ds = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+
+  return (
+    <div ref={wrapRef} style={{ position:'absolute', inset:0, background:'#000080', fontFamily:'"Courier New",Courier,monospace', color:'#fff', overflow:'hidden', display:'flex', flexDirection:'column', userSelect:'none' }}>
+
+      {/* CNN header */}
+      <div style={{ background:'#CC0000', display:'flex', alignItems:'center', padding:'3px 8px', gap:7, flexShrink:0 }}>
+        <div style={{ background:'#fff', color:'#CC0000', fontWeight:900, fontSize:'0.9rem', padding:'0 5px', lineHeight:1.25, fontFamily:'Arial Black,Arial,sans-serif', flexShrink:0 }}>CNN</div>
+        <span style={{ color:'#FFD700', fontSize:'0.38rem', fontWeight:700, letterSpacing:'0.3em', flex:1 }}>HEADLINE NEWS · TELETEXT SERVICE</span>
+        <span style={{ color:dot?'#FF5555':'transparent', fontSize:'0.4rem' }}>●</span>
+        <span style={{ color:'#FFAAAA', fontSize:'0.33rem', fontWeight:700, letterSpacing:'0.22em', marginRight:8 }}>LIVE</span>
+        <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end' }}>
+          <span style={{ color:'#FFD700', fontSize:'0.4rem', fontWeight:700 }}>P{pg.num}</span>
+          <span style={{ color:'rgba(255,255,255,0.6)', fontSize:'0.35rem' }}>{ts}</span>
+        </div>
+      </div>
+
+      {/* Date + page nav */}
+      <div style={{ background:'#000060', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'2px 8px', flexShrink:0, borderBottom:'1px solid #AA0000' }}>
+        <span style={{ color:'#00CCFF', fontSize:'0.35rem', letterSpacing:'0.12em' }}>{ds}</span>
+        <div style={{ display:'flex', gap:3 }}>
+          {CNN_PAGES.map((p, i) => (
+            <button key={p.num} onClick={() => setPidx(i)} style={{ background:i===pidx?p.accent:'transparent', color:i===pidx?'#000':'#445', border:'none', cursor:'pointer', padding:'0 5px', fontSize:'0.35rem', fontFamily:'monospace', fontWeight:700, borderRadius:1, lineHeight:1.6 }}>{p.num}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Page title */}
+      <div style={{ background:'#000070', padding:'4px 8px', display:'flex', alignItems:'center', gap:7, flexShrink:0, borderBottom:`2px solid ${pg.accent}44` }}>
+        <div style={{ background:'#CC0000', color:'#fff', padding:'1px 5px', fontSize:'0.37rem', fontWeight:900, letterSpacing:'0.18em', lineHeight:1.5, flexShrink:0 }}>BREAKING</div>
+        <span style={{ color:pg.accent, fontSize:'0.58rem', fontWeight:700, letterSpacing:'0.2em', textShadow:`0 0 10px ${pg.accent}66`, flex:1 }}>{pg.title}</span>
+        <span style={{ color:'#223', fontSize:'0.3rem' }}>CNN.COM</span>
+      </div>
+
+      {/* Content */}
+      <div style={{ flex:1, padding:'7px 8px 22px', overflow:'hidden', display:'flex', flexDirection:'column', gap:4 }}>
+        {pg.cat === 'business' ? (
+          <div style={{ display:'flex', gap:10, height:'100%' }}>
+            <div style={{ flex:1, display:'flex', flexDirection:'column', gap:3 }}>
+              <span style={{ color:pg.accent, fontSize:'0.36rem', fontWeight:700, letterSpacing:'0.2em', borderBottom:`1px solid ${pg.accent}33`, paddingBottom:2, marginBottom:2 }}>LIVE MARKETS</span>
+              {prices.map(q => (
+                <div key={q.s} style={{ display:'flex', alignItems:'center', gap:4 }}>
+                  <span style={{ color:'#FFD700', fontWeight:700, minWidth:72, fontSize:'0.37rem' }}>{q.s}</span>
+                  <span style={{ color:'#fff', minWidth:58, fontSize:'0.41rem', fontVariantNumeric:'tabular-nums' }}>{q.p >= 1000 ? q.p.toFixed(0) : q.p.toFixed(2)}</span>
+                  <span style={{ color:q.c>=0?'#00FF7F':'#FF4444', fontSize:'0.36rem', fontWeight:700 }}>{q.c>=0?'▲':'▼'}{Math.abs(q.c).toFixed(2)}%</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ width:'40%', display:'flex', flexDirection:'column', gap:3 }}>
+              <span style={{ color:'#00CCFF', fontSize:'0.36rem', fontWeight:700, letterSpacing:'0.2em', borderBottom:'1px solid #00CCFF33', paddingBottom:2, marginBottom:2 }}>BIZ WIRE</span>
+              {lines.slice(0,5).map((h, i) => (
+                <div key={i} style={{ display:'flex', gap:4 }}>
+                  <span style={{ color:'#445', fontSize:'0.36rem' }}>▶</span>
+                  <span style={{ color:'rgba(190,205,255,0.75)', fontSize:'0.36rem', lineHeight:1.4 }}>{h.toUpperCase()}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          lines.slice(0,6).map((h, i) => (
+            <div key={i} style={{ display:'flex', gap:6, alignItems:'flex-start' }}>
+              <span style={{ color:i===0?'#CC0000':'#445', fontSize:'0.4rem', flexShrink:0, marginTop:1 }}>{i===0?'▶▶':'▶'}</span>
+              <span style={{ color:i===0?'#FFD700':i<3?'#fff':'rgba(190,205,255,0.6)', fontSize:i===0?'0.52rem':'0.44rem', lineHeight:1.45, fontWeight:i===0?700:400 }}>
+                {h.toUpperCase()}
+              </span>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Scrolling ticker */}
+      <div style={{ position:'absolute', bottom:0, left:0, right:0, background:'#990000', display:'flex', alignItems:'center', height:18, overflow:'hidden' }}>
+        <div style={{ background:'#FFD700', color:'#000', fontWeight:900, padding:'0 8px', fontSize:'0.37rem', whiteSpace:'nowrap', height:'100%', display:'flex', alignItems:'center', letterSpacing:'0.1em', flexShrink:0 }}>NEWS</div>
+        <div style={{ flex:1, overflow:'hidden', position:'relative', height:'100%' }}>
+          <span ref={tickRef} style={{ position:'absolute', top:'50%', left:0, whiteSpace:'nowrap', fontSize:'0.39rem', color:'#fff', fontWeight:600, letterSpacing:'0.05em', willChange:'transform' }}>
+            {CNN_TICKER}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
