@@ -43,60 +43,129 @@ function CassetteWidget({ playing, track }: { playing: boolean; track: CassetteT
   const reelCls = `${styles.reel}${playing ? '' : ` ${styles.reelPaused}`}`;
   const label = track?.name?.toUpperCase() || 'HERMES MIXTAPE VOL. I';
   const artist = (track?.artists?.join(' · ') || 'VARIOUS ARTISTS').toUpperCase();
-  const labelLine1 = label.slice(0, 24);
-  const labelLine2 = label.length > 24 ? label.slice(24, 48) : null;
+  const labelLine1 = label.slice(0, 26);
+  const labelLine2 = label.length > 26 ? label.slice(26, 52) : null;
+
   return (
     <div className={styles.cassetteWrap}>
-      <svg viewBox="0 0 300 180" className={styles.cassetteSvg} xmlns="http://www.w3.org/2000/svg">
-        {/* Shell */}
-        <rect x="2" y="2" width="296" height="176" rx="10" fill="#0f0820" stroke="rgba(168,85,247,0.5)" strokeWidth="1.5"/>
-        {/* Label zone */}
-        <rect x="20" y="10" width="260" height="90" rx="4" fill="#1a0930" stroke="rgba(168,85,247,0.18)" strokeWidth="1"/>
-        <text x="150" y="28" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="6.5" fill="rgba(168,85,247,0.4)" letterSpacing="3">HERMES TYPE-IV CHROME · 90 MIN</text>
-        <text x="150" y="52" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="12" fontWeight="bold" fill="#f2efe8">{labelLine1}</text>
-        {labelLine2 && <text x="150" y="66" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="12" fontWeight="bold" fill="#f2efe8">{labelLine2}</text>}
-        <text x="150" y={labelLine2 ? 80 : 68} textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="7.5" fill="rgba(168,85,247,0.55)">{artist.slice(0, 30)}</text>
-        <text x="150" y="96" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="6" fill="rgba(168,85,247,0.28)" letterSpacing="4">◄ A-SIDE ►</text>
+      <svg viewBox="0 0 320 200" className={styles.cassetteSvg} xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="cBodyGrad" x1="0" y1="0" x2="0.3" y2="1">
+            <stop offset="0%" stopColor="#0c1c3e"/>
+            <stop offset="45%" stopColor="#061025"/>
+            <stop offset="100%" stopColor="#030a18"/>
+          </linearGradient>
+          <linearGradient id="cLabelGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#0e2654"/>
+            <stop offset="100%" stopColor="#05142c"/>
+          </linearGradient>
+          <radialGradient id="cHubGrad" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stopColor="#7dd3fc"/>
+            <stop offset="100%" stopColor="#1e3a8a"/>
+          </radialGradient>
+          <linearGradient id="cShineGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgba(56,189,248,0.13)"/>
+            <stop offset="100%" stopColor="rgba(56,189,248,0)"/>
+          </linearGradient>
+        </defs>
+
+        {/* Main shell */}
+        <rect x="2" y="2" width="316" height="196" rx="11" fill="url(#cBodyGrad)" stroke="rgba(56,189,248,0.55)" strokeWidth="1.5"/>
+        {/* Top shine overlay */}
+        <rect x="2" y="2" width="316" height="52" rx="11" fill="url(#cShineGrad)"/>
+        <rect x="2" y="40" width="316" height="14" fill="url(#cShineGrad)"/>
+
+        {/* Top metal strip */}
+        <rect x="10" y="7" width="300" height="22" rx="3" fill="rgba(0,0,0,0.42)" stroke="rgba(56,189,248,0.1)" strokeWidth="0.5"/>
+
+        {/* Drive spindle access holes */}
+        <circle cx="96" cy="18" r="9" fill="#02050f" stroke="rgba(56,189,248,0.25)" strokeWidth="1"/>
+        <circle cx="96" cy="18" r="3.5" fill="#010309" stroke="rgba(56,189,248,0.12)" strokeWidth="0.5"/>
+        <circle cx="224" cy="18" r="9" fill="#02050f" stroke="rgba(56,189,248,0.25)" strokeWidth="1"/>
+        <circle cx="224" cy="18" r="3.5" fill="#010309" stroke="rgba(56,189,248,0.12)" strokeWidth="0.5"/>
+
+        {/* Label area */}
+        <rect x="14" y="34" width="292" height="86" rx="4" fill="url(#cLabelGrad)" stroke="rgba(56,189,248,0.2)" strokeWidth="1"/>
+        {/* Label top accent bar */}
+        <rect x="14" y="34" width="292" height="7" rx="4" fill="rgba(56,189,248,0.32)"/>
+        <rect x="14" y="38" width="292" height="3" fill="rgba(56,189,248,0.32)"/>
+        {/* Label bottom accent bar */}
+        <rect x="14" y="112" width="292" height="8" fill="rgba(56,189,248,0.14)"/>
+        <rect x="14" y="116" width="292" height="4" fill="rgba(56,189,248,0.1)"/>
+
+        {/* Brand / tape spec */}
+        <text x="160" y="57" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="6.5" fill="rgba(56,189,248,0.42)" letterSpacing="3">HERMES TYPE-IV CHROME · 90 MIN</text>
+
+        {/* Track name */}
+        <text x="160" y="79" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="11" fontWeight="bold" fill="#e0f2fe">{labelLine1}</text>
+        {labelLine2 && (
+          <text x="160" y="92" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="11" fontWeight="bold" fill="#e0f2fe">{labelLine2}</text>
+        )}
+
+        {/* Artist */}
+        <text x="160" y={labelLine2 ? 106 : 96} textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="7.5" fill="rgba(56,189,248,0.58)">{artist.slice(0, 32)}</text>
+
+        {/* Side marker */}
+        <text x="160" y="113" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="5.5" fill="rgba(56,189,248,0.28)" letterSpacing="4">◄ A-SIDE ►</text>
+
         {/* Reel window */}
-        <rect x="20" y="108" width="260" height="62" rx="4" fill="#080810" stroke="rgba(168,85,247,0.14)" strokeWidth="1"/>
-        <line x1="70" y1="162" x2="112" y2="162" stroke="rgba(168,85,247,0.18)" strokeWidth="1"/>
-        <rect x="112" y="154" width="76" height="10" rx="2" fill="#080810" stroke="rgba(168,85,247,0.18)" strokeWidth="1"/>
-        <line x1="188" y1="162" x2="230" y2="162" stroke="rgba(168,85,247,0.18)" strokeWidth="1"/>
-        {/* Left reel */}
+        <rect x="14" y="124" width="292" height="62" rx="4" fill="#02050d" stroke="rgba(56,189,248,0.12)" strokeWidth="1"/>
+
+        {/* Tape path between reels */}
+        <path d="M108,174 Q160,168 212,174" fill="none" stroke="rgba(56,189,248,0.22)" strokeWidth="1.5"/>
+
+        {/* Tape head window */}
+        <rect x="128" y="164" width="64" height="16" rx="3" fill="#01030a" stroke="rgba(56,189,248,0.28)" strokeWidth="1"/>
+        <line x1="160" y1="165" x2="160" y2="179" stroke="rgba(56,189,248,0.16)" strokeWidth="1"/>
+
+        {/* Left reel — 6 spokes, cx=90 cy=154 r=28 hub=9 */}
         <g className={reelCls}>
-          <circle cx="70" cy="137" r="22" fill="none" stroke="rgba(168,85,247,0.3)" strokeWidth="1.5"/>
-          <circle cx="70" cy="137" r="7" fill="rgba(168,85,247,0.45)" stroke="rgba(168,85,247,0.6)" strokeWidth="1"/>
-          <line x1="70" y1="115" x2="70" y2="159" stroke="rgba(168,85,247,0.22)" strokeWidth="1.5"/>
-          <line x1="48" y1="137" x2="92" y2="137" stroke="rgba(168,85,247,0.22)" strokeWidth="1.5"/>
-          <line x1="54" y1="118" x2="86" y2="156" stroke="rgba(168,85,247,0.22)" strokeWidth="1.5"/>
-          <line x1="86" y1="118" x2="54" y2="156" stroke="rgba(168,85,247,0.22)" strokeWidth="1.5"/>
+          <circle cx="90" cy="154" r="28" fill="none" stroke="rgba(56,189,248,0.28)" strokeWidth="1.5"/>
+          <circle cx="90" cy="154" r="15" fill="none" stroke="rgba(56,189,248,0.14)" strokeWidth="0.7" strokeDasharray="3 2"/>
+          <circle cx="90" cy="154" r="9" fill="url(#cHubGrad)" stroke="rgba(56,189,248,0.5)" strokeWidth="1"/>
+          <line x1="99" y1="154" x2="118" y2="154" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
+          <line x1="95" y1="162" x2="104" y2="178" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
+          <line x1="85" y1="162" x2="76" y2="178" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
+          <line x1="81" y1="154" x2="62" y2="154" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
+          <line x1="85" y1="146" x2="76" y2="130" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
+          <line x1="95" y1="146" x2="104" y2="130" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
         </g>
-        {/* Right reel */}
+
+        {/* Right reel — cx=230 cy=154 */}
         <g className={reelCls}>
-          <circle cx="230" cy="137" r="22" fill="none" stroke="rgba(168,85,247,0.3)" strokeWidth="1.5"/>
-          <circle cx="230" cy="137" r="7" fill="rgba(168,85,247,0.45)" stroke="rgba(168,85,247,0.6)" strokeWidth="1"/>
-          <line x1="230" y1="115" x2="230" y2="159" stroke="rgba(168,85,247,0.22)" strokeWidth="1.5"/>
-          <line x1="208" y1="137" x2="252" y2="137" stroke="rgba(168,85,247,0.22)" strokeWidth="1.5"/>
-          <line x1="214" y1="118" x2="246" y2="156" stroke="rgba(168,85,247,0.22)" strokeWidth="1.5"/>
-          <line x1="246" y1="118" x2="214" y2="156" stroke="rgba(168,85,247,0.22)" strokeWidth="1.5"/>
+          <circle cx="230" cy="154" r="28" fill="none" stroke="rgba(56,189,248,0.28)" strokeWidth="1.5"/>
+          <circle cx="230" cy="154" r="15" fill="none" stroke="rgba(56,189,248,0.14)" strokeWidth="0.7" strokeDasharray="3 2"/>
+          <circle cx="230" cy="154" r="9" fill="url(#cHubGrad)" stroke="rgba(56,189,248,0.5)" strokeWidth="1"/>
+          <line x1="239" y1="154" x2="258" y2="154" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
+          <line x1="235" y1="162" x2="244" y2="178" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
+          <line x1="225" y1="162" x2="216" y2="178" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
+          <line x1="221" y1="154" x2="202" y2="154" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
+          <line x1="225" y1="146" x2="216" y2="130" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
+          <line x1="235" y1="146" x2="244" y2="130" stroke="rgba(56,189,248,0.26)" strokeWidth="1.2"/>
         </g>
-        {/* Corner screws */}
-        <circle cx="11" cy="12" r="4" fill="none" stroke="rgba(168,85,247,0.15)" strokeWidth="1"/>
-        <line x1="9" y1="10" x2="13" y2="14" stroke="rgba(168,85,247,0.12)" strokeWidth="0.8"/>
-        <line x1="13" y1="10" x2="9" y2="14" stroke="rgba(168,85,247,0.12)" strokeWidth="0.8"/>
-        <circle cx="289" cy="12" r="4" fill="none" stroke="rgba(168,85,247,0.15)" strokeWidth="1"/>
-        <line x1="287" y1="10" x2="291" y2="14" stroke="rgba(168,85,247,0.12)" strokeWidth="0.8"/>
-        <line x1="291" y1="10" x2="287" y2="14" stroke="rgba(168,85,247,0.12)" strokeWidth="0.8"/>
-        <circle cx="11" cy="168" r="4" fill="none" stroke="rgba(168,85,247,0.15)" strokeWidth="1"/>
-        <line x1="9" y1="166" x2="13" y2="170" stroke="rgba(168,85,247,0.12)" strokeWidth="0.8"/>
-        <line x1="13" y1="166" x2="9" y2="170" stroke="rgba(168,85,247,0.12)" strokeWidth="0.8"/>
-        <circle cx="289" cy="168" r="4" fill="none" stroke="rgba(168,85,247,0.15)" strokeWidth="1"/>
-        <line x1="287" y1="166" x2="291" y2="170" stroke="rgba(168,85,247,0.12)" strokeWidth="0.8"/>
-        <line x1="291" y1="166" x2="287" y2="170" stroke="rgba(168,85,247,0.12)" strokeWidth="0.8"/>
-        {/* Playing indicator dot */}
+
+        {/* 4 corner screws */}
+        <circle cx="12" cy="12" r="5" fill="#01030a" stroke="rgba(56,189,248,0.18)" strokeWidth="1"/>
+        <line x1="9.5" y1="9.5" x2="14.5" y2="14.5" stroke="rgba(56,189,248,0.14)" strokeWidth="0.8"/>
+        <line x1="14.5" y1="9.5" x2="9.5" y2="14.5" stroke="rgba(56,189,248,0.14)" strokeWidth="0.8"/>
+        <circle cx="308" cy="12" r="5" fill="#01030a" stroke="rgba(56,189,248,0.18)" strokeWidth="1"/>
+        <line x1="305.5" y1="9.5" x2="310.5" y2="14.5" stroke="rgba(56,189,248,0.14)" strokeWidth="0.8"/>
+        <line x1="310.5" y1="9.5" x2="305.5" y2="14.5" stroke="rgba(56,189,248,0.14)" strokeWidth="0.8"/>
+        <circle cx="12" cy="190" r="5" fill="#01030a" stroke="rgba(56,189,248,0.18)" strokeWidth="1"/>
+        <line x1="9.5" y1="187.5" x2="14.5" y2="192.5" stroke="rgba(56,189,248,0.14)" strokeWidth="0.8"/>
+        <line x1="14.5" y1="187.5" x2="9.5" y2="192.5" stroke="rgba(56,189,248,0.14)" strokeWidth="0.8"/>
+        <circle cx="308" cy="190" r="5" fill="#01030a" stroke="rgba(56,189,248,0.18)" strokeWidth="1"/>
+        <line x1="305.5" y1="187.5" x2="310.5" y2="192.5" stroke="rgba(56,189,248,0.14)" strokeWidth="0.8"/>
+        <line x1="310.5" y1="187.5" x2="305.5" y2="192.5" stroke="rgba(56,189,248,0.14)" strokeWidth="0.8"/>
+        {/* Bottom centre screw */}
+        <circle cx="160" cy="190" r="5" fill="#01030a" stroke="rgba(56,189,248,0.18)" strokeWidth="1"/>
+        <line x1="157.5" y1="187.5" x2="162.5" y2="192.5" stroke="rgba(56,189,248,0.14)" strokeWidth="0.8"/>
+        <line x1="162.5" y1="187.5" x2="157.5" y2="192.5" stroke="rgba(56,189,248,0.14)" strokeWidth="0.8"/>
+
+        {/* Playing indicator */}
         {playing && (
-          <circle cx="150" cy="172" r="3" fill="#a855f7" opacity="0.8">
-            <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.2s" repeatCount="indefinite"/>
+          <circle cx="160" cy="196" r="3" fill="#38bdf8" opacity="0.9">
+            <animate attributeName="opacity" values="0.9;0.2;0.9" dur="1.2s" repeatCount="indefinite"/>
           </circle>
         )}
       </svg>
