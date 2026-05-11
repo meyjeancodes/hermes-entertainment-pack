@@ -240,11 +240,18 @@ async def discord_channels(guild_id: str):
         raise HTTPException(status_code=401, detail={"error": "DISCORD_BOT_TOKEN not configured."})
     try:
         channels = _discord_api("GET", f"/guilds/{guild_id}/channels", token)
+        # Include categories (4) and text/announcement channels (0, 5)
         result = [
-            {"id": c["id"], "name": c["name"], "type": c["type"]}
-            for c in channels if c["type"] in (0, 5)
+            {
+                "id": c["id"],
+                "name": c["name"],
+                "type": c["type"],
+                "position": c.get("position", 0),
+                "parent_id": c.get("parent_id"),
+            }
+            for c in channels if c["type"] in (0, 4, 5)
         ]
-        result.sort(key=lambda c: c["name"])
+        result.sort(key=lambda c: (c.get("position") or 0))
         return result
     except urllib.error.HTTPError as exc:
         raise HTTPException(status_code=exc.code, detail={"error": f"Discord API error {exc.code}"})
@@ -253,26 +260,64 @@ async def discord_channels(guild_id: str):
 
 
 @router.get("/discord/messages")
-async def discord_messages(channel_id: str, limit: int = 50):
+async def discord_messages(channel_id: str, limit: int = 50, after: _Opt[str] = None):
     token = _discord_bot_token()
     if not token:
         raise HTTPException(status_code=401, detail={"error": "DISCORD_BOT_TOKEN not configured."})
     try:
-        msgs = _discord_api("GET", f"/channels/{channel_id}/messages", token, params={"limit": str(min(limit, 100))})
+        params: dict = {"limit": str(min(limit, 100))}
+        if after:
+            params["after"] = after
+        msgs = _discord_api("GET", f"/channels/{channel_id}/messages", token, params=params)
         result = []
         for m in (msgs or []):
             a = m.get("author", {})
+            attachments = [
+                {
+                    "id": att.get("id"),
+                    "url": att.get("url"),
+                    "filename": att.get("filename"),
+                    "content_type": att.get("content_type", ""),
+                    "width": att.get("width"),
+                    "height": att.get("height"),
+                    "size": att.get("size"),
+                }
+                for att in m.get("attachments", [])
+            ]
+            embeds = [
+                {
+                    "type": e.get("type"),
+                    "title": e.get("title"),
+                    "description": e.get("description"),
+                    "url": e.get("url"),
+                    "color": e.get("color"),
+                    "image": e.get("image", {}).get("url") if e.get("image") else None,
+                    "thumbnail": e.get("thumbnail", {}).get("url") if e.get("thumbnail") else None,
+                    "author_name": e.get("author", {}).get("name") if e.get("author") else None,
+                    "footer_text": e.get("footer", {}).get("text") if e.get("footer") else None,
+                }
+                for e in m.get("embeds", [])
+            ]
             result.append({
                 "id": m["id"],
                 "content": m.get("content", ""),
                 "author": {
+                    "id": a.get("id", ""),
                     "username": a.get("username", ""),
                     "discriminator": a.get("discriminator", "0"),
                     "avatar": a.get("avatar"),
                     "bot": a.get("bot", False),
                 },
                 "timestamp": m.get("timestamp", ""),
+                "edited_timestamp": m.get("edited_timestamp"),
                 "channel_id": channel_id,
+                "attachments": attachments,
+                "embeds": embeds,
+                "mention_everyone": m.get("mention_everyone", False),
+                "reactions": [
+                    {"emoji": r.get("emoji", {}).get("name", ""), "count": r.get("count", 0)}
+                    for r in m.get("reactions", [])
+                ],
             })
         return result
     except urllib.error.HTTPError as exc:
@@ -284,6 +329,36 @@ async def discord_messages(channel_id: str, limit: int = 50):
 class DiscordSendPayload(BaseModel):
     channel_id: str
     content: str
+
+
+# ── Teletext news (BBC RSS) ────────────────────────────────────────────────────
+
+import xml.etree.ElementTree as _ET
+import html as _html
+
+_TELETEXT_FEEDS = {
+    "top":      "https://feeds.bbci.co.uk/news/rss.xml",
+    "business": "https://feeds.bbci.co.uk/news/business/rss.xml",
+    "tech":     "https://feeds.bbci.co.uk/news/technology/rss.xml",
+}
+
+
+@router.get("/teletext/news")
+async def teletext_news(category: str = "top"):
+    url = _TELETEXT_FEEDS.get(category, _TELETEXT_FEEDS["top"])
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible)"})
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            raw = resp.read().decode("utf-8", errors="replace")
+        root = _ET.fromstring(raw)
+        headlines = [
+            _html.unescape(t.text.strip())
+            for item in root.findall(".//item")[:10]
+            if (t := item.find("title")) is not None and t.text
+        ]
+        return {"headlines": headlines}
+    except Exception as exc:
+        return {"headlines": [], "error": str(exc)}
 
 
 @router.post("/discord/send")
