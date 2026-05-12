@@ -1784,6 +1784,7 @@ function HNNTeletextCanvas() {
   const [flash, setFlash] = useState(false);
   const [news, setNews] = useState<Record<string, string[]>>(HNN_FALLBACK);
   const [prices, setPrices] = useState(HNN_INIT_PRICES);
+  const [tickerText, setTickerText] = useState(HNN_TICKER);
   const wrapRef = useRef<HTMLDivElement>(null);
   const tickRef = useRef<HTMLSpanElement>(null);
   const raf = useRef(0);
@@ -1823,12 +1824,20 @@ function HNNTeletextCanvas() {
   }, []);
 
   useEffect(() => {
-    (['top', 'business', 'tech'] as const).forEach(async cat => {
+    (['top', 'world', 'business', 'tech', 'sports'] as const).forEach(async cat => {
       try {
         const tok = (window as any).__HERMES_SESSION_TOKEN__;
         const h: Record<string, string> = tok ? { 'X-Hermes-Session-Token': tok } : {};
         const r = await fetch(`/api/plugins/hermes-entertainment-pack/teletext/news?category=${cat}`, { headers: h });
-        if (r.ok) { const d = await r.json(); if (d.headlines?.length >= 3) setNews(prev => ({ ...prev, [cat]: d.headlines })); }
+        if (r.ok) {
+          const d = await r.json();
+          if (d.headlines?.length >= 3) {
+            setNews(prev => ({ ...prev, [cat]: d.headlines }));
+            if (cat === 'top') {
+              setTickerText(d.headlines.map((hl: string) => `◈ ${hl.toUpperCase()}  `).join('  '));
+            }
+          }
+        }
       } catch {}
     });
   }, []);
@@ -2028,7 +2037,7 @@ function HNNTeletextCanvas() {
         <div style={{ background:'#FFE066', color:'#000', fontWeight:900, padding:'0 8px', fontSize:10, whiteSpace:'nowrap', height:'100%', display:'flex', alignItems:'center', letterSpacing:'0.08em', flexShrink:0 }}>◈ HNN</div>
         <div style={{ flex:1, overflow:'hidden', position:'relative', height:'100%' }}>
           <span ref={tickRef} style={{ position:'absolute', top:'50%', left:0, transform:'translateY(-50%)', whiteSpace:'nowrap', fontSize:10, color:'rgba(255,230,100,0.85)', fontWeight:600, letterSpacing:'0.04em', willChange:'transform' }}>
-            {HNN_TICKER}
+            {tickerText}
           </span>
         </div>
       </div>
