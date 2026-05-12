@@ -241,6 +241,40 @@ async def spotify_volume(payload: VolumePayload):
         raise HTTPException(status_code=502, detail={"message": str(exc)})
 
 
+@router.get("/spotify/recently-played")
+async def spotify_recently_played(limit: int = 8):
+    try:
+        client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    try:
+        data = client.get_recently_played(limit=limit)
+    except SpotifyAuthRequiredError:
+        raise HTTPException(status_code=401, detail={"error": "auth_required"})
+    except SpotifyAPIError as exc:
+        raise HTTPException(status_code=502, detail={"message": str(exc)})
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail={"message": str(exc)})
+    items = (data or {}).get("items", [])
+    seen: set = set()
+    result = []
+    for item in items:
+        track = item.get("track") or {}
+        name = track.get("name", "")
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        artists = [a.get("name", "") for a in track.get("artists", [])]
+        result.append({
+            "name": name,
+            "artists": artists,
+            "album": (track.get("album") or {}).get("name", ""),
+            "duration_ms": track.get("duration_ms", 0),
+            "played_at": item.get("played_at", ""),
+        })
+    return result
+
+
 # ── Discord passthrough endpoints ─────────────────────────────────────────────
 
 @router.get("/discord/guilds")
@@ -264,11 +298,18 @@ async def discord_channels(guild_id: str):
         raise HTTPException(status_code=401, detail={"error": "DISCORD_BOT_TOKEN not configured."})
     try:
         channels = _discord_api("GET", f"/guilds/{guild_id}/channels", token)
+        # Include categories (4) and text/announcement channels (0, 5)
         result = [
-            {"id": c["id"], "name": c["name"], "type": c["type"]}
-            for c in channels if c["type"] in (0, 5)
+            {
+                "id": c["id"],
+                "name": c["name"],
+                "type": c["type"],
+                "position": c.get("position", 0),
+                "parent_id": c.get("parent_id"),
+            }
+            for c in channels if c["type"] in (0, 4, 5)
         ]
-        result.sort(key=lambda c: c["name"])
+        result.sort(key=lambda c: (c.get("position") or 0))
         return result
     except urllib.error.HTTPError as exc:
         raise HTTPException(status_code=exc.code, detail={"error": f"Discord API error {exc.code}"})
@@ -277,7 +318,7 @@ async def discord_channels(guild_id: str):
 
 
 @router.get("/discord/messages")
-async def discord_messages(channel_id: str, limit: int = 50):
+async def discord_messages(channel_id: str, limit: int = 50, after: _Opt[str] = None):
     token = _discord_bot_token()
     if not token:
         raise HTTPException(status_code=401, detail={"error": "DISCORD_BOT_TOKEN not configured."})
@@ -305,12 +346,14 @@ async def discord_messages(channel_id: str, limit: int = 50):
                 "id": m["id"],
                 "content": m.get("content", ""),
                 "author": {
+                    "id": a.get("id", ""),
                     "username": a.get("username", ""),
                     "discriminator": a.get("discriminator", "0"),
                     "avatar": a.get("avatar"),
                     "bot": a.get("bot", False),
                 },
                 "timestamp": m.get("timestamp", ""),
+                "edited_timestamp": m.get("edited_timestamp"),
                 "channel_id": channel_id,
                 "images": images,
             })
@@ -324,6 +367,36 @@ async def discord_messages(channel_id: str, limit: int = 50):
 class DiscordSendPayload(BaseModel):
     channel_id: str
     content: str
+
+
+# ── Teletext news (BBC RSS) ────────────────────────────────────────────────────
+
+import xml.etree.ElementTree as _ET
+import html as _html
+
+_TELETEXT_FEEDS = {
+    "top":      "https://feeds.bbci.co.uk/news/rss.xml",
+    "business": "https://feeds.bbci.co.uk/news/business/rss.xml",
+    "tech":     "https://feeds.bbci.co.uk/news/technology/rss.xml",
+}
+
+
+@router.get("/teletext/news")
+async def teletext_news(category: str = "top"):
+    url = _TELETEXT_FEEDS.get(category, _TELETEXT_FEEDS["top"])
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible)"})
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            raw = resp.read().decode("utf-8", errors="replace")
+        root = _ET.fromstring(raw)
+        headlines = [
+            _html.unescape(t.text.strip())
+            for item in root.findall(".//item")[:10]
+            if (t := item.find("title")) is not None and t.text
+        ]
+        return {"headlines": headlines}
+    except Exception as exc:
+        return {"headlines": [], "error": str(exc)}
 
 
 @router.post("/discord/send")
