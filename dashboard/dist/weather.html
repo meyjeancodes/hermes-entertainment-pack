@@ -128,6 +128,7 @@ body { display:flex; flex-direction:column; }
   padding:8px 10px;
   position:relative;
   overflow:hidden;
+  flex-shrink:0;
 }
 .p-card::after {
   content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
@@ -387,10 +388,10 @@ body { display:flex; flex-direction:column; }
         </div>
       </div>
 
-      <div id="sparkline-wrap" style="display:none;">
-        <div class="section-lbl" style="margin-top:4px;">Next 12 Hours</div>
-        <div id="sparkline-box" style="position:relative;padding:2px 0 0;">
-          <svg id="sparkline-svg" width="100%" viewBox="0 0 280 44" preserveAspectRatio="none" style="display:block;"></svg>
+      <div id="sparkline-wrap" style="display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,200,32,0.12);border-radius:2px;padding:4px 7px;flex-shrink:0;">
+        <div style="font-size:7px;letter-spacing:0.18em;color:rgba(255,200,32,0.5);text-transform:uppercase;margin-bottom:2px;">Next 12 Hours</div>
+        <div id="sparkline-box" style="position:relative;">
+          <svg id="sparkline-svg" width="100%" viewBox="0 0 280 30" preserveAspectRatio="none" style="display:block;"></svg>
           <div id="sparkline-labels" style="display:flex;justify-content:space-between;padding:0 2px;margin-top:1px;"></div>
         </div>
       </div>
@@ -645,7 +646,7 @@ function buildSparkline(hourlyTimes, hourlyTemps, todayStr, resolvedTz) {
   if (temps.length < 3) return;
 
   const minT=Math.min(...temps), maxT=Math.max(...temps), range=maxT-minT||1;
-  const W=280, H=44, PX=6, PY=5;
+  const W=280, H=30, PX=6, PY=4;
   const iw=W-PX*2, ih=H-PY*2;
   const px = i => PX + (i/(temps.length-1))*iw;
   const py = t => PY + ih - ((t-minT)/range)*ih;
