@@ -25,7 +25,7 @@ const CHANNELS: Channel[] = [
   { id: "ch7",  name: "Flight Watch",type: "iframe",  src: "https://globe.adsbexchange.com/?lat=39&lon=-30&zoom=3" },
   { id: "ch8",  name: "Local 58",    type: "iframe",  src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q&autoplay=1&mute=1", autoplay: true },
   { id: "ch9",  name: "HNN Teletext",type: "canvas",  color: "#000033" },
-  { id: "ch10", name: "Vapor FM",    type: "iframe",  src: `${PLUGIN_URL}/public/vapor.html` },
+  { id: "ch10", name: "Vapor FM",    type: "iframe",  src: `${PLUGIN_URL}/public/vapor.html?v=2` },
   { id: "ch11", name: "NOUS-DOS",    type: "iframe",  src: `${PLUGIN_URL}/games/nousdos.html` },
 ];
 const GAMEBOY_GAMES = [
@@ -1749,15 +1749,13 @@ const HNN_FALLBACK: Record<string, string[]> = {
 };
 
 const HNN_PAGES = [
-  { num: 100, title: "HNN INDEX",      cat: "top",      accent: "#FFE066", strip: "#1a0a00", fastext: ["101 NEWS","200 WORLD","300 MKTS","500 SPORT"] },
-  { num: 101, title: "HEADLINE NEWS",  cat: "top",      accent: "#FF6B6B", strip: "#1a0000", fastext: ["100 IDX","200 WORLD","300 MKTS","500 SPORT"] },
-  { num: 200, title: "WORLD REPORT",   cat: "world",    accent: "#4DFFFF", strip: "#00131a", fastext: ["100 IDX","101 NEWS","300 MKTS","500 SPORT"] },
-  { num: 300, title: "MARKETS",        cat: "business", accent: "#50FF9A", strip: "#001a08", fastext: ["100 IDX","101 NEWS","400 TECH","500 SPORT"] },
-  { num: 400, title: "TECHNOLOGY",     cat: "tech",     accent: "#FFAA44", strip: "#1a0800", fastext: ["100 IDX","101 NEWS","300 MKTS","500 SPORT"] },
-  { num: 500, title: "SPORTS",         cat: "sports",   accent: "#FF88CC", strip: "#1a0012", fastext: ["100 IDX","101 NEWS","200 WORLD","300 MKTS"] },
+  { num: 100, title: "HNN INDEX",      cat: "top",      accent: "#FFE066", strip: "#1a0a00" },
+  { num: 101, title: "HEADLINE NEWS",  cat: "top",      accent: "#FF6B6B", strip: "#1a0000" },
+  { num: 200, title: "WORLD REPORT",   cat: "world",    accent: "#4DFFFF", strip: "#00131a" },
+  { num: 300, title: "MARKETS",        cat: "business", accent: "#50FF9A", strip: "#001a08" },
+  { num: 400, title: "TECHNOLOGY",     cat: "tech",     accent: "#FFAA44", strip: "#1a0800" },
+  { num: 500, title: "SPORTS",         cat: "sports",   accent: "#FF88CC", strip: "#1a0012" },
 ];
-
-const HNN_FASTEXT_COLORS = ["#9B1C1C","#1A5C1A","#7A6200","#1A3A7A"];
 
 const HNN_INIT_PRICES = [
   { s: "S&P 500",  p: 5847.32,  c:  0.74 },
@@ -2020,16 +2018,6 @@ function HNNTeletextCanvas() {
           </div>
         ))}
 
-      </div>
-
-      {/* ══ FASTEXT BAR ══ */}
-      <div style={{ display:'flex', flexShrink:0, borderTop:'1px solid rgba(255,255,255,0.1)' }}>
-        {pg.fastext.map((label, i) => (
-          <div key={i} onClick={() => { const num = parseInt(label); changePage(HNN_PAGES.findIndex(p=>p.num===num)); }}
-            style={{ flex:1, background:HNN_FASTEXT_COLORS[i], color:'rgba(255,255,255,0.9)', fontSize:9, fontWeight:900, padding:'3px 4px', textAlign:'center', letterSpacing:'0.06em', cursor:'pointer', borderRight:i<3?'1px solid rgba(0,0,0,0.4)':undefined, transition:'opacity 0.1s' }}>
-            {label}
-          </div>
-        ))}
       </div>
 
       {/* ══ TICKER ══ */}
