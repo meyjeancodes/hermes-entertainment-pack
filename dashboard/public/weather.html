@@ -797,15 +797,15 @@ async function loadWeather(loc){
       fc.appendChild(div);
     }
 
-    /* ── Sparkline ── */
-    buildSparkline(hourly.time, hourly.temperature_2m, todayStr, resolvedTz);
-
     /* ── Panel 2: Today Detail (hourly data) ── */
     setEl('loc-block3',locStr);
     const detail=document.getElementById('detail-grid');
     detail.innerHTML='';
     const todayStr=d.time[0];
     const hourly=data.hourly;
+
+    /* ── Sparkline ── */
+    buildSparkline(hourly.time, hourly.temperature_2m, todayStr, resolvedTz);
     function getHourly(hour){
       const target=`${todayStr}T${String(hour).padStart(2,'0')}:00`;
       const idx=hourly.time.indexOf(target);

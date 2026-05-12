@@ -9,7 +9,7 @@
     "position": "after:dashboard"
   },
   "slots": [],
-  "entry": "dist/index.js?v=1778552439275",
+  "entry": "dist/index.js?v=1778553561481",
   "api": "plugin_api.py",
   "css": "dist/index.css"
 }
