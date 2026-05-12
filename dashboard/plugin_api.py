@@ -7,10 +7,66 @@ from __future__ import annotations
 
 import sys
 import os
+import time
+import re
+from typing import Optional
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+
+import json as _json
+import urllib.request
+import urllib.error
+import urllib.parse
+
 router = APIRouter()
+
+# Rate limiting: 60 requests per minute per IP
+limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
+router.add_exception_handler(_rate_limit_exceeded_handler)
+
+_DISCORD_API_BASE = "https://discord.com/api/v10"
+_DISCORD_CHANNEL_ID_REGEX = re.compile(r'^\d{17,19}$')
+
+
+def _discord_bot_token() -> Optional[str]:
+    return os.getenv("DISCORD_BOT_TOKEN", "").strip() or None
+
+
+def _discord_api(method: str, path: str, token: str, params: Optional[dict] = None, body: Optional[dict] = None, retry_count: int = 3):
+    url = f"{_DISCORD_API_BASE}{path}"
+    if params:
+        url += "?" + urllib.parse.urlencode({k: v for k, v in params.items() if v is not None})
+    data = _json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(
+        url, data=data, method=method,
+        headers={
+            "Authorization": f"Bot {token}",
+            "Content-Type": "application/json",
+            "User-Agent": "Hermes-Entertainment/1.0",
+        },
+    )
+    
+    for attempt in range(retry_count):
+        try:
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                if resp.status == 204:
+                    return None
+                return _json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            if exc.code == 429:  # Rate limited
+                # Respect Discord's Retry-After header if present
+                retry_after = 1.0  # default 1 second
+                if exc.headers.get("Retry-After"):
+                    retry_after = float(exc.headers["Retry-After"])
+                time.sleep(retry_after)
+                continue
+            raise
+        except Exception:
+            raise
 
 
 @router.get("/health")
@@ -33,8 +89,8 @@ def _spotify_client():
 async def spotify_now_playing():
     try:
         client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    except Exception:
+        raise HTTPException(status_code=503, detail={"message": "Service unavailable"})
 
     try:
         data = client.get_currently_playing()
@@ -42,8 +98,8 @@ async def spotify_now_playing():
         raise HTTPException(status_code=401, detail={"error": "auth_required", "message": "Run hermes auth spotify to connect."})
     except SpotifyAPIError as exc:
         raise HTTPException(status_code=502, detail={"message": str(exc)})
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail={"message": str(exc)})
+    except Exception:
+        raise HTTPException(status_code=500, detail={"message": "Internal server error"})
 
     # Normalise Spotify's now-playing response into the shape the frontend expects
     if not data or data.get("empty"):
@@ -76,8 +132,8 @@ async def spotify_now_playing():
 async def spotify_play():
     try:
         client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    except Exception:
+        raise HTTPException(status_code=503, detail={"message": "Service unavailable"})
     try:
         return client.start_playback()
     except SpotifyAuthRequiredError:
@@ -90,8 +146,8 @@ async def spotify_play():
 async def spotify_pause():
     try:
         client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    except Exception:
+        raise HTTPException(status_code=503, detail={"message": "Service unavailable"})
     try:
         return client.pause_playback()
     except SpotifyAuthRequiredError:
@@ -104,8 +160,8 @@ async def spotify_pause():
 async def spotify_next():
     try:
         client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    except Exception:
+        raise HTTPException(status_code=503, detail={"message": "Service unavailable"})
     try:
         return client.skip_next()
     except SpotifyAuthRequiredError:
@@ -118,8 +174,8 @@ async def spotify_next():
 async def spotify_previous():
     try:
         client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    except Exception:
+        raise HTTPException(status_code=503, detail={"message": "Service unavailable"})
     try:
         return client.skip_previous()
     except SpotifyAuthRequiredError:
@@ -136,8 +192,8 @@ class ShufflePayload(BaseModel):
 async def spotify_shuffle(payload: ShufflePayload):
     try:
         client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    except Exception:
+        raise HTTPException(status_code=503, detail={"message": "Service unavailable"})
     try:
         return client.set_shuffle(state=payload.state)
     except SpotifyAuthRequiredError:
@@ -157,8 +213,8 @@ async def spotify_repeat(payload: RepeatPayload):
         raise HTTPException(status_code=400, detail={"message": f"state must be one of: {valid}"})
     try:
         client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    except Exception:
+        raise HTTPException(status_code=503, detail={"message": "Service unavailable"})
     try:
         return client.set_repeat(state=payload.state)
     except SpotifyAuthRequiredError:
@@ -175,8 +231,8 @@ class VolumePayload(BaseModel):
 async def spotify_volume(payload: VolumePayload):
     try:
         client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
-    except Exception as exc:
-        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    except Exception:
+        raise HTTPException(status_code=503, detail={"message": "Service unavailable"})
     try:
         return client.set_volume(volume_percent=max(0, min(100, payload.volume)))
     except SpotifyAuthRequiredError:
@@ -186,38 +242,6 @@ async def spotify_volume(payload: VolumePayload):
 
 
 # ── Discord passthrough endpoints ─────────────────────────────────────────────
-
-import json as _json
-import urllib.request
-import urllib.error
-import urllib.parse
-from typing import Optional as _Opt
-
-_DISCORD_API_BASE = "https://discord.com/api/v10"
-
-
-def _discord_bot_token() -> _Opt[str]:
-    return os.getenv("DISCORD_BOT_TOKEN", "").strip() or None
-
-
-def _discord_api(method: str, path: str, token: str, params: _Opt[dict] = None, body: _Opt[dict] = None):
-    url = f"{_DISCORD_API_BASE}{path}"
-    if params:
-        url += "?" + urllib.parse.urlencode({k: v for k, v in params.items() if v is not None})
-    data = _json.dumps(body).encode() if body is not None else None
-    req = urllib.request.Request(
-        url, data=data, method=method,
-        headers={
-            "Authorization": f"Bot {token}",
-            "Content-Type": "application/json",
-            "User-Agent": "Hermes-Entertainment/1.0",
-        },
-    )
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        if resp.status == 204:
-            return None
-        return _json.loads(resp.read().decode("utf-8"))
-
 
 @router.get("/discord/guilds")
 async def discord_guilds():
@@ -257,11 +281,26 @@ async def discord_messages(channel_id: str, limit: int = 50):
     token = _discord_bot_token()
     if not token:
         raise HTTPException(status_code=401, detail={"error": "DISCORD_BOT_TOKEN not configured."})
+    
+    # Validate channel_id format
+    if not _DISCORD_CHANNEL_ID_REGEX.match(channel_id):
+        raise HTTPException(status_code=400, detail={"error": "Invalid channel ID format"})
+    
+    # Validate limit
+    if limit < 1 or limit > 100:
+        limit = 50
+    
     try:
-        msgs = _discord_api("GET", f"/channels/{channel_id}/messages", token, params={"limit": str(min(limit, 100))})
+        msgs = _discord_api("GET", f"/channels/{channel_id}/messages", token, params={"limit": str(limit)})
         result = []
         for m in (msgs or []):
             a = m.get("author", {})
+            attachments = m.get("attachments", [])
+            images = []
+            for att in attachments:
+                if att.get("type", "").startswith("image/"):
+                    images.append(att.get("url"))
+            
             result.append({
                 "id": m["id"],
                 "content": m.get("content", ""),
@@ -273,6 +312,7 @@ async def discord_messages(channel_id: str, limit: int = 50):
                 },
                 "timestamp": m.get("timestamp", ""),
                 "channel_id": channel_id,
+                "images": images,
             })
         return result
     except urllib.error.HTTPError as exc:
