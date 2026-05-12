@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Play,
@@ -11,6 +12,11 @@ import {
   Repeat,
 } from "lucide-react";
 import { useSpotifyPlayer } from "@/hooks/useSpotifyPlayer";
+
+function fmtMs(ms: number): string {
+  const total = Math.floor(ms / 1000);
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}
 
 const S = {
   wrap: {
@@ -88,6 +94,27 @@ export function SpotifyNowPlaying() {
     toggleRepeat,
     setVolumeAndSend,
   } = useSpotifyPlayer({ refreshInterval: 8000 });
+
+  const [localProgress, setLocalProgress] = useState(0);
+  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (state?.progress_ms != null) setLocalProgress(state.progress_ms);
+  }, [state?.progress_ms, state?.track?.name]);
+
+  useEffect(() => {
+    if (tickRef.current) clearInterval(tickRef.current);
+    if (state?.playing) {
+      const cap = state.track?.duration_ms || 0;
+      tickRef.current = setInterval(() => {
+        setLocalProgress(p => cap > 0 ? Math.min(p + 1000, cap) : p + 1000);
+      }, 1000);
+    }
+    return () => { if (tickRef.current) clearInterval(tickRef.current); };
+  }, [state?.playing, state?.track?.duration_ms]);
+
+  const trackDuration = state?.track?.duration_ms || 0;
+  const progressPct = trackDuration > 0 ? Math.min(100, (localProgress / trackDuration) * 100) : 0;
 
   if (loading) {
     return (
@@ -205,6 +232,17 @@ export function SpotifyNowPlaying() {
               <button onClick={next} disabled={actings.next} style={S.navBtn()}>
                 <SkipForward style={{ width: 13, height: 13 }} />
               </button>
+            </div>
+          </div>
+
+          {/* Progress bar */}
+          <div style={{ padding: '2px 0 0' }}>
+            <div style={{ height: 2, background: 'rgba(255,255,255,0.07)', borderRadius: 1, overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${progressPct}%`, background: '#1DB954', borderRadius: 1, transition: 'width 0.6s linear' }} />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
+              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.28)', fontVariantNumeric: 'tabular-nums' as const }}>{fmtMs(localProgress)}</span>
+              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.18)', fontVariantNumeric: 'tabular-nums' as const }}>{fmtMs(trackDuration)}</span>
             </div>
           </div>
         </div>
