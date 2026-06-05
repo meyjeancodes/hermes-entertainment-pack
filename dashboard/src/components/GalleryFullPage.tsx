@@ -283,6 +283,33 @@ const GALLERY_IMAGES = [
     subtitle: "NEWSPAPER ADVERT",
     type: "card",
     orientation: "portrait",
+  },
+
+  {
+    id: "33",
+    url: `${PLUGIN_URL}/gallery/HIoy8J8W8AApMb-.jpeg`,
+    title: "HERMES AGENT MEDIA",
+    subtitle: "CLASSICAL BUST — ORBITAL DREAM",
+    type: "card",
+    orientation: "landscape",
+  },
+
+  {
+    id: "34",
+    url: `${PLUGIN_URL}/gallery/HJ8JKOjW8AA2QrJ.jpeg`,
+    title: "HERMES VESSEL",
+    subtitle: "CERAMIC AMPHORA — BLUE GLAZE",
+    type: "card",
+    orientation: "portrait",
+  },
+
+  {
+    id: "35",
+    url: `${PLUGIN_URL}/gallery/HJSqH16WQAEfRIn.jpeg`,
+    title: "THORNY FRAME",
+    subtitle: "STATUE PORTRAIT — BARBED WIRE BORDER",
+    type: "card",
+    orientation: "square",
   }
   
 ];
