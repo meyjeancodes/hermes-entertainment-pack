@@ -1353,7 +1353,6 @@ function NousBoySection({
       if (!GAME_KEYS.has(e.key)) return;
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-      // Only intercept if focus is inside the NousBoy section or its game iframe
       const section = sectionRef.current;
       const active = document.activeElement;
       if (section && active && !section.contains(active) && active !== iframeRef.current) return;
@@ -1372,251 +1371,221 @@ function NousBoySection({
   }, [gbPower]);
 
   return (
-    <div ref={sectionRef} className="flex flex-col items-center gap-0 w-full">
+    <div ref={sectionRef} className="flex flex-col items-center gap-6 w-full max-w-3xl mx-auto">
       {/* Section header */}
-      <div className="w-full flex items-center gap-3 pb-4 pt-2">
-        <div className="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]" />
-        <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">Nous Boy</h2>
-        <div className="flex-1 h-px bg-border/30" />
-        <span className="text-[0.6rem] font-mono text-muted-foreground/40 uppercase tracking-widest">
-          Keyboard arrows + Z/X · or use D-pad buttons
+      <div className="w-full flex items-center gap-3 pb-2">
+        <div className="w-2 h-2 rounded-full bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.6)]" />
+        <h2 className="text-sm font-semibold text-foreground">Nous Boy</h2>
+        <div className="flex-1 h-px bg-border/50" />
+        <span className="text-[0.65rem] font-mono text-muted-foreground/60 uppercase tracking-wider">
+          Keyboard arrows + Z/X · or use on-screen controls
         </span>
       </div>
 
-      {/* GameBoy console — classic DMG-01 style */}
-      <div className="flex justify-center mb-6">
-        <div style={{ width: 480 }}>
-          {/* Body — solid classic Game Boy gray */}
-          <div className="relative rounded-[28px_28px_20px_20px] px-6 pt-4 pb-7"
-               style={{
-                 background: 'linear-gradient(170deg, #c8c4bc 0%, #b0aca4 40%, #9a9690 100%)',
-                 boxShadow: '0 20px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.2)',
-               }}>
+      {/* Modern Console Card */}
+      <Card className="w-full border-border bg-card/50 backdrop-blur-md shadow-xl overflow-hidden">
+        <CardContent className="p-0">
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-background/30">
+            <div className="flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full transition-all ${gbPower ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-red-500'}`} />
+              <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Console</span>
+            </div>
+            <button 
+              onClick={() => setGbPower(p => !p)} 
+              title="Power"
+              className={`flex items-center gap-1.5 px-3 h-8 rounded-full border transition-all active:scale-95 text-xs font-medium ${
+                gbPower 
+                  ? 'text-emerald-500 border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20' 
+                  : 'text-red-500 border-red-500/30 bg-red-500/10 hover:bg-red-500/20'
+              }`}
+            >
+              <Power className="w-3.5 h-3.5" />
+              <span>{gbPower ? 'ON' : 'OFF'}</span>
+            </button>
+          </div>
 
-            {/* Top bar: NOUS BOY label + power LED + power toggle */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                {/* Power switch */}
-                <button onClick={() => setGbPower(p => !p)} title="Power"
-                  className="flex items-center gap-1.5 rounded-sm px-2 py-1 active:scale-95 transition-all select-none border"
-                  style={{
-                    background: gbPower ? 'linear-gradient(180deg,#2a6a2a,#184818)' : 'linear-gradient(180deg,#4a2020,#2a1010)',
-                    borderColor: gbPower ? '#3a8a3a' : '#6a2020',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)',
-                  }}>
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${gbPower ? 'bg-[#4ade80] shadow-[0_0_8px_#4ade80]' : 'bg-[#ef4444] shadow-[0_0_6px_#dc2626]'}`} />
-                  <span className="text-[0.42rem] font-mono font-bold uppercase tracking-widest" style={{ color: gbPower ? '#86efac' : '#fca5a5' }}>PWR</span>
+          {/* Screen Area */}
+          <div className="relative bg-black aspect-[4/3] w-full max-w-md mx-auto my-6 rounded-lg border border-border/50 overflow-hidden shadow-inner">
+            {gbPower ? (
+              <iframe
+                key={activeGame.id}
+                ref={iframeRef}
+                src={activeGame.src}
+                className="absolute inset-0 w-full h-full border-0 z-0"
+                title={activeGame.name}
+                allow="fullscreen; gamepad; autoplay"
+                loading="lazy"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
+              />
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background">
+                <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center border border-border">
+                  <Power className="w-6 h-6 text-muted-foreground" />
+                </div>
+                <span className="text-sm font-medium text-muted-foreground">Powered Off</span>
+              </div>
+            )}
+          </div>
+
+          {/* Controls */}
+          <div className="px-6 pb-6">
+            <div className="flex items-center justify-between gap-8">
+              {/* D-Pad */}
+              <div className="grid grid-cols-3 gap-1">
+                <div />
+                <button 
+                  onPointerDown={() => sendKey("ArrowUp", true)} 
+                  onPointerUp={() => sendKey("ArrowUp", false)} 
+                  onPointerLeave={() => sendKey("ArrowUp", false)}
+                  className="w-10 h-10 flex items-center justify-center rounded-t-md bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all text-muted-foreground"
+                >
+                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M12 8l-6 6 1.4 1.4 4.6-4.6 4.6 4.6L18 14z"/></svg>
+                </button>
+                <div />
+                <button 
+                  onPointerDown={() => sendKey("ArrowLeft", true)} 
+                  onPointerUp={() => sendKey("ArrowLeft", false)} 
+                  onPointerLeave={() => sendKey("ArrowLeft", false)}
+                  className="w-10 h-10 flex items-center justify-center rounded-l-md bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all text-muted-foreground"
+                >
+                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
+                </button>
+                <div className="w-10 h-10 flex items-center justify-center bg-muted border border-border/50 rounded-sm">
+                  <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />
+                </div>
+                <button 
+                  onPointerDown={() => sendKey("ArrowRight", true)} 
+                  onPointerUp={() => sendKey("ArrowRight", false)} 
+                  onPointerLeave={() => sendKey("ArrowRight", false)}
+                  className="w-10 h-10 flex items-center justify-center rounded-r-md bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all text-muted-foreground"
+                >
+                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+                </button>
+                <div />
+                <button 
+                  onPointerDown={() => sendKey("ArrowDown", true)} 
+                  onPointerUp={() => sendKey("ArrowDown", false)} 
+                  onPointerLeave={() => sendKey("ArrowDown", false)}
+                  className="w-10 h-10 flex items-center justify-center rounded-b-md bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all text-muted-foreground"
+                >
+                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+                </button>
+                <div />
+              </div>
+
+              {/* Select / Start */}
+              <div className="flex flex-col gap-3 -rotate-12">
+                <div className="flex flex-col items-center gap-1">
+                  <button
+                    onPointerDown={() => sendKey("Shift", true)}
+                    onPointerUp={() => sendKey("Shift", false)}
+                    onPointerLeave={() => sendKey("Shift", false)}
+                    className="w-12 h-6 rounded-full bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all flex items-center justify-center"
+                  >
+                    <span className="text-[0.55rem] font-bold text-muted-foreground tracking-wider">SEL</span>
+                  </button>
+                  <span className="text-[0.5rem] font-mono text-muted-foreground/50 uppercase tracking-widest">Select</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <button
+                    onPointerDown={() => sendKey(" ", true)}
+                    onPointerUp={() => sendKey(" ", false)}
+                    onPointerLeave={() => sendKey(" ", false)}
+                    className="w-12 h-6 rounded-full bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all flex items-center justify-center"
+                  >
+                    <span className="text-[0.55rem] font-bold text-muted-foreground tracking-wider">STA</span>
+                  </button>
+                  <span className="text-[0.5rem] font-mono text-muted-foreground/50 uppercase tracking-widest">Start</span>
+                </div>
+              </div>
+
+              {/* A / B Buttons */}
+              <div className="relative w-24 h-20">
+                <button
+                  onPointerDown={() => sendKey("z", true)}
+                  onPointerUp={() => sendKey("z", false)}
+                  onPointerLeave={() => sendKey("z", false)}
+                  className="absolute right-0 top-0 w-12 h-12 rounded-full bg-primary/20 border border-primary/30 hover:bg-primary/30 active:scale-95 transition-all flex items-center justify-center text-primary font-bold text-sm shadow-sm"
+                >
+                  A
+                </button>
+                <button
+                  onPointerDown={() => sendKey("x", true)}
+                  onPointerUp={() => sendKey("x", false)}
+                  onPointerLeave={() => sendKey("x", false)}
+                  className="absolute left-0 bottom-0 w-12 h-12 rounded-full bg-primary/20 border border-primary/30 hover:bg-primary/30 active:scale-95 transition-all flex items-center justify-center text-primary font-bold text-sm shadow-sm"
+                >
+                  B
                 </button>
               </div>
-              <span className="text-[0.55rem] font-mono font-bold tracking-[0.35em] uppercase" style={{ color: '#4a4642', textShadow: '0 1px 0 rgba(255,255,255,0.3)' }}>NOUS BOY</span>
-              <div className="text-[0.42rem] font-mono" style={{ color: '#8a8480' }}>™</div>
-            </div>
-
-            {/* Screen housing — dark olive bezel */}
-            <div className="rounded-2xl p-2.5 mb-4 shadow-[inset_0_3px_12px_rgba(0,0,0,0.7),0_2px_4px_rgba(0,0,0,0.3)]"
-                 style={{ background: 'linear-gradient(180deg,#2e2d28 0%,#3a3932 100%)', border: '2px solid #1e1d18' }}>
-              {/* Screen label strip */}
-              <div className="flex justify-center mb-1.5">
-                <span className="text-[0.38rem] font-mono tracking-[0.5em] uppercase" style={{ color: '#6a6a5a' }}>DOT MATRIX WITH STEREO SOUND</span>
-              </div>
-
-              {/* Screen */}
-              <div className="relative rounded-lg overflow-hidden shadow-[inset_0_2px_10px_rgba(0,0,0,0.9)]"
-                   style={{ aspectRatio: '4/3', background: '#0d1a0d', border: '3px solid #1a1a14' }}>
-                {/* CRT scanlines */}
-                <div className="absolute inset-0 pointer-events-none z-10" style={{
-                  backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.18) 3px,rgba(0,0,0,0.18) 4px)',
-                }} />
-                {/* Green phosphor tint on border */}
-                <div className="absolute inset-0 pointer-events-none z-10 rounded-lg"
-                     style={{ boxShadow: gbPower ? 'inset 0 0 20px rgba(74,222,128,0.08)' : 'none' }} />
-                {gbPower ? (
-                  <iframe
-                    key={activeGame.id}
-                    ref={iframeRef}
-                    src={activeGame.src}
-                    className="absolute inset-0 w-full h-full border-0 z-0"
-                    title={activeGame.name}
-                    allow="fullscreen; gamepad; autoplay"
-                    loading="lazy"
-                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2"
-                       style={{ background: '#0d1a0d' }}>
-                    <Power className="w-6 h-6" style={{ color: '#2a4a2a' }} />
-                    <span className="text-[0.45rem] font-mono tracking-widest uppercase" style={{ color: '#2a4a2a' }}>POWER OFF</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Controls row — 3-column grid: D-pad | SELECT+START | A+B */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 0 }}>
-
-              {/* D-pad — left column, centred within its cell */}
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '32px 32px 32px', gridTemplateRows: '32px 32px 32px', gap: '2px' }}>
-                  <div />
-                  <button onPointerDown={() => sendKey("ArrowUp", true)} onPointerUp={() => sendKey("ArrowUp", false)} onPointerLeave={() => sendKey("ArrowUp", false)}
-                    className="flex items-center justify-center select-none active:scale-95 transition-all"
-                    style={{ background: 'linear-gradient(180deg,#4a4845,#3a3835)', borderRadius: '6px 6px 0 0', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 8l-6 6 1.4 1.4 4.6-4.6 4.6 4.6L18 14z"/></svg>
-                  </button>
-                  <div />
-                  <button onPointerDown={() => sendKey("ArrowLeft", true)} onPointerUp={() => sendKey("ArrowLeft", false)} onPointerLeave={() => sendKey("ArrowLeft", false)}
-                    className="flex items-center justify-center select-none active:scale-95 transition-all"
-                    style={{ background: 'linear-gradient(90deg,#4a4845,#3a3835)', borderRadius: '6px 0 0 6px', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
-                  </button>
-                  <div className="flex items-center justify-center" style={{ background: '#3a3835', border: '1px solid #2a2825', borderRadius: '3px' }}>
-                    <div className="w-2 h-2 rounded-full" style={{ background: '#2a2825' }} />
-                  </div>
-                  <button onPointerDown={() => sendKey("ArrowRight", true)} onPointerUp={() => sendKey("ArrowRight", false)} onPointerLeave={() => sendKey("ArrowRight", false)}
-                    className="flex items-center justify-center select-none active:scale-95 transition-all"
-                    style={{ background: 'linear-gradient(270deg,#4a4845,#3a3835)', borderRadius: '0 6px 6px 0', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
-                  </button>
-                  <div />
-                  <button onPointerDown={() => sendKey("ArrowDown", true)} onPointerUp={() => sendKey("ArrowDown", false)} onPointerLeave={() => sendKey("ArrowDown", false)}
-                    className="flex items-center justify-center select-none active:scale-95 transition-all"
-                    style={{ background: 'linear-gradient(0deg,#4a4845,#3a3835)', borderRadius: '0 0 6px 6px', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
-                  </button>
-                  <div />
-                </div>
-              </div>
-
-              {/* SELECT + START — centre column, truly centred */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center', transform: 'rotate(-20deg)' }}>
-                {[
-                  { label: 'SEL', key: 'Shift' },
-                  { label: 'STA', key: ' ' },
-                ].map(({ label, key }) => (
-                  <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                    <button
-                      onPointerDown={() => sendKey(key, true)}
-                      onPointerUp={() => sendKey(key, false)}
-                      onPointerLeave={() => sendKey(key, false)}
-                      className="select-none active:scale-90 transition-all"
-                      style={{ width: 26, height: 26, borderRadius: '50%', background: 'linear-gradient(180deg,#7a7870,#5a5852)', border: '1px solid #4a4840', boxShadow: '0 2px 5px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18)', color: '#c0bdb8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    >
-                      <span style={{ fontSize: '0.38rem', fontFamily: 'monospace', fontWeight: 900, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{label}</span>
-                    </button>
-                    <span style={{ fontSize: '0.32rem', fontFamily: 'monospace', color: '#7a7672', letterSpacing: '0.12em', textTransform: 'uppercase' }}>{label === 'SEL' ? 'SELECT' : 'START'}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* A / B — right column, centred within its cell */}
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{ position: 'relative', width: 78, height: 68 }}>
-                  <button
-                    onPointerDown={() => sendKey("z", true)}
-                    onPointerUp={() => sendKey("z", false)}
-                    onPointerLeave={() => sendKey("z", false)}
-                    className="absolute right-0 top-0 flex items-center justify-center select-none transition-all active:scale-95"
-                    style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(145deg,#8b1a2a,#6b0e1e)', border: '2px solid #4a0c14', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2)', fontSize: '0.75rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#f0c8d0' }}>
-                    A
-                  </button>
-                  <button
-                    onPointerDown={() => sendKey("x", true)}
-                    onPointerUp={() => sendKey("x", false)}
-                    onPointerLeave={() => sendKey("x", false)}
-                    className="absolute left-0 bottom-0 flex items-center justify-center select-none transition-all active:scale-95"
-                    style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(145deg,#7a1828,#5a0c1a)', border: '2px solid #3a0a12', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15)', fontSize: '0.75rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#e0b8c8' }}>
-                    B
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Speaker + branding */}
-            <div className="flex items-end justify-between mt-4">
-              <span className="text-[0.38rem] font-mono tracking-[0.4em] uppercase" style={{ color: '#6a6662' }}>NOUS RESEARCH</span>
-              {/* Speaker holes — classic circular pattern */}
-              <div className="flex gap-1">
-                {Array.from({ length: 6 }).map((_, col) => (
-                  <div key={col} className="flex flex-col gap-1">
-                    {Array.from({ length: 4 }).map((_, row) => (
-                      <div key={row} className="w-1.5 h-1.5 rounded-full" style={{ background: '#8a8680', boxShadow: 'inset 0 1px 1px rgba(0,0,0,0.5)' }} />
-                    ))}
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
-
-          {/* Drop shadow */}
-          <div className="h-4 mx-10 rounded-full -mt-2" style={{ background: 'rgba(0,0,0,0.4)', filter: 'blur(12px)' }} />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Game Guide */}
-      <Card className="w-full max-w-full border-border bg-background-elevated overflow-hidden">
+      <Card className="w-full max-w-full border-border bg-card/50 backdrop-blur-md overflow-hidden">
         <CardContent className="p-0">
-          <div className="px-4 py-2.5 border-b border-border">
+          <div className="p-4 border-b border-border/50">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground shrink-0">Game Guide</h2>
+              <h2 className="text-sm font-semibold text-foreground shrink-0">Game Guide</h2>
               <div className="flex gap-1.5 shrink-0">
                 {GAMEBOY_GAMES.map((_, i) => (
-                  <div key={i} className={`w-1.5 h-4 rounded-full transition-all
-                    ${activeGameIdx === i
-                      ? 'bg-sky-400 shadow-[0_0_6px_rgba(56,189,248,0.6)]'
-                      : 'bg-slate-700'}`} />
+                  <div key={i} className={`w-1.5 h-5 rounded-full transition-all ${activeGameIdx === i ? "bg-primary shadow-[0_0_6px_rgba(16,185,129,0.6)]" : "bg-muted-foreground/20"}`} />
                 ))}
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-2.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+          <div className="flex items-center gap-1.5 px-4 py-3 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
             {GAMEBOY_GAMES.map((game, i) => (
               <button
                 key={game.id}
                 onClick={() => setActiveGameId(game.id)}
-                className={`relative flex-shrink-0 flex items-center gap-2 px-3 h-8 rounded-full font-mono text-[0.63rem] border transition-all select-none active:scale-95 whitespace-nowrap
-                  ${activeGameIdx === i
-                    ? 'bg-sky-500/10 text-foreground border-sky-500/50'
-                    : 'bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted hover:text-foreground hover:border-foreground/20'
-                  }`}
+                className={`relative flex-shrink-0 flex items-center gap-2 px-3 h-9 rounded-lg font-medium text-xs border transition-all select-none active:scale-95 whitespace-nowrap ${
+                  activeGameIdx === i
+                    ? "bg-primary/10 text-primary border-primary/30"
+                    : "bg-muted/30 text-muted-foreground border-border/50 hover:bg-muted hover:text-foreground hover:border-border"
+                }`}
               >
-                <GameIcon icon={game.icon} size={13} />
-                <span>{game.name}</span>
+                <GameIcon icon={game.icon} size={14} />
+                <span className="font-semibold">{game.name}</span>
                 {activeGameIdx === i && (
-                  <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-sky-400 shadow-[0_0_5px_rgba(56,189,248,0.9)]" />
+                  <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_5px_rgba(16,185,129,0.8)]" />
                 )}
               </button>
             ))}
           </div>
           {/* Per-game controls reference */}
-          <div className="px-4 pb-3 pt-1 border-t border-border/20">
+          <div className="px-4 pb-4 pt-2 border-t border-border/50">
             {activeGame.id === 'g1' && (
-              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
-                <span className="text-muted-foreground/80">Pong</span> · ↑↓ Move paddle · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> Serve · A button = serve
+              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
+                <span className="text-foreground font-semibold">Pong</span> · ↑↓ Move paddle · <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Z</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Space</kbd> Serve
               </p>
             )}
             {activeGame.id === 'g2' && (
-              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
-                <span className="text-muted-foreground/80">Tetris</span> · ← → Move · ↑ or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>X</kbd> Rotate · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> Hard drop · A = drop · B = rotate
+              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
+                <span className="text-foreground font-semibold">Tetris</span> · ← → Move · ↑ or <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">X</kbd> Rotate · <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Z</kbd> Hard drop
               </p>
             )}
             {activeGame.id === 'g3' && (
-              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
-                <span className="text-muted-foreground/80">Space Raid</span> · ← → ↑ ↓ Move ship · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> Shoot · A button = shoot
+              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
+                <span className="text-foreground font-semibold">Space Raid</span> · ← → ↑ ↓ Move ship · <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Z</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Space</kbd> Shoot
               </p>
             )}
             {activeGame.id === 'g4' && (
-              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
-                <span className="text-muted-foreground/80">Flappy Bird</span> · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> or Click to flap · Opens at flappybird.io
+              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
+                <span className="text-foreground font-semibold">Flappy Bird</span> · <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Space</kbd> or Click to flap
               </p>
             )}
             {activeGame.id === 'g5' && (
-              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
-                <span className="text-muted-foreground/80">Snake</span> · ← → ↑ ↓ Turn · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> Start / Restart · Walls wrap around · High score saved locally
+              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
+                <span className="text-foreground font-semibold">Snake</span> · ← → ↑ ↓ Turn · <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Z</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Space</kbd> Start
               </p>
             )}
             {activeGame.id === 'g6' && (
-              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
-                <span className="text-muted-foreground/80">2048</span> · ← → ↑ ↓ Slide tiles · Combine matching numbers · Reach 2048 to win · Opens at play2048.co
+              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
+                <span className="text-foreground font-semibold">2048</span> · ← → ↑ ↓ Slide tiles · Combine matching numbers
               </p>
             )}
           </div>
