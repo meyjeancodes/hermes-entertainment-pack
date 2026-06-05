@@ -309,7 +309,7 @@ export default function GalleryFullPage() {
     setLoaded((prev) => ({ ...prev, [id]: true }));
   };
 
-  const hero = GALLERY_IMAGES.find((img) => img.id === "new-1") || GALLERY_IMAGES.find((img) => img.id === "1")!;
+  const hero = GALLERY_IMAGES.find((img) => img.id === "9") || GALLERY_IMAGES.find((img) => img.id === "new-1") || GALLERY_IMAGES.find((img) => img.id === "1")!;
   const aestheticImg = GALLERY_IMAGES.find((img) => img.id === "14")!;
 
   return (
