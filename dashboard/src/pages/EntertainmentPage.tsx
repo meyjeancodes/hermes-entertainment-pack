@@ -200,227 +200,157 @@ export default function EntertainmentPage() {
 
       {/* TV UNIT */}
       <div className="flex flex-col items-center gap-10">
-        <Card className="overflow-hidden border-border bg-background-elevated relative w-full max-w-3xl mx-auto">
+        <Card className="overflow-hidden border-border bg-card/50 backdrop-blur-md relative w-full max-w-3xl mx-auto shadow-xl">
           <CardContent className="p-0">
             <div className="relative px-2 md:px-3 lg:px-4 pb-6">
-                {/* Hide YouTube large play button overlay */}
-                <style>{`.ytp-large-play-button { display: none !important; }`}</style>
+              {/* Hide YouTube large play button overlay */}
+              <style>{`.ytp-large-play-button { display: none !important; }`}</style>
 
-                {/* ── TV HOUSING — frosted glass ── */}
-                <div className="relative rounded-[28px]"
-                     style={{
-                       background: 'rgba(10, 10, 24, 0.55)',
-                       backdropFilter: 'blur(24px) saturate(160%)',
-                       WebkitBackdropFilter: 'blur(24px) saturate(160%)',
-                       border: '1px solid rgba(255,255,255,0.09)',
-                       boxShadow: '0 20px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.3)',
-                       padding: '14px 14px 20px',
-                     }}>
-
-                  {/* Top accent strip */}
-                  <div className="absolute top-0 left-8 right-8 h-px rounded-full"
-                       style={{ background: 'linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent)' }} />
-
-                  {/* Brand badge */}
-                  <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
-                    <div className={`w-2.5 h-2.5 rounded-full transition-all ${powerOn ? 'bg-emerald-400 shadow-[0_0_10px_#4ade80]' : 'bg-red-600 shadow-[0_0_6px_#dc2626]'}`} />
-                    <span className="text-[0.6rem] font-mono tracking-[0.5em] uppercase font-bold" style={{ color: 'rgba(255,255,255,0.65)' }}>NOUS</span>
+              {/* ── MODERN MEDIA VIEWPORT ── */}
+              <div className="relative rounded-xl border border-border bg-background/30 overflow-hidden">
+                {/* Header */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-background/50">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full transition-all ${powerOn ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-red-500'}`} />
+                    <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Media Player</span>
                   </div>
-
-                  {/* CRT bezel — deeply recessed */}
-                  <div className="relative rounded-[16px] mt-3 shadow-[inset_0_4px_20px_rgba(0,0,0,0.95),inset_0_0_0_2px_rgba(0,0,0,0.8)]"
-                       style={{ background: '#080604', padding: '20px' }}>
-                    {/* Subtle phosphor glow around screen */}
-                    <div className="absolute inset-0 rounded-[16px] pointer-events-none"
-                         style={{ boxShadow: powerOn ? 'inset 0 0 40px rgba(74,222,128,0.06)' : 'none' }} />
-
-                  {/* Screen — 16:9 widescreen */}
-                  <div className="relative bg-black rounded overflow-hidden" style={{ aspectRatio: "16/9" }}>
-                    {/* Power-on sweep (only on power-up) */}
-                    {powerOn && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent z-40 pointer-events-none power-on-sweep" />
-                    )}
-
-                    {/* Conditional content based on power state */}
-                    {powerOn ? (
-                      /* ON: channel + OSD + enhanced CRT effects */
-                      <>
-                        {/* Scanlines — finer, more authentic */}
-                        <div className="absolute inset-0 pointer-events-none z-10" style={{
-                          backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px)",
-                          opacity: 0.4,
-                        }} />
-                        {/* Horizontal scan line animation */}
-                        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-b from-emerald-400/10 to-transparent animate-[scan_3s_linear_infinite]" style={{
-                            animationName: 'scan',
-                            animationDuration: '3s',
-                            animationTimingFunction: 'linear',
-                            animationIterationCount: 'infinite'
-                          }} />
-                        </div>
-                        {/* Vignette — deeper corner shadows */}
-                        <div className="absolute inset-0 rounded pointer-events-none z-10" style={{
-                          background: "radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0,0,0,0.35) 100%)",
-                        }} />
-                        {/* Subtle screen glow */}
-                        <div className="absolute inset-0 pointer-events-none z-5 rounded" style={{
-                          boxShadow: "inset 0 0 60px rgba(16, 185, 129, 0.06)",
-                        }} />
-                        {/* Channel content */}
-                        <div className="absolute inset-0">
-                          <ChannelRenderer channel={activeChannel} isPlaying={isPlaying} volume={volume} isMuted={isMuted} />
-                        </div>
-                        {/* OSD — channel number only */}
-                        <div className="absolute bottom-2 left-2 z-20 pointer-events-none">
-                          <div className="flex items-center gap-1.5 bg-black/80 px-2 py-0.5 rounded border border-slate-600">
-                            <span className="text-[0.45rem] text-slate-500 font-mono">CH</span>
-                            <span className="text-sm font-mono text-emerald-400">{String(activeIdx + 1).padStart(2, "0")}</span>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      /* OFF: black screen + animated static + NO SIGNAL text */
-                      <div className="absolute inset-0 bg-black flex items-center justify-center z-10">
-                        <style>{`
-                          @keyframes tv-static {
-                            0% { background-position: 0 0; }
-                            100% { background-position: 100% 100%; }
-                          }
-                        `}</style>
-                        <div className="absolute inset-0" style={{
-                          backgroundImage: "repeating-radial-gradient(circle, rgba(255,255,255,0.15) 0px, rgba(255,255,255,0.15) 1px, transparent 1px, transparent 3px)",
-                          backgroundSize: "6px 6px",
-                          animation: "tv-static 0.2s linear infinite",
-                          opacity: 0.7,
-                        }} />
-                        <span className="text-[0.7rem] font-mono text-slate-400 tracking-[0.3em] uppercase animate-pulse">NO SIGNAL</span>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/20">
-                    <span className="text-xs">NOUS</span>
-                  </div>
-                  <span className="text-sm text-midground/70">Entertainment System</span>
+                  {powerOn && (
+                    <div className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground">
+                      <span>CH {String(activeIdx + 1).padStart(2, "0")}</span>
+                      <span className="text-muted-foreground/50">•</span>
+                      <span>{activeChannel.name}</span>
+                    </div>
+                  )}
                 </div>
+
+                {/* Screen Area */}
+                <div className="relative bg-black aspect-video w-full">
+                  {powerOn && (
+                    <div className="absolute inset-0 pointer-events-none rounded-lg shadow-[inset_0_0_60px_rgba(16,185,129,0.03)]" />
+                  )}
+                  
+                  {powerOn ? (
+                    <>
+                      {/* Subtle, clean scanlines */}
+                      <div className="absolute inset-0 pointer-events-none z-10 opacity-[0.04]" style={{
+                        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)",
+                      }} />
+                      
+                      {/* Channel content */}
+                      <div className="absolute inset-0 z-0">
+                        <ChannelRenderer channel={activeChannel} isPlaying={isPlaying} volume={volume} isMuted={isMuted} />
+                      </div>
+
+                      {/* Clean OSD */}
+                      <div className="absolute bottom-3 left-3 z-20 pointer-events-none">
+                        <div className="flex items-center gap-2 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10">
+                          <span className="text-[10px] text-muted-foreground font-mono">CH</span>
+                          <span className="text-xs font-mono font-semibold text-emerald-400">{String(activeIdx + 1).padStart(2, "0")}</span>
                         </div>
-                    )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="absolute inset-0 bg-background flex flex-col items-center justify-center gap-3 z-10">
+                      <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center border border-border">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-muted-foreground">
+                          <rect x="2" y="7" width="20" height="15" rx="2" />
+                          <path d="M17 2l-5 5-5-5" />
+                        </svg>
+                      </div>
+                      <span className="text-sm font-medium text-muted-foreground">Powered Off</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Control Panel */}
+                <div className="p-4 border-t border-border/50 bg-background/30">
+                  {/* Transport Controls */}
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <button onClick={togglePower} title="Power"
+                      className={`flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border transition-all active:scale-95 ${
+                        powerOn ? 'text-emerald-500 border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20' : 'text-red-500 border-red-500/30 bg-red-500/10 hover:bg-red-500/20'
+                      }`}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+                    </button>
+                    
+                    <div className="w-px h-6 bg-border" />
+                    
+                    <button onClick={handleRewind} title="Previous Channel"
+                      className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border border-border/50 bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted transition-all active:scale-95">
+                      <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="19,20 9,12 19,4"/><rect x="5" y="4" width="2" height="16"/></svg>
+                    </button>
+                    
+                    <button onClick={handlePlayPause} title={isPlaying ? "Pause" : "Play"}
+                      className="flex-shrink-0 flex items-center gap-2 px-5 h-10 rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-all active:scale-95 font-medium text-sm tracking-wide">
+                      {isPlaying ? (
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                      ) : (
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
+                      )}
+                      <span>{isPlaying ? 'PAUSE' : 'PLAY'}</span>
+                    </button>
+                    
+                    <button onClick={handleNext} title="Next Channel"
+                      className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border border-border/50 bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted transition-all active:scale-95">
+                      <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="5,4 15,12 5,20"/><rect x="17" y="4" width="2" height="16"/></svg>
+                    </button>
+
+                    <div className="w-px h-6 bg-border" />
+
+                    <button onClick={() => adjustVolume(-10)} title="Volume Down"
+                      className="w-8 h-8 flex items-center justify-center rounded-full border border-border/50 bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted transition-all active:scale-95">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/></svg>
+                    </button>
+                    <button onClick={toggleMute} title={isMuted ? 'Unmute' : 'Mute'}
+                      className={`w-8 h-8 flex items-center justify-center rounded-full border transition-all active:scale-95 ${
+                        isMuted ? 'text-red-500 border-red-500/30 bg-red-500/10 hover:bg-red-500/20' : 'text-muted-foreground border-border/50 bg-muted/30 hover:text-foreground hover:bg-muted'
+                      }`}>
+                      {isMuted ? (
+                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                      ) : (
+                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                      )}
+                    </button>
+                    <button onClick={() => adjustVolume(10)} title="Volume Up"
+                      className="w-8 h-8 flex items-center justify-center rounded-full border border-border/50 bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted transition-all active:scale-95">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><polygon points="13,5 18,9 22,9 22,15 18,15 13,19"/><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
+                    </button>
                   </div>
 
-                  </div>{/* close CRT bezel */}
-
-                  {/* ── Control panel — glass ── */}
-                  <div className="mt-3 rounded-[12px] px-4 py-4"
-                       style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                    {/* Transport row */}
-                    <div className="flex items-center justify-around gap-2 w-full mb-3">
-                      {/* Power */}
-                      <button onClick={togglePower} title="Power"
-                        className="relative flex-shrink-0 flex items-center gap-1.5 px-3 h-9 rounded-full border active:scale-95 transition-all select-none"
-                        style={{
-                          background: powerOn ? 'rgba(52,211,153,0.15)' : 'rgba(239,68,68,0.1)',
-                          borderColor: powerOn ? 'rgba(52,211,153,0.4)' : 'rgba(239,68,68,0.3)',
-                          color: powerOn ? '#6ee7b7' : '#fca5a5',
-                          boxShadow: powerOn ? '0 0 12px rgba(52,211,153,0.2)' : 'none',
-                        }}>
-                        <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all ${powerOn ? 'bg-emerald-400 shadow-[0_0_6px_#4ade80]' : 'bg-red-500'}`} />
-                        <Power className="w-3.5 h-3.5" />
+                  {/* Channel Pills */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+                    {CHANNELS.map((ch, i) => (
+                      <button
+                        key={ch.id}
+                        onClick={() => changeChannel(i)}
+                        className={`flex-shrink-0 flex items-center gap-1.5 px-3 h-8 rounded-full text-xs font-medium border transition-all select-none active:scale-95 ${
+                          activeIdx === i 
+                            ? 'bg-primary/10 text-primary border-primary/30 shadow-sm' 
+                            : 'bg-muted/30 text-muted-foreground border-border/50 hover:bg-muted hover:text-foreground'
+                        }`}
+                      >
+                        <ChannelIcon channel={ch} size={12} />
+                        <span>{String(i + 1).padStart(2, "0")}</span>
                       </button>
-
-                      <div className="w-px h-7" style={{ background: 'rgba(255,255,255,0.1)' }} />
-
-                      {/* Rewind */}
-                      <button onClick={handleRewind} title="Prev channel"
-                        className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border active:scale-95 transition-all select-none"
-                        style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)' }}>
-                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="4,12 10,6 10,18"/><polygon points="10,12 16,6 16,18"/></svg>
-                      </button>
-                      {/* Play/Pause — larger pill */}
-                      <button onClick={handlePlayPause} title={isPlaying ? "Pause" : "Play"}
-                        className="flex-shrink-0 flex items-center gap-2 px-5 h-10 rounded-full border-2 active:scale-95 transition-all select-none"
-                        style={{ background: 'rgba(56,189,248,0.18)', borderColor: 'rgba(56,189,248,0.45)', color: '#bae6fd', boxShadow: '0 0 18px rgba(56,189,248,0.2)' }}>
-                        {isPlaying ? (
-                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                        ) : (
-                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
-                        )}
-                        <span className="text-[0.58rem] font-mono font-bold tracking-widest uppercase">{isPlaying ? 'PAUSE' : 'PLAY'}</span>
-                      </button>
-                      {/* Next */}
-                      <button onClick={handleNext} title="Next channel"
-                        className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border active:scale-95 transition-all select-none"
-                        style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)' }}>
-                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="20,12 14,6 14,18"/><polygon points="14,12 8,6 8,18"/></svg>
-                      </button>
-
-                      <div className="w-px h-7" style={{ background: 'rgba(255,255,255,0.1)' }} />
-
-                      {/* Vol- */}
-                      <button onClick={() => adjustVolume(-10)} title="Volume Down"
-                        className="w-8 h-8 flex items-center justify-center rounded-full border active:scale-95 transition-all select-none"
-                        style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}>
-                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><polygon points="4,12 10,6 10,18"/></svg>
-                      </button>
-                      {/* Mute */}
-                      <button onClick={toggleMute} title={isMuted ? 'Unmute' : 'Mute'}
-                        className="w-8 h-8 flex items-center justify-center rounded-full border active:scale-95 transition-all select-none"
-                        style={{
-                          background: isMuted ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.05)',
-                          borderColor: isMuted ? 'rgba(239,68,68,0.5)' : 'rgba(255,255,255,0.1)',
-                          color: isMuted ? '#fca5a5' : 'rgba(255,255,255,0.5)',
-                        }}>
-                        {isMuted ? (
-                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-                        ) : (
-                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                        )}
-                      </button>
-                      {/* Vol+ */}
-                      <button onClick={() => adjustVolume(10)} title="Volume Up"
-                        className="w-8 h-8 flex items-center justify-center rounded-full border active:scale-95 transition-all select-none"
-                        style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}>
-                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><polygon points="20,12 14,6 14,18"/></svg>
-                      </button>
-                    </div>
-
-                    {/* Channel pills — scrollable single row */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-                      {CHANNELS.map((ch, i) => (
-                        <button
-                          key={ch.id}
-                          onClick={() => changeChannel(i)}
-                          className="relative flex-shrink-0 flex items-center gap-1.5 font-mono text-[0.58rem] active:scale-95 transition-all select-none rounded-full px-2.5 h-7 border"
-                          style={{
-                            background: activeIdx === i ? 'rgba(56,189,248,0.22)' : 'rgba(255,255,255,0.04)',
-                            borderColor: activeIdx === i ? 'rgba(56,189,248,0.55)' : 'rgba(255,255,255,0.08)',
-                            color: activeIdx === i ? '#e9d5ff' : 'rgba(255,255,255,0.38)',
-                            boxShadow: activeIdx === i ? '0 0 14px rgba(56,189,248,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
-                          }}>
-                          <ChannelIcon channel={ch} size={10} />
-                          <span>{String(i + 1).padStart(2, "0")}</span>
-                          {activeIdx === i && (
-                            <span className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: '#38bdf8', boxShadow: '0 0 4px #38bdf8' }} />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>{/* close control panel */}
-
-                </div>{/* close TV housing */}
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* TV GUIDE */}
-        <Card className="w-full max-w-full border-border bg-background-elevated overflow-hidden">
+        {/* CHANNEL GUIDE */}
+        <Card className="w-full max-w-full border-border bg-card/50 backdrop-blur-md overflow-hidden mt-4">
           <CardContent className="p-0">
-            <div className="p-4 border-b border-border">
+            <div className="p-4 border-b border-border/50">
               <div className="flex items-center justify-between gap-3">
-                {/* Left: TV Guide title */}
-                <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground shrink-0">TV Guide</h2>
+                <h2 className="text-sm font-semibold text-foreground shrink-0">Channel Guide</h2>
 
                 {/* Center: scroller + time label */}
                 <div className="flex flex-col items-center flex-1 min-w-0 px-2">
                   {isVideoChannel ? (
-                    <div className="w-full flex items-center gap-2 text-[0.6rem] font-mono text-muted-foreground/80">
+                    <div className="w-full flex items-center gap-2 text-[0.65rem] font-mono text-muted-foreground">
                       <span className="shrink-0 tabular-nums w-10 text-right">{videoTime > 2 || getSavedPosition(activeChannelId) > 2 ? formatTime(videoTime) : "00:00"}</span>
                       <input
                         type="range"
@@ -442,14 +372,14 @@ export default function EntertainmentPage() {
                             savePosition(activeChannel.id, seekTo);
                           }
                         }}
-                        className="flex-1 h-1.5 bg-slate-800 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-400 [&::-webkit-slider-thumb]:shadow-[0_0_6px_rgba(74,222,128,0.8)] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-emerald-400 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-[0_0_6px_rgba(74,222,128,0.8)]"
+                        className="flex-1 h-1.5 bg-muted rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-[0_0_6px_rgba(16,185,129,0.6)] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-[0_0_6px_rgba(16,185,129,0.6)]"
                       />
                       <span className="shrink-0 tabular-nums w-10 text-left">
                         {duration > 0 ? formatTime(duration) : "--:--"}
                       </span>
                     </div>
                   ) : (
-                    <div className="w-full h-6 flex items-center justify-center text-[0.55rem] font-mono text-muted-foreground/30 uppercase tracking-wider">
+                    <div className="w-full h-6 flex items-center justify-center text-[0.6rem] font-mono text-muted-foreground/40 uppercase tracking-wider">
                       No video
                     </div>
                   )}
@@ -460,13 +390,13 @@ export default function EntertainmentPage() {
                   {CHANNELS.map((_, i) => (
                     <div
                       key={i}
-                      className={`w-1.5 h-5 rounded-full transition-all ${activeIdx === i ? "bg-emerald-400 shadow-[0_0_6px_rgba(74,222,128,0.6)]" : "bg-slate-700"}`}
+                      className={`w-1.5 h-5 rounded-full transition-all ${activeIdx === i ? "bg-primary shadow-[0_0_6px_rgba(16,185,129,0.6)]" : "bg-muted-foreground/20"}`}
                     />
                   ))}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-2.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+            <div className="flex items-center gap-1.5 px-4 py-3 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
               {CHANNELS.map((ch, i) => (
                 <button
                   key={ch.id}
@@ -475,17 +405,17 @@ export default function EntertainmentPage() {
                     else changeChannel(i);
                   }}
                   title={ch.name}
-                  className={`relative flex-shrink-0 flex items-center gap-1.5 px-3 h-8 rounded-full font-mono text-[0.63rem] border transition-all select-none active:scale-95 whitespace-nowrap
-                    ${activeIdx === i
-                      ? "bg-primary/10 text-foreground border-primary/50"
-                      : "bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted hover:text-foreground hover:border-foreground/20"
-                    }`}
+                  className={`relative flex-shrink-0 flex items-center gap-2 px-3 h-9 rounded-lg font-medium text-xs border transition-all select-none active:scale-95 whitespace-nowrap ${
+                    activeIdx === i
+                      ? "bg-primary/10 text-primary border-primary/30"
+                      : "bg-muted/30 text-muted-foreground border-border/50 hover:bg-muted hover:text-foreground hover:border-border"
+                  }`}
                 >
-                  <ChannelIcon channel={ch} size={11} />
-                  <span className="font-semibold">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="opacity-75">{ch.name}</span>
+                  <ChannelIcon channel={ch} size={12} />
+                  <span className="font-semibold tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="opacity-80">{ch.name}</span>
                   {activeIdx === i && (
-                    <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(74,222,128,0.9)]" />
+                    <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_5px_rgba(16,185,129,0.8)]" />
                   )}
                 </button>
               ))}
