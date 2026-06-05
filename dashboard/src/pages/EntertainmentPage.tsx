@@ -200,157 +200,227 @@ export default function EntertainmentPage() {
 
       {/* TV UNIT */}
       <div className="flex flex-col items-center gap-10">
-        <Card className="overflow-hidden border-border bg-card/50 backdrop-blur-md relative w-full max-w-3xl mx-auto shadow-xl">
+        <Card className="overflow-hidden border-border bg-background-elevated relative w-full max-w-3xl mx-auto">
           <CardContent className="p-0">
             <div className="relative px-2 md:px-3 lg:px-4 pb-6">
-              {/* Hide YouTube large play button overlay */}
-              <style>{`.ytp-large-play-button { display: none !important; }`}</style>
+                {/* Hide YouTube large play button overlay */}
+                <style>{`.ytp-large-play-button { display: none !important; }`}</style>
 
-              {/* ── MODERN MEDIA VIEWPORT ── */}
-              <div className="relative rounded-xl border border-border bg-background/30 overflow-hidden">
-                {/* Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-background/50">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full transition-all ${powerOn ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-red-500'}`} />
-                    <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Media Player</span>
+                {/* ── TV HOUSING — frosted glass ── */}
+                <div className="relative rounded-[28px]"
+                     style={{
+                       background: 'rgba(10, 10, 24, 0.55)',
+                       backdropFilter: 'blur(24px) saturate(160%)',
+                       WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+                       border: '1px solid rgba(255,255,255,0.09)',
+                       boxShadow: '0 20px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.3)',
+                       padding: '14px 14px 20px',
+                     }}>
+
+                  {/* Top accent strip */}
+                  <div className="absolute top-0 left-8 right-8 h-px rounded-full"
+                       style={{ background: 'linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent)' }} />
+
+                  {/* Brand badge */}
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                    <div className={`w-2.5 h-2.5 rounded-full transition-all ${powerOn ? 'bg-emerald-400 shadow-[0_0_10px_#4ade80]' : 'bg-red-600 shadow-[0_0_6px_#dc2626]'}`} />
+                    <span className="text-[0.6rem] font-mono tracking-[0.5em] uppercase font-bold" style={{ color: 'rgba(255,255,255,0.65)' }}>NOUS</span>
                   </div>
-                  {powerOn && (
-                    <div className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground">
-                      <span>CH {String(activeIdx + 1).padStart(2, "0")}</span>
-                      <span className="text-muted-foreground/50">•</span>
-                      <span>{activeChannel.name}</span>
-                    </div>
-                  )}
-                </div>
 
-                {/* Screen Area */}
-                <div className="relative bg-black aspect-video w-full">
-                  {powerOn && (
-                    <div className="absolute inset-0 pointer-events-none rounded-lg shadow-[inset_0_0_60px_rgba(16,185,129,0.03)]" />
-                  )}
-                  
-                  {powerOn ? (
-                    <>
-                      {/* Subtle, clean scanlines */}
-                      <div className="absolute inset-0 pointer-events-none z-10 opacity-[0.04]" style={{
-                        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)",
-                      }} />
-                      
-                      {/* Channel content */}
-                      <div className="absolute inset-0 z-0">
-                        <ChannelRenderer channel={activeChannel} isPlaying={isPlaying} volume={volume} isMuted={isMuted} />
-                      </div>
+                  {/* CRT bezel — deeply recessed */}
+                  <div className="relative rounded-[16px] mt-3 shadow-[inset_0_4px_20px_rgba(0,0,0,0.95),inset_0_0_0_2px_rgba(0,0,0,0.8)]"
+                       style={{ background: '#080604', padding: '20px' }}>
+                    {/* Subtle phosphor glow around screen */}
+                    <div className="absolute inset-0 rounded-[16px] pointer-events-none"
+                         style={{ boxShadow: powerOn ? 'inset 0 0 40px rgba(74,222,128,0.06)' : 'none' }} />
 
-                      {/* Clean OSD */}
-                      <div className="absolute bottom-3 left-3 z-20 pointer-events-none">
-                        <div className="flex items-center gap-2 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10">
-                          <span className="text-[10px] text-muted-foreground font-mono">CH</span>
-                          <span className="text-xs font-mono font-semibold text-emerald-400">{String(activeIdx + 1).padStart(2, "0")}</span>
+                  {/* Screen — 16:9 widescreen */}
+                  <div className="relative bg-black rounded overflow-hidden" style={{ aspectRatio: "16/9" }}>
+                    {/* Power-on sweep (only on power-up) */}
+                    {powerOn && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent z-40 pointer-events-none power-on-sweep" />
+                    )}
+
+                    {/* Conditional content based on power state */}
+                    {powerOn ? (
+                      /* ON: channel + OSD + enhanced CRT effects */
+                      <>
+                        {/* Scanlines — finer, more authentic */}
+                        <div className="absolute inset-0 pointer-events-none z-10" style={{
+                          backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px)",
+                          opacity: 0.4,
+                        }} />
+                        {/* Horizontal scan line animation */}
+                        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-b from-emerald-400/10 to-transparent animate-[scan_3s_linear_infinite]" style={{
+                            animationName: 'scan',
+                            animationDuration: '3s',
+                            animationTimingFunction: 'linear',
+                            animationIterationCount: 'infinite'
+                          }} />
                         </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="absolute inset-0 bg-background flex flex-col items-center justify-center gap-3 z-10">
-                      <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center border border-border">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-muted-foreground">
-                          <rect x="2" y="7" width="20" height="15" rx="2" />
-                          <path d="M17 2l-5 5-5-5" />
-                        </svg>
-                      </div>
-                      <span className="text-sm font-medium text-muted-foreground">Powered Off</span>
-                    </div>
-                  )}
+                        {/* Vignette — deeper corner shadows */}
+                        <div className="absolute inset-0 rounded pointer-events-none z-10" style={{
+                          background: "radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0,0,0,0.35) 100%)",
+                        }} />
+                        {/* Subtle screen glow */}
+                        <div className="absolute inset-0 pointer-events-none z-5 rounded" style={{
+                          boxShadow: "inset 0 0 60px rgba(16, 185, 129, 0.06)",
+                        }} />
+                        {/* Channel content */}
+                        <div className="absolute inset-0">
+                          <ChannelRenderer channel={activeChannel} isPlaying={isPlaying} volume={volume} isMuted={isMuted} />
+                        </div>
+                        {/* OSD — channel number only */}
+                        <div className="absolute bottom-2 left-2 z-20 pointer-events-none">
+                          <div className="flex items-center gap-1.5 bg-black/80 px-2 py-0.5 rounded border border-slate-600">
+                            <span className="text-[0.45rem] text-slate-500 font-mono">CH</span>
+                            <span className="text-sm font-mono text-emerald-400">{String(activeIdx + 1).padStart(2, "0")}</span>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      /* OFF: black screen + animated static + NO SIGNAL text */
+                      <div className="absolute inset-0 bg-black flex items-center justify-center z-10">
+                        <style>{`
+                          @keyframes tv-static {
+                            0% { background-position: 0 0; }
+                            100% { background-position: 100% 100%; }
+                          }
+                        `}</style>
+                        <div className="absolute inset-0" style={{
+                          backgroundImage: "repeating-radial-gradient(circle, rgba(255,255,255,0.15) 0px, rgba(255,255,255,0.15) 1px, transparent 1px, transparent 3px)",
+                          backgroundSize: "6px 6px",
+                          animation: "tv-static 0.2s linear infinite",
+                          opacity: 0.7,
+                        }} />
+                        <span className="text-[0.7rem] font-mono text-slate-400 tracking-[0.3em] uppercase animate-pulse">NO SIGNAL</span>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/20">
+                    <span className="text-xs">NOUS</span>
+                  </div>
+                  <span className="text-sm text-midground/70">Entertainment System</span>
                 </div>
-
-                {/* Control Panel */}
-                <div className="p-4 border-t border-border/50 bg-background/30">
-                  {/* Transport Controls */}
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <button onClick={togglePower} title="Power"
-                      className={`flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border transition-all active:scale-95 ${
-                        powerOn ? 'text-emerald-500 border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20' : 'text-red-500 border-red-500/30 bg-red-500/10 hover:bg-red-500/20'
-                      }`}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
-                    </button>
-                    
-                    <div className="w-px h-6 bg-border" />
-                    
-                    <button onClick={handleRewind} title="Previous Channel"
-                      className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border border-border/50 bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted transition-all active:scale-95">
-                      <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="19,20 9,12 19,4"/><rect x="5" y="4" width="2" height="16"/></svg>
-                    </button>
-                    
-                    <button onClick={handlePlayPause} title={isPlaying ? "Pause" : "Play"}
-                      className="flex-shrink-0 flex items-center gap-2 px-5 h-10 rounded-full border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-all active:scale-95 font-medium text-sm tracking-wide">
-                      {isPlaying ? (
-                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                      ) : (
-                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
-                      )}
-                      <span>{isPlaying ? 'PAUSE' : 'PLAY'}</span>
-                    </button>
-                    
-                    <button onClick={handleNext} title="Next Channel"
-                      className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border border-border/50 bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted transition-all active:scale-95">
-                      <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="5,4 15,12 5,20"/><rect x="17" y="4" width="2" height="16"/></svg>
-                    </button>
-
-                    <div className="w-px h-6 bg-border" />
-
-                    <button onClick={() => adjustVolume(-10)} title="Volume Down"
-                      className="w-8 h-8 flex items-center justify-center rounded-full border border-border/50 bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted transition-all active:scale-95">
-                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/></svg>
-                    </button>
-                    <button onClick={toggleMute} title={isMuted ? 'Unmute' : 'Mute'}
-                      className={`w-8 h-8 flex items-center justify-center rounded-full border transition-all active:scale-95 ${
-                        isMuted ? 'text-red-500 border-red-500/30 bg-red-500/10 hover:bg-red-500/20' : 'text-muted-foreground border-border/50 bg-muted/30 hover:text-foreground hover:bg-muted'
-                      }`}>
-                      {isMuted ? (
-                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-                      ) : (
-                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                      )}
-                    </button>
-                    <button onClick={() => adjustVolume(10)} title="Volume Up"
-                      className="w-8 h-8 flex items-center justify-center rounded-full border border-border/50 bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted transition-all active:scale-95">
-                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><polygon points="13,5 18,9 22,9 22,15 18,15 13,19"/><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
-                    </button>
+                        </div>
+                    )}
                   </div>
 
-                  {/* Channel Pills */}
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-                    {CHANNELS.map((ch, i) => (
-                      <button
-                        key={ch.id}
-                        onClick={() => changeChannel(i)}
-                        className={`flex-shrink-0 flex items-center gap-1.5 px-3 h-8 rounded-full text-xs font-medium border transition-all select-none active:scale-95 ${
-                          activeIdx === i 
-                            ? 'bg-primary/10 text-primary border-primary/30 shadow-sm' 
-                            : 'bg-muted/30 text-muted-foreground border-border/50 hover:bg-muted hover:text-foreground'
-                        }`}
-                      >
-                        <ChannelIcon channel={ch} size={12} />
-                        <span>{String(i + 1).padStart(2, "0")}</span>
+                  </div>{/* close CRT bezel */}
+
+                  {/* ── Control panel — glass ── */}
+                  <div className="mt-3 rounded-[12px] px-4 py-4"
+                       style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    {/* Transport row */}
+                    <div className="flex items-center justify-around gap-2 w-full mb-3">
+                      {/* Power */}
+                      <button onClick={togglePower} title="Power"
+                        className="relative flex-shrink-0 flex items-center gap-1.5 px-3 h-9 rounded-full border active:scale-95 transition-all select-none"
+                        style={{
+                          background: powerOn ? 'rgba(52,211,153,0.15)' : 'rgba(239,68,68,0.1)',
+                          borderColor: powerOn ? 'rgba(52,211,153,0.4)' : 'rgba(239,68,68,0.3)',
+                          color: powerOn ? '#6ee7b7' : '#fca5a5',
+                          boxShadow: powerOn ? '0 0 12px rgba(52,211,153,0.2)' : 'none',
+                        }}>
+                        <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all ${powerOn ? 'bg-emerald-400 shadow-[0_0_6px_#4ade80]' : 'bg-red-500'}`} />
+                        <Power className="w-3.5 h-3.5" />
                       </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+
+                      <div className="w-px h-7" style={{ background: 'rgba(255,255,255,0.1)' }} />
+
+                      {/* Rewind */}
+                      <button onClick={handleRewind} title="Prev channel"
+                        className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border active:scale-95 transition-all select-none"
+                        style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)' }}>
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="4,12 10,6 10,18"/><polygon points="10,12 16,6 16,18"/></svg>
+                      </button>
+                      {/* Play/Pause — larger pill */}
+                      <button onClick={handlePlayPause} title={isPlaying ? "Pause" : "Play"}
+                        className="flex-shrink-0 flex items-center gap-2 px-5 h-10 rounded-full border-2 active:scale-95 transition-all select-none"
+                        style={{ background: 'rgba(56,189,248,0.18)', borderColor: 'rgba(56,189,248,0.45)', color: '#bae6fd', boxShadow: '0 0 18px rgba(56,189,248,0.2)' }}>
+                        {isPlaying ? (
+                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                        ) : (
+                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
+                        )}
+                        <span className="text-[0.58rem] font-mono font-bold tracking-widest uppercase">{isPlaying ? 'PAUSE' : 'PLAY'}</span>
+                      </button>
+                      {/* Next */}
+                      <button onClick={handleNext} title="Next channel"
+                        className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border active:scale-95 transition-all select-none"
+                        style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)' }}>
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><polygon points="20,12 14,6 14,18"/><polygon points="14,12 8,6 8,18"/></svg>
+                      </button>
+
+                      <div className="w-px h-7" style={{ background: 'rgba(255,255,255,0.1)' }} />
+
+                      {/* Vol- */}
+                      <button onClick={() => adjustVolume(-10)} title="Volume Down"
+                        className="w-8 h-8 flex items-center justify-center rounded-full border active:scale-95 transition-all select-none"
+                        style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}>
+                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><polygon points="4,12 10,6 10,18"/></svg>
+                      </button>
+                      {/* Mute */}
+                      <button onClick={toggleMute} title={isMuted ? 'Unmute' : 'Mute'}
+                        className="w-8 h-8 flex items-center justify-center rounded-full border active:scale-95 transition-all select-none"
+                        style={{
+                          background: isMuted ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.05)',
+                          borderColor: isMuted ? 'rgba(239,68,68,0.5)' : 'rgba(255,255,255,0.1)',
+                          color: isMuted ? '#fca5a5' : 'rgba(255,255,255,0.5)',
+                        }}>
+                        {isMuted ? (
+                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                        ) : (
+                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                        )}
+                      </button>
+                      {/* Vol+ */}
+                      <button onClick={() => adjustVolume(10)} title="Volume Up"
+                        className="w-8 h-8 flex items-center justify-center rounded-full border active:scale-95 transition-all select-none"
+                        style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}>
+                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><polygon points="20,12 14,6 14,18"/></svg>
+                      </button>
+                    </div>
+
+                    {/* Channel pills — scrollable single row */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                      {CHANNELS.map((ch, i) => (
+                        <button
+                          key={ch.id}
+                          onClick={() => changeChannel(i)}
+                          className="relative flex-shrink-0 flex items-center gap-1.5 font-mono text-[0.58rem] active:scale-95 transition-all select-none rounded-full px-2.5 h-7 border"
+                          style={{
+                            background: activeIdx === i ? 'rgba(56,189,248,0.22)' : 'rgba(255,255,255,0.04)',
+                            borderColor: activeIdx === i ? 'rgba(56,189,248,0.55)' : 'rgba(255,255,255,0.08)',
+                            color: activeIdx === i ? '#e9d5ff' : 'rgba(255,255,255,0.38)',
+                            boxShadow: activeIdx === i ? '0 0 14px rgba(56,189,248,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
+                          }}>
+                          <ChannelIcon channel={ch} size={10} />
+                          <span>{String(i + 1).padStart(2, "0")}</span>
+                          {activeIdx === i && (
+                            <span className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: '#38bdf8', boxShadow: '0 0 4px #38bdf8' }} />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>{/* close control panel */}
+
+                </div>{/* close TV housing */}
             </div>
           </CardContent>
         </Card>
 
-        {/* CHANNEL GUIDE */}
-        <Card className="w-full max-w-full border-border bg-card/50 backdrop-blur-md overflow-hidden mt-4">
+        {/* TV GUIDE */}
+        <Card className="w-full max-w-full border-border bg-background-elevated overflow-hidden">
           <CardContent className="p-0">
-            <div className="p-4 border-b border-border/50">
+            <div className="p-4 border-b border-border">
               <div className="flex items-center justify-between gap-3">
-                <h2 className="text-sm font-semibold text-foreground shrink-0">Channel Guide</h2>
+                {/* Left: TV Guide title */}
+                <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground shrink-0">TV Guide</h2>
 
                 {/* Center: scroller + time label */}
                 <div className="flex flex-col items-center flex-1 min-w-0 px-2">
                   {isVideoChannel ? (
-                    <div className="w-full flex items-center gap-2 text-[0.65rem] font-mono text-muted-foreground">
+                    <div className="w-full flex items-center gap-2 text-[0.6rem] font-mono text-muted-foreground/80">
                       <span className="shrink-0 tabular-nums w-10 text-right">{videoTime > 2 || getSavedPosition(activeChannelId) > 2 ? formatTime(videoTime) : "00:00"}</span>
                       <input
                         type="range"
@@ -372,14 +442,14 @@ export default function EntertainmentPage() {
                             savePosition(activeChannel.id, seekTo);
                           }
                         }}
-                        className="flex-1 h-1.5 bg-muted rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-[0_0_6px_rgba(16,185,129,0.6)] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-[0_0_6px_rgba(16,185,129,0.6)]"
+                        className="flex-1 h-1.5 bg-slate-800 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-400 [&::-webkit-slider-thumb]:shadow-[0_0_6px_rgba(74,222,128,0.8)] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-emerald-400 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-[0_0_6px_rgba(74,222,128,0.8)]"
                       />
                       <span className="shrink-0 tabular-nums w-10 text-left">
                         {duration > 0 ? formatTime(duration) : "--:--"}
                       </span>
                     </div>
                   ) : (
-                    <div className="w-full h-6 flex items-center justify-center text-[0.6rem] font-mono text-muted-foreground/40 uppercase tracking-wider">
+                    <div className="w-full h-6 flex items-center justify-center text-[0.55rem] font-mono text-muted-foreground/30 uppercase tracking-wider">
                       No video
                     </div>
                   )}
@@ -390,13 +460,13 @@ export default function EntertainmentPage() {
                   {CHANNELS.map((_, i) => (
                     <div
                       key={i}
-                      className={`w-1.5 h-5 rounded-full transition-all ${activeIdx === i ? "bg-primary shadow-[0_0_6px_rgba(16,185,129,0.6)]" : "bg-muted-foreground/20"}`}
+                      className={`w-1.5 h-5 rounded-full transition-all ${activeIdx === i ? "bg-emerald-400 shadow-[0_0_6px_rgba(74,222,128,0.6)]" : "bg-slate-700"}`}
                     />
                   ))}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 px-4 py-3 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+            <div className="flex items-center gap-1.5 px-3 py-2.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
               {CHANNELS.map((ch, i) => (
                 <button
                   key={ch.id}
@@ -405,17 +475,17 @@ export default function EntertainmentPage() {
                     else changeChannel(i);
                   }}
                   title={ch.name}
-                  className={`relative flex-shrink-0 flex items-center gap-2 px-3 h-9 rounded-lg font-medium text-xs border transition-all select-none active:scale-95 whitespace-nowrap ${
-                    activeIdx === i
-                      ? "bg-primary/10 text-primary border-primary/30"
-                      : "bg-muted/30 text-muted-foreground border-border/50 hover:bg-muted hover:text-foreground hover:border-border"
-                  }`}
+                  className={`relative flex-shrink-0 flex items-center gap-1.5 px-3 h-8 rounded-full font-mono text-[0.63rem] border transition-all select-none active:scale-95 whitespace-nowrap
+                    ${activeIdx === i
+                      ? "bg-primary/10 text-foreground border-primary/50"
+                      : "bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted hover:text-foreground hover:border-foreground/20"
+                    }`}
                 >
-                  <ChannelIcon channel={ch} size={12} />
-                  <span className="font-semibold tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="opacity-80">{ch.name}</span>
+                  <ChannelIcon channel={ch} size={11} />
+                  <span className="font-semibold">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="opacity-75">{ch.name}</span>
                   {activeIdx === i && (
-                    <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_5px_rgba(16,185,129,0.8)]" />
+                    <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(74,222,128,0.9)]" />
                   )}
                 </button>
               ))}
@@ -1353,6 +1423,7 @@ function NousBoySection({
       if (!GAME_KEYS.has(e.key)) return;
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      // Only intercept if focus is inside the NousBoy section or its game iframe
       const section = sectionRef.current;
       const active = document.activeElement;
       if (section && active && !section.contains(active) && active !== iframeRef.current) return;
@@ -1371,221 +1442,251 @@ function NousBoySection({
   }, [gbPower]);
 
   return (
-    <div ref={sectionRef} className="flex flex-col items-center gap-6 w-full max-w-3xl mx-auto">
+    <div ref={sectionRef} className="flex flex-col items-center gap-0 w-full">
       {/* Section header */}
-      <div className="w-full flex items-center gap-3 pb-2">
-        <div className="w-2 h-2 rounded-full bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.6)]" />
-        <h2 className="text-sm font-semibold text-foreground">Nous Boy</h2>
-        <div className="flex-1 h-px bg-border/50" />
-        <span className="text-[0.65rem] font-mono text-muted-foreground/60 uppercase tracking-wider">
-          Keyboard arrows + Z/X · or use on-screen controls
+      <div className="w-full flex items-center gap-3 pb-4 pt-2">
+        <div className="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]" />
+        <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">Nous Boy</h2>
+        <div className="flex-1 h-px bg-border/30" />
+        <span className="text-[0.6rem] font-mono text-muted-foreground/40 uppercase tracking-widest">
+          Keyboard arrows + Z/X · or use D-pad buttons
         </span>
       </div>
 
-      {/* Modern Console Card */}
-      <Card className="w-full border-border bg-card/50 backdrop-blur-md shadow-xl overflow-hidden">
-        <CardContent className="p-0">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-background/30">
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full transition-all ${gbPower ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-red-500'}`} />
-              <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Console</span>
+      {/* GameBoy console — classic DMG-01 style */}
+      <div className="flex justify-center mb-6">
+        <div style={{ width: 480 }}>
+          {/* Body — solid classic Game Boy gray */}
+          <div className="relative rounded-[28px_28px_20px_20px] px-6 pt-4 pb-7"
+               style={{
+                 background: 'linear-gradient(170deg, #c8c4bc 0%, #b0aca4 40%, #9a9690 100%)',
+                 boxShadow: '0 20px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.2)',
+               }}>
+
+            {/* Top bar: NOUS BOY label + power LED + power toggle */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                {/* Power switch */}
+                <button onClick={() => setGbPower(p => !p)} title="Power"
+                  className="flex items-center gap-1.5 rounded-sm px-2 py-1 active:scale-95 transition-all select-none border"
+                  style={{
+                    background: gbPower ? 'linear-gradient(180deg,#2a6a2a,#184818)' : 'linear-gradient(180deg,#4a2020,#2a1010)',
+                    borderColor: gbPower ? '#3a8a3a' : '#6a2020',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)',
+                  }}>
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${gbPower ? 'bg-[#4ade80] shadow-[0_0_8px_#4ade80]' : 'bg-[#ef4444] shadow-[0_0_6px_#dc2626]'}`} />
+                  <span className="text-[0.42rem] font-mono font-bold uppercase tracking-widest" style={{ color: gbPower ? '#86efac' : '#fca5a5' }}>PWR</span>
+                </button>
+              </div>
+              <span className="text-[0.55rem] font-mono font-bold tracking-[0.35em] uppercase" style={{ color: '#4a4642', textShadow: '0 1px 0 rgba(255,255,255,0.3)' }}>NOUS BOY</span>
+              <div className="text-[0.42rem] font-mono" style={{ color: '#8a8480' }}>™</div>
             </div>
-            <button 
-              onClick={() => setGbPower(p => !p)} 
-              title="Power"
-              className={`flex items-center gap-1.5 px-3 h-8 rounded-full border transition-all active:scale-95 text-xs font-medium ${
-                gbPower 
-                  ? 'text-emerald-500 border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20' 
-                  : 'text-red-500 border-red-500/30 bg-red-500/10 hover:bg-red-500/20'
-              }`}
-            >
-              <Power className="w-3.5 h-3.5" />
-              <span>{gbPower ? 'ON' : 'OFF'}</span>
-            </button>
-          </div>
 
-          {/* Screen Area */}
-          <div className="relative bg-black aspect-[4/3] w-full max-w-md mx-auto my-6 rounded-lg border border-border/50 overflow-hidden shadow-inner">
-            {gbPower ? (
-              <iframe
-                key={activeGame.id}
-                ref={iframeRef}
-                src={activeGame.src}
-                className="absolute inset-0 w-full h-full border-0 z-0"
-                title={activeGame.name}
-                allow="fullscreen; gamepad; autoplay"
-                loading="lazy"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
-              />
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background">
-                <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center border border-border">
-                  <Power className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <span className="text-sm font-medium text-muted-foreground">Powered Off</span>
-              </div>
-            )}
-          </div>
-
-          {/* Controls */}
-          <div className="px-6 pb-6">
-            <div className="flex items-center justify-between gap-8">
-              {/* D-Pad */}
-              <div className="grid grid-cols-3 gap-1">
-                <div />
-                <button 
-                  onPointerDown={() => sendKey("ArrowUp", true)} 
-                  onPointerUp={() => sendKey("ArrowUp", false)} 
-                  onPointerLeave={() => sendKey("ArrowUp", false)}
-                  className="w-10 h-10 flex items-center justify-center rounded-t-md bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all text-muted-foreground"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M12 8l-6 6 1.4 1.4 4.6-4.6 4.6 4.6L18 14z"/></svg>
-                </button>
-                <div />
-                <button 
-                  onPointerDown={() => sendKey("ArrowLeft", true)} 
-                  onPointerUp={() => sendKey("ArrowLeft", false)} 
-                  onPointerLeave={() => sendKey("ArrowLeft", false)}
-                  className="w-10 h-10 flex items-center justify-center rounded-l-md bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all text-muted-foreground"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
-                </button>
-                <div className="w-10 h-10 flex items-center justify-center bg-muted border border-border/50 rounded-sm">
-                  <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />
-                </div>
-                <button 
-                  onPointerDown={() => sendKey("ArrowRight", true)} 
-                  onPointerUp={() => sendKey("ArrowRight", false)} 
-                  onPointerLeave={() => sendKey("ArrowRight", false)}
-                  className="w-10 h-10 flex items-center justify-center rounded-r-md bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all text-muted-foreground"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
-                </button>
-                <div />
-                <button 
-                  onPointerDown={() => sendKey("ArrowDown", true)} 
-                  onPointerUp={() => sendKey("ArrowDown", false)} 
-                  onPointerLeave={() => sendKey("ArrowDown", false)}
-                  className="w-10 h-10 flex items-center justify-center rounded-b-md bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all text-muted-foreground"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
-                </button>
-                <div />
+            {/* Screen housing — dark olive bezel */}
+            <div className="rounded-2xl p-2.5 mb-4 shadow-[inset_0_3px_12px_rgba(0,0,0,0.7),0_2px_4px_rgba(0,0,0,0.3)]"
+                 style={{ background: 'linear-gradient(180deg,#2e2d28 0%,#3a3932 100%)', border: '2px solid #1e1d18' }}>
+              {/* Screen label strip */}
+              <div className="flex justify-center mb-1.5">
+                <span className="text-[0.38rem] font-mono tracking-[0.5em] uppercase" style={{ color: '#6a6a5a' }}>DOT MATRIX WITH STEREO SOUND</span>
               </div>
 
-              {/* Select / Start */}
-              <div className="flex flex-col gap-3 -rotate-12">
-                <div className="flex flex-col items-center gap-1">
-                  <button
-                    onPointerDown={() => sendKey("Shift", true)}
-                    onPointerUp={() => sendKey("Shift", false)}
-                    onPointerLeave={() => sendKey("Shift", false)}
-                    className="w-12 h-6 rounded-full bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all flex items-center justify-center"
-                  >
-                    <span className="text-[0.55rem] font-bold text-muted-foreground tracking-wider">SEL</span>
-                  </button>
-                  <span className="text-[0.5rem] font-mono text-muted-foreground/50 uppercase tracking-widest">Select</span>
-                </div>
-                <div className="flex flex-col items-center gap-1">
-                  <button
-                    onPointerDown={() => sendKey(" ", true)}
-                    onPointerUp={() => sendKey(" ", false)}
-                    onPointerLeave={() => sendKey(" ", false)}
-                    className="w-12 h-6 rounded-full bg-muted border border-border/50 hover:bg-muted/80 active:scale-95 transition-all flex items-center justify-center"
-                  >
-                    <span className="text-[0.55rem] font-bold text-muted-foreground tracking-wider">STA</span>
-                  </button>
-                  <span className="text-[0.5rem] font-mono text-muted-foreground/50 uppercase tracking-widest">Start</span>
-                </div>
-              </div>
-
-              {/* A / B Buttons */}
-              <div className="relative w-24 h-20">
-                <button
-                  onPointerDown={() => sendKey("z", true)}
-                  onPointerUp={() => sendKey("z", false)}
-                  onPointerLeave={() => sendKey("z", false)}
-                  className="absolute right-0 top-0 w-12 h-12 rounded-full bg-primary/20 border border-primary/30 hover:bg-primary/30 active:scale-95 transition-all flex items-center justify-center text-primary font-bold text-sm shadow-sm"
-                >
-                  A
-                </button>
-                <button
-                  onPointerDown={() => sendKey("x", true)}
-                  onPointerUp={() => sendKey("x", false)}
-                  onPointerLeave={() => sendKey("x", false)}
-                  className="absolute left-0 bottom-0 w-12 h-12 rounded-full bg-primary/20 border border-primary/30 hover:bg-primary/30 active:scale-95 transition-all flex items-center justify-center text-primary font-bold text-sm shadow-sm"
-                >
-                  B
-                </button>
+              {/* Screen */}
+              <div className="relative rounded-lg overflow-hidden shadow-[inset_0_2px_10px_rgba(0,0,0,0.9)]"
+                   style={{ aspectRatio: '4/3', background: '#0d1a0d', border: '3px solid #1a1a14' }}>
+                {/* CRT scanlines */}
+                <div className="absolute inset-0 pointer-events-none z-10" style={{
+                  backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.18) 3px,rgba(0,0,0,0.18) 4px)',
+                }} />
+                {/* Green phosphor tint on border */}
+                <div className="absolute inset-0 pointer-events-none z-10 rounded-lg"
+                     style={{ boxShadow: gbPower ? 'inset 0 0 20px rgba(74,222,128,0.08)' : 'none' }} />
+                {gbPower ? (
+                  <iframe
+                    key={activeGame.id}
+                    ref={iframeRef}
+                    src={activeGame.src}
+                    className="absolute inset-0 w-full h-full border-0 z-0"
+                    title={activeGame.name}
+                    allow="fullscreen; gamepad; autoplay"
+                    loading="lazy"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2"
+                       style={{ background: '#0d1a0d' }}>
+                    <Power className="w-6 h-6" style={{ color: '#2a4a2a' }} />
+                    <span className="text-[0.45rem] font-mono tracking-widest uppercase" style={{ color: '#2a4a2a' }}>POWER OFF</span>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Game Guide */}
-      <Card className="w-full max-w-full border-border bg-card/50 backdrop-blur-md overflow-hidden">
-        <CardContent className="p-0">
-          <div className="p-4 border-b border-border/50">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-sm font-semibold text-foreground shrink-0">Game Guide</h2>
-              <div className="flex gap-1.5 shrink-0">
-                {GAMEBOY_GAMES.map((_, i) => (
-                  <div key={i} className={`w-1.5 h-5 rounded-full transition-all ${activeGameIdx === i ? "bg-primary shadow-[0_0_6px_rgba(16,185,129,0.6)]" : "bg-muted-foreground/20"}`} />
+            {/* Controls row — 3-column grid: D-pad | SELECT+START | A+B */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 0 }}>
+
+              {/* D-pad — left column, centred within its cell */}
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '32px 32px 32px', gridTemplateRows: '32px 32px 32px', gap: '2px' }}>
+                  <div />
+                  <button onPointerDown={() => sendKey("ArrowUp", true)} onPointerUp={() => sendKey("ArrowUp", false)} onPointerLeave={() => sendKey("ArrowUp", false)}
+                    className="flex items-center justify-center select-none active:scale-95 transition-all"
+                    style={{ background: 'linear-gradient(180deg,#4a4845,#3a3835)', borderRadius: '6px 6px 0 0', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 8l-6 6 1.4 1.4 4.6-4.6 4.6 4.6L18 14z"/></svg>
+                  </button>
+                  <div />
+                  <button onPointerDown={() => sendKey("ArrowLeft", true)} onPointerUp={() => sendKey("ArrowLeft", false)} onPointerLeave={() => sendKey("ArrowLeft", false)}
+                    className="flex items-center justify-center select-none active:scale-95 transition-all"
+                    style={{ background: 'linear-gradient(90deg,#4a4845,#3a3835)', borderRadius: '6px 0 0 6px', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
+                  </button>
+                  <div className="flex items-center justify-center" style={{ background: '#3a3835', border: '1px solid #2a2825', borderRadius: '3px' }}>
+                    <div className="w-2 h-2 rounded-full" style={{ background: '#2a2825' }} />
+                  </div>
+                  <button onPointerDown={() => sendKey("ArrowRight", true)} onPointerUp={() => sendKey("ArrowRight", false)} onPointerLeave={() => sendKey("ArrowRight", false)}
+                    className="flex items-center justify-center select-none active:scale-95 transition-all"
+                    style={{ background: 'linear-gradient(270deg,#4a4845,#3a3835)', borderRadius: '0 6px 6px 0', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+                  </button>
+                  <div />
+                  <button onPointerDown={() => sendKey("ArrowDown", true)} onPointerUp={() => sendKey("ArrowDown", false)} onPointerLeave={() => sendKey("ArrowDown", false)}
+                    className="flex items-center justify-center select-none active:scale-95 transition-all"
+                    style={{ background: 'linear-gradient(0deg,#4a4845,#3a3835)', borderRadius: '0 0 6px 6px', border: '1px solid #2a2825', boxShadow: '0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)', color: '#c0bdb8' }}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+                  </button>
+                  <div />
+                </div>
+              </div>
+
+              {/* SELECT + START — centre column, truly centred */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center', transform: 'rotate(-20deg)' }}>
+                {[
+                  { label: 'SEL', key: 'Shift' },
+                  { label: 'STA', key: ' ' },
+                ].map(({ label, key }) => (
+                  <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                    <button
+                      onPointerDown={() => sendKey(key, true)}
+                      onPointerUp={() => sendKey(key, false)}
+                      onPointerLeave={() => sendKey(key, false)}
+                      className="select-none active:scale-90 transition-all"
+                      style={{ width: 26, height: 26, borderRadius: '50%', background: 'linear-gradient(180deg,#7a7870,#5a5852)', border: '1px solid #4a4840', boxShadow: '0 2px 5px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18)', color: '#c0bdb8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <span style={{ fontSize: '0.38rem', fontFamily: 'monospace', fontWeight: 900, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{label}</span>
+                    </button>
+                    <span style={{ fontSize: '0.32rem', fontFamily: 'monospace', color: '#7a7672', letterSpacing: '0.12em', textTransform: 'uppercase' }}>{label === 'SEL' ? 'SELECT' : 'START'}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* A / B — right column, centred within its cell */}
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ position: 'relative', width: 78, height: 68 }}>
+                  <button
+                    onPointerDown={() => sendKey("z", true)}
+                    onPointerUp={() => sendKey("z", false)}
+                    onPointerLeave={() => sendKey("z", false)}
+                    className="absolute right-0 top-0 flex items-center justify-center select-none transition-all active:scale-95"
+                    style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(145deg,#8b1a2a,#6b0e1e)', border: '2px solid #4a0c14', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2)', fontSize: '0.75rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#f0c8d0' }}>
+                    A
+                  </button>
+                  <button
+                    onPointerDown={() => sendKey("x", true)}
+                    onPointerUp={() => sendKey("x", false)}
+                    onPointerLeave={() => sendKey("x", false)}
+                    className="absolute left-0 bottom-0 flex items-center justify-center select-none transition-all active:scale-95"
+                    style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(145deg,#7a1828,#5a0c1a)', border: '2px solid #3a0a12', boxShadow: '0 4px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15)', fontSize: '0.75rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#e0b8c8' }}>
+                    B
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Speaker + branding */}
+            <div className="flex items-end justify-between mt-4">
+              <span className="text-[0.38rem] font-mono tracking-[0.4em] uppercase" style={{ color: '#6a6662' }}>NOUS RESEARCH</span>
+              {/* Speaker holes — classic circular pattern */}
+              <div className="flex gap-1">
+                {Array.from({ length: 6 }).map((_, col) => (
+                  <div key={col} className="flex flex-col gap-1">
+                    {Array.from({ length: 4 }).map((_, row) => (
+                      <div key={row} className="w-1.5 h-1.5 rounded-full" style={{ background: '#8a8680', boxShadow: 'inset 0 1px 1px rgba(0,0,0,0.5)' }} />
+                    ))}
+                  </div>
                 ))}
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 px-4 py-3 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+
+          {/* Drop shadow */}
+          <div className="h-4 mx-10 rounded-full -mt-2" style={{ background: 'rgba(0,0,0,0.4)', filter: 'blur(12px)' }} />
+        </div>
+      </div>
+
+      {/* Game Guide */}
+      <Card className="w-full max-w-full border-border bg-background-elevated overflow-hidden">
+        <CardContent className="p-0">
+          <div className="px-4 py-2.5 border-b border-border">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground shrink-0">Game Guide</h2>
+              <div className="flex gap-1.5 shrink-0">
+                {GAMEBOY_GAMES.map((_, i) => (
+                  <div key={i} className={`w-1.5 h-4 rounded-full transition-all
+                    ${activeGameIdx === i
+                      ? 'bg-sky-400 shadow-[0_0_6px_rgba(56,189,248,0.6)]'
+                      : 'bg-slate-700'}`} />
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 px-3 py-2.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
             {GAMEBOY_GAMES.map((game, i) => (
               <button
                 key={game.id}
                 onClick={() => setActiveGameId(game.id)}
-                className={`relative flex-shrink-0 flex items-center gap-2 px-3 h-9 rounded-lg font-medium text-xs border transition-all select-none active:scale-95 whitespace-nowrap ${
-                  activeGameIdx === i
-                    ? "bg-primary/10 text-primary border-primary/30"
-                    : "bg-muted/30 text-muted-foreground border-border/50 hover:bg-muted hover:text-foreground hover:border-border"
-                }`}
+                className={`relative flex-shrink-0 flex items-center gap-2 px-3 h-8 rounded-full font-mono text-[0.63rem] border transition-all select-none active:scale-95 whitespace-nowrap
+                  ${activeGameIdx === i
+                    ? 'bg-sky-500/10 text-foreground border-sky-500/50'
+                    : 'bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted hover:text-foreground hover:border-foreground/20'
+                  }`}
               >
-                <GameIcon icon={game.icon} size={14} />
-                <span className="font-semibold">{game.name}</span>
+                <GameIcon icon={game.icon} size={13} />
+                <span>{game.name}</span>
                 {activeGameIdx === i && (
-                  <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_5px_rgba(16,185,129,0.8)]" />
+                  <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-sky-400 shadow-[0_0_5px_rgba(56,189,248,0.9)]" />
                 )}
               </button>
             ))}
           </div>
           {/* Per-game controls reference */}
-          <div className="px-4 pb-4 pt-2 border-t border-border/50">
+          <div className="px-4 pb-3 pt-1 border-t border-border/20">
             {activeGame.id === 'g1' && (
-              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
-                <span className="text-foreground font-semibold">Pong</span> · ↑↓ Move paddle · <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Z</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Space</kbd> Serve
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Pong</span> · ↑↓ Move paddle · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> Serve · A button = serve
               </p>
             )}
             {activeGame.id === 'g2' && (
-              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
-                <span className="text-foreground font-semibold">Tetris</span> · ← → Move · ↑ or <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">X</kbd> Rotate · <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Z</kbd> Hard drop
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Tetris</span> · ← → Move · ↑ or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>X</kbd> Rotate · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> Hard drop · A = drop · B = rotate
               </p>
             )}
             {activeGame.id === 'g3' && (
-              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
-                <span className="text-foreground font-semibold">Space Raid</span> · ← → ↑ ↓ Move ship · <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Z</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Space</kbd> Shoot
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Space Raid</span> · ← → ↑ ↓ Move ship · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> Shoot · A button = shoot
               </p>
             )}
             {activeGame.id === 'g4' && (
-              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
-                <span className="text-foreground font-semibold">Flappy Bird</span> · <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Space</kbd> or Click to flap
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Flappy Bird</span> · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> or Click to flap · Opens at flappybird.io
               </p>
             )}
             {activeGame.id === 'g5' && (
-              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
-                <span className="text-foreground font-semibold">Snake</span> · ← → ↑ ↓ Turn · <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Z</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border/50 text-muted-foreground">Space</kbd> Start
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Snake</span> · ← → ↑ ↓ Turn · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> Start / Restart · Walls wrap around · High score saved locally
               </p>
             )}
             {activeGame.id === 'g6' && (
-              <p className="text-[0.65rem] font-mono text-muted-foreground/70 tracking-wide">
-                <span className="text-foreground font-semibold">2048</span> · ← → ↑ ↓ Slide tiles · Combine matching numbers
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">2048</span> · ← → ↑ ↓ Slide tiles · Combine matching numbers · Reach 2048 to win · Opens at play2048.co
               </p>
             )}
           </div>
