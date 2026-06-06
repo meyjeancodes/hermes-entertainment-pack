@@ -447,6 +447,64 @@
   transform: scale(1.05);
 }
 
+.modalArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s ease, transform 0.25s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.modalArrow:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.modalArrowPrev {
+  left: 24px;
+}
+
+.modalArrowNext {
+  right: 24px;
+}
+
+.modalMeta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+
+.modalTitle {
+  font-weight: 500;
+}
+
+.modalSubtitle {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 6px;
+}
+
+.modalCounter {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+  font-size: 12px;
+}
+
 /* ── TRANSITIONS & SCROLL REVEAL ──────────────────────────────────────── */
 .transition-opacity {
   transition-property: opacity;

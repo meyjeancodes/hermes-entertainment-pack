@@ -13,30 +13,93 @@ const GALLERY_IMAGES = [
     subtitle: "Ambient",
     type: "background",
   },
-  // ── NEW IMAGES AT THE TOP ──
   {
-    id: "new-1",
-    url: `${PLUGIN_URL}/gallery/HIoy8J8W8AApMb-.jpeg`,
-    title: "Hermes Agent Media",
-    subtitle: "Classical Bust — Orbital Dream",
+    id: "9",
+    url: `${PLUGIN_URL}/gallery/nous-3.jpg`,
+    title: "NOUS STUDIES — ISSUE 002",
+    subtitle: "",
     type: "card",
     orientation: "landscape",
   },
   {
-    id: "new-2",
-    url: `${PLUGIN_URL}/gallery/HJ8JKOjW8AA2QrJ.jpeg`,
-    title: "Hermes Vessel",
-    subtitle: "Ceramic Amphora — Blue Glaze",
+    id: "nous-2",
+    url: `${PLUGIN_URL}/gallery/nous-2.jpg`,
+    title: "Hermes Desktop Blueprint",
+    subtitle: "NOUS ISSUE 002",
+    type: "card",
+    orientation: "landscape",
+  },
+  {
+    id: "nous-7",
+    url: `${PLUGIN_URL}/gallery/nous-7.jpg`,
+    title: "Cognitive Weather Proof",
+    subtitle: "NOUS ISSUE 002",
+    type: "card",
+    orientation: "landscape",
+  },
+  {
+    id: "nous-10",
+    url: `${PLUGIN_URL}/gallery/nous-10.jpg`,
+    title: "Memory Leak",
+    subtitle: "NOUS ISSUE 002",
     type: "card",
     orientation: "portrait",
   },
   {
-    id: "new-3",
-    url: `${PLUGIN_URL}/gallery/HJSqH16WQAEfRIn.jpeg`,
-    title: "Thorny Frame",
-    subtitle: "Statue Portrait — Barbed Wire Border",
+    id: "nous-9",
+    url: `${PLUGIN_URL}/gallery/nous-9.jpg`,
+    title: "Who Observes the Observer",
+    subtitle: "NOUS ISSUE 002",
+    type: "card",
+    orientation: "landscape",
+  },
+  {
+    id: "nous-5",
+    url: `${PLUGIN_URL}/gallery/nous-5.jpg`,
+    title: "Spectral Proof",
+    subtitle: "NOUS ISSUE 002",
+    type: "card",
+    orientation: "landscape",
+  },
+  {
+    id: "nous-1",
+    url: `${PLUGIN_URL}/gallery/nous-1.jpg`,
+    title: "NOUS Studies — Filler",
+    subtitle: "NOUS ISSUE 002",
+    type: "card",
+    orientation: "portrait",
+  },
+  {
+    id: "nous-4",
+    url: `${PLUGIN_URL}/gallery/nous-4.jpg`,
+    title: "NOUS Studies — Filler",
+    subtitle: "NOUS ISSUE 002",
     type: "card",
     orientation: "square",
+  },
+  {
+    id: "nous-6",
+    url: `${PLUGIN_URL}/gallery/nous-6.jpg`,
+    title: "NOUS Studies — Filler",
+    subtitle: "NOUS ISSUE 002",
+    type: "card",
+    orientation: "landscape",
+  },
+  {
+    id: "nous-8",
+    url: `${PLUGIN_URL}/gallery/nous-8.jpg`,
+    title: "NOUS Studies — Filler",
+    subtitle: "NOUS ISSUE 002",
+    type: "card",
+    orientation: "portrait",
+  },
+  {
+    id: "the-artist",
+    url: `${PLUGIN_URL}/gallery/the-artist.jpg`,
+    title: "The Artist",
+    subtitle: "",
+    type: "card",
+    orientation: "landscape",
   },
   // ── EXISTING IMAGES ──
   {
@@ -112,7 +175,7 @@ const GALLERY_IMAGES = [
     orientation: "square",
   },
   {
-    id: "9",
+    id: "issue1-9",
     url: `${PLUGIN_URL}/gallery/GuYLrlGWMAAYMcu copy.jpeg`,
     title: "Untitled Fragment",
     subtitle: "Work in Progress",
@@ -287,6 +350,31 @@ export default function GalleryFullPage() {
   const [visibleCards, setVisibleCards] = useState<Set<string>>(new Set());
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const lightboxImages = GALLERY_IMAGES.filter(
+    (img) => img.type === "card"
+  );
+
+  const getLightboxIndex = useRef<number>(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number>(0);
+
+  const openLightbox = (url: string) => {
+    const idx = lightboxImages.findIndex((img) => img.url === url);
+    if (idx >= 0) setLightboxIndex(idx);
+    setSelectedImage(url);
+  };
+
+  const prevLightbox = () => {
+    if (!selectedImage) return;
+    setLightboxIndex((prev) => {
+      const next = (prev - 1 + lightboxImages.length) % lightboxImages.length;
+      return next;
+    });
+  };
+
+  const nextLightbox = () => {
+    if (!selectedImage) return;
+    setLightboxIndex((prev) => (prev + 1) % lightboxImages.length);
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -304,6 +392,23 @@ export default function GalleryFullPage() {
     cardRefs.current.forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!selectedImage) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedImage(null);
+      } else if (event.key === "ArrowLeft") {
+        prevLightbox();
+      } else if (event.key === "ArrowRight") {
+        nextLightbox();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedImage, lightboxImages.length]);
 
   const handleImageLoad = (id: string) => {
     setLoaded((prev) => ({ ...prev, [id]: true }));
@@ -339,7 +444,7 @@ export default function GalleryFullPage() {
                 src={hero.url}
                 alt={hero.title}
                 onLoad={() => handleImageLoad(hero.id)}
-                onClick={() => setSelectedImage(hero.url)}
+                onClick={() => openLightbox(hero.url)}
                 className={`${styles.heroImage} transition-opacity duration-700 ${
                   loaded[hero.id] ? "opacity-100" : "opacity-0"
                 }`}
@@ -348,7 +453,9 @@ export default function GalleryFullPage() {
               <div className={styles.heroOverlay} />
               <div className={styles.heroText}>
                 <h1 className={styles.heroTitle}>{hero.title}</h1>
-                <p className={styles.heroSubtitle}>{hero.subtitle}</p>
+                {hero.subtitle ? (
+                  <p className={styles.heroSubtitle}>{hero.subtitle}</p>
+                ) : null}
               </div>
             </div>
           </div>
@@ -409,7 +516,7 @@ export default function GalleryFullPage() {
                     src={img.url}
                     alt={img.title}
                     onLoad={() => handleImageLoad(img.id)}
-                    onClick={() => setSelectedImage(img.url)}
+                    onClick={() => openLightbox(img.url)}
                     className={`${styles.cardImage} transition-opacity duration-500 ${
                       loaded[img.id] ? "opacity-100" : "opacity-0"
                     }`}
@@ -452,7 +559,6 @@ export default function GalleryFullPage() {
           onClick={() => setSelectedImage(null)}
         >
           <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
-            <img src={selectedImage} alt="Full size" className={styles.modalImage} />
             <button
               onClick={() => setSelectedImage(null)}
               aria-label="Close"
@@ -463,6 +569,51 @@ export default function GalleryFullPage() {
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
+
+            <button
+              onClick={prevLightbox}
+              aria-label="Previous image"
+              className={`${styles.modalArrow} ${styles.modalArrowPrev}`}
+              type="button"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <button
+              onClick={nextLightbox}
+              aria-label="Next image"
+              className={`${styles.modalArrow} ${styles.modalArrowNext}`}
+              type="button"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+
+            <img
+              src={
+                lightboxImages[lightboxIndex]?.url ??
+                selectedImage
+              }
+              alt={lightboxImages[lightboxIndex]?.title ?? ""}
+              className={styles.modalImage}
+            />
+            <div className={styles.modalMeta}>
+              <div>
+                <p className={styles.modalTitle}>
+                  {lightboxImages[lightboxIndex]?.title}
+                </p>
+                {lightboxImages[lightboxIndex]?.subtitle ? (
+                  <p className={styles.modalSubtitle}>
+                    {lightboxImages[lightboxIndex]?.subtitle}
+                  </p>
+                ) : null}
+              </div>
+              <p className={styles.modalCounter}>
+                {lightboxIndex + 1}/{lightboxImages.length}
+              </p>
+            </div>
           </div>
         </div>
       )}

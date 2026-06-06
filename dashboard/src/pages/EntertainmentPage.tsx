@@ -16,13 +16,13 @@ export interface Channel {
 }
 
 const CHANNELS: Channel[] = [
-  { id: "ch1",  name: "Static",      type: "noise",   color: "#111" },
-  { id: "ch2",  name: "Nous Network",type: "video",   src: "https://video.twimg.com/amplify_video/2054680803716612096/vid/avc1/1080x1080/FYL3QgQLEZ8ZKJOh.mp4?tag=27", color: "#0a0a1a" },
+  { id: "ch1", name: "Static", type: "noise", color: "#111" },
+  { id: "ch2", name: "Signal", type: "iframe", src: "https://platform.twitter.com/embed/Tweet.html?dnt=false&embedId=twitter-widget-0&frame=false&hideCard=false&hideThread=false&id=2054681410368164018&lang=en&theme=dark&widgetsVersion=2615f7e52b7e0%3A1702314776716", color: "#0a0a1a" },
   { id: "ch3",  name: "Music Scene", type: "iframe",  src: "https://www.youtube.com/embed/NhheiPTdZCw?si=l0t7VslIKlOQ2wTC&controls=1" },
   { id: "ch4",  name: "Weather Retro", type: "iframe", src: `${PLUGIN_URL}/public/weather.html` },
   { id: "ch5",  name: "Nature",      type: "iframe",  src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0&autoplay=1&mute=1", autoplay: true },
   { id: "ch6",  name: "Aethereon",   type: "iframe",  src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0&autoplay=1&mute=1", autoplay: true },
-  { id: "ch7",  name: "Nous Network",type: "video",   src: "/dashboard-plugins/hermes-entertainment-pack/dashboard/media/NousNetwork.mp4", color: "#0a0a1a" },
+  { id: "ch7", name: "Nous Network", type: "video", src: "/dashboard-plugins/hermes-entertainment-pack/games/NousNetwork.mp4", color: "#0a0a1a" },
   { id: "ch8",  name: "Local 58",    type: "iframe",  src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q&autoplay=1&mute=1", autoplay: true },
   { id: "ch9",  name: "HNN Teletext",type: "canvas",  color: "#000033" },
   { id: "ch10", name: "Vapor FM",    type: "iframe",  src: `${PLUGIN_URL}/public/vapor.html?v=2` },
@@ -280,28 +280,10 @@ export default function EntertainmentPage() {
                         </div>
                       </>
                     ) : (
-                      /* OFF: black screen + animated static + NO SIGNAL text */
-                      <div className="absolute inset-0 bg-black flex items-center justify-center z-10">
-                        <style>{`
-                          @keyframes tv-static {
-                            0% { background-position: 0 0; }
-                            100% { background-position: 100% 100%; }
-                          }
-                        `}</style>
-                        <div className="absolute inset-0" style={{
-                          backgroundImage: "repeating-radial-gradient(circle, rgba(255,255,255,0.15) 0px, rgba(255,255,255,0.15) 1px, transparent 1px, transparent 3px)",
-                          backgroundSize: "6px 6px",
-                          animation: "tv-static 0.2s linear infinite",
-                          opacity: 0.7,
-                        }} />
-                        <span className="text-[0.7rem] font-mono text-slate-400 tracking-[0.3em] uppercase animate-pulse">NO SIGNAL</span>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/20">
-                    <span className="text-xs">NOUS</span>
-                  </div>
-                  <span className="text-sm text-midground/70">Entertainment System</span>
-                </div>
-                        </div>
+                      /* OFF: nous-1 wallpaper */
+                      <div className="absolute inset-0 z-10">
+                        <iframe src="/dashboard-plugins/hermes-entertainment-pack/games/nous-off.html" className="absolute inset-0 w-full h-full border-0" title="Off" />
+                      </div>
                     )}
                   </div>
 
@@ -1404,7 +1386,7 @@ function NousBoySection({
 }) {
   const activeGame = GAMEBOY_GAMES.find(g => g.id === activeGameId) || GAMEBOY_GAMES[0];
   const activeGameIdx = GAMEBOY_GAMES.findIndex(g => g.id === activeGameId);
-  const [gbPower, setGbPower] = useState(true);
+  const [gbPower, setGbPower] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -1513,11 +1495,7 @@ function NousBoySection({
                     sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
                   />
                 ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2"
-                       style={{ background: '#0d1a0d' }}>
-                    <Power className="w-6 h-6" style={{ color: '#2a4a2a' }} />
-                    <span className="text-[0.45rem] font-mono tracking-widest uppercase" style={{ color: '#2a4a2a' }}>POWER OFF</span>
-                  </div>
+                  <iframe src="/dashboard-plugins/hermes-entertainment-pack/dist/nousboy-off.html" className="absolute inset-0 w-full h-full border-0" title="Off" />
                 )}
               </div>
             </div>
