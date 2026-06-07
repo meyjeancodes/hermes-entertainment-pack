@@ -33,13 +33,13 @@ import DiscordPage from './pages/DiscordPage';
 import GalleryPage from './pages/GalleryPage';
 import MusicPortalPage from './pages/MusicPortalPage';
 
-type TabId = 'entertainment' | 'discord' | 'gallery' | 'mixtape';
+type TabId = 'entertainment' | 'discord' | 'gallery' | 'music';
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'entertainment', label: 'TV & Games' },
   { id: 'discord',       label: 'Discord' },
   { id: 'gallery',       label: 'Gallery' },
-  { id: 'mixtape',       label: 'Mixtape' },
+  { id: 'music',        label: 'Music' },
 ];
 
 function TabIcon({ id, size = 13 }: { id: TabId; size?: number }) {
@@ -66,7 +66,7 @@ function TabIcon({ id, size = 13 }: { id: TabId; size?: number }) {
           <path d="M21 15l-5-5L5 21"/>
         </svg>
       );
-    case 'mixtape':
+    case 'music':
       return (
         <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10"/>
@@ -106,7 +106,7 @@ function EntertainmentApp() {
       {activeTab === 'entertainment' && <EntertainmentPage />}
       {activeTab === 'discord'       && <DiscordPage />}
       {activeTab === 'gallery'       && <GalleryPage />}
-      {activeTab === 'mixtape'       && <MusicPortalPage />}
+      {activeTab === 'music'        && <MusicPortalPage />}
     </div>
   );
 }
