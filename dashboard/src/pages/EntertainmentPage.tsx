@@ -16,8 +16,8 @@ export interface Channel {
 }
 
 const CHANNELS: Channel[] = [
-  { id: "ch1", name: "Static", type: "noise", color: "#111" },
-  { id: "ch2", name: "Signal", type: "iframe", src: "https://platform.twitter.com/embed/Tweet.html?dnt=false&embedId=twitter-widget-0&frame=false&hideCard=false&hideThread=false&id=2054681410368164018&lang=en&theme=dark&widgetsVersion=2615f7e52b7e0%3A1702314776716", color: "#0a0a1a" },
+  { id: "ch1", name: "Hackathon Anime", type: "iframe", src: `${PLUGIN_URL}/public/hackathon-anime.html`, color: "#0a0a1a" },
+  { id: "ch2", name: "Signal", type: "iframe", src: `${PLUGIN_URL}/public/twitter-embed.html`, color: "#0a0a1a" },
   { id: "ch3",  name: "Music Scene", type: "iframe",  src: "https://www.youtube.com/embed/NhheiPTdZCw?si=l0t7VslIKlOQ2wTC&controls=1" },
   { id: "ch4",  name: "Weather Retro", type: "iframe", src: `${PLUGIN_URL}/public/weather.html` },
   { id: "ch5",  name: "Nature",      type: "iframe",  src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0&autoplay=1&mute=1", autoplay: true },
@@ -317,8 +317,16 @@ export default function EntertainmentPage() {
                       </button>
                       {/* Play/Pause — larger pill */}
                       <button onClick={handlePlayPause} title={isPlaying ? "Pause" : "Play"}
+                        disabled={!isVideoChannel}
                         className="flex-shrink-0 flex items-center gap-2 px-5 h-10 rounded-full border-2 active:scale-95 transition-all select-none"
-                        style={{ background: 'rgba(56,189,248,0.18)', borderColor: 'rgba(56,189,248,0.45)', color: '#bae6fd', boxShadow: '0 0 18px rgba(56,189,248,0.2)' }}>
+                        style={{
+                          background: 'rgba(56,189,248,0.18)',
+                          borderColor: 'rgba(56,189,248,0.45)',
+                          color: isVideoChannel ? '#bae6fd' : 'rgba(186,230,253,0.35)',
+                          boxShadow: isVideoChannel ? '0 0 18px rgba(56,189,248,0.2)' : 'none',
+                          opacity: isVideoChannel ? 1 : 0.5,
+                          cursor: isVideoChannel ? 'pointer' : 'not-allowed',
+                        }}>
                         {isPlaying ? (
                           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
                         ) : (
@@ -337,17 +345,27 @@ export default function EntertainmentPage() {
 
                       {/* Vol- */}
                       <button onClick={() => adjustVolume(-10)} title="Volume Down"
+                        disabled={!isVideoChannel}
                         className="w-8 h-8 flex items-center justify-center rounded-full border active:scale-95 transition-all select-none"
-                        style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}>
+                        style={{
+                          background: 'rgba(255,255,255,0.05)',
+                          borderColor: 'rgba(255,255,255,0.1)',
+                          color: isVideoChannel ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.15)',
+                          opacity: isVideoChannel ? 1 : 0.4,
+                          cursor: isVideoChannel ? 'pointer' : 'not-allowed',
+                        }}>
                         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><polygon points="4,12 10,6 10,18"/></svg>
                       </button>
                       {/* Mute */}
                       <button onClick={toggleMute} title={isMuted ? 'Unmute' : 'Mute'}
+                        disabled={!isVideoChannel}
                         className="w-8 h-8 flex items-center justify-center rounded-full border active:scale-95 transition-all select-none"
                         style={{
                           background: isMuted ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.05)',
                           borderColor: isMuted ? 'rgba(239,68,68,0.5)' : 'rgba(255,255,255,0.1)',
-                          color: isMuted ? '#fca5a5' : 'rgba(255,255,255,0.5)',
+                          color: isMuted ? '#fca5a5' : (isVideoChannel ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.15)'),
+                          opacity: isVideoChannel ? 1 : 0.4,
+                          cursor: isVideoChannel ? 'pointer' : 'not-allowed',
                         }}>
                         {isMuted ? (
                           <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
@@ -357,8 +375,15 @@ export default function EntertainmentPage() {
                       </button>
                       {/* Vol+ */}
                       <button onClick={() => adjustVolume(10)} title="Volume Up"
+                        disabled={!isVideoChannel}
                         className="w-8 h-8 flex items-center justify-center rounded-full border active:scale-95 transition-all select-none"
-                        style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}>
+                        style={{
+                          background: 'rgba(255,255,255,0.05)',
+                          borderColor: 'rgba(255,255,255,0.1)',
+                          color: isVideoChannel ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.15)',
+                          opacity: isVideoChannel ? 1 : 0.4,
+                          cursor: isVideoChannel ? 'pointer' : 'not-allowed',
+                        }}>
                         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><polygon points="20,12 14,6 14,18"/></svg>
                       </button>
                     </div>
@@ -703,12 +728,21 @@ function ChannelRenderer({ channel, isPlaying, volume, isMuted }: { channel: Cha
       return channel.src ? <VideoPlayer src={channel.src} isPlaying={isPlaying} channelId={channel.id} volume={volume} isMuted={isMuted} /> : <FallbackScreen name={channel.name} />;
     case "iframe":
       return channel.src ? (
-        <iframe
-          src={channel.src}
-          className="absolute inset-0 w-full h-full border-0"
-          allowFullScreen
-          title={channel.name}
-        />
+        <div className="absolute inset-0 overflow-hidden flex items-center justify-center">
+          <iframe
+            src={channel.src}
+            allowFullScreen
+            title={channel.name}
+            style={{
+              transform: "scale(2.0)",
+              transformOrigin: "center center",
+              width: "50%",
+              height: "50%",
+              pointerEvents: "auto",
+              border: "none"
+            }}
+          />
+        </div>
       ) : <FallbackScreen name={channel.name} />;
     default:
       return <FallbackScreen name={channel.name} />;
