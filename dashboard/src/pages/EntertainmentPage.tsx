@@ -22,7 +22,7 @@ const CHANNELS: Channel[] = [
   { id: "ch4",  name: "Weather Retro", type: "iframe", src: `${PLUGIN_URL}/public/weather.html` },
   { id: "ch5",  name: "Nature",      type: "iframe",  src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0&autoplay=1&mute=1", autoplay: true },
   { id: "ch6",  name: "Aethereon",   type: "iframe",  src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0&autoplay=1&mute=1", autoplay: true },
-  { id: "ch7", name: "Nous Network", type: "video", src: "/dashboard-plugins/hermes-entertainment-pack/games/NousNetwork.mp4", color: "#0a0a1a" },
+  { id: "ch7", name: "Nous Network", type: "video", src: `${PLUGIN_URL}/games/NousNetwork.mp4`, color: "#0a0a1a" },
   { id: "ch8",  name: "Local 58",    type: "iframe",  src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q&autoplay=1&mute=1", autoplay: true },
   { id: "ch9",  name: "HNN Teletext",type: "canvas",  color: "#000033" },
   { id: "ch10", name: "Vapor FM",    type: "iframe",  src: `${PLUGIN_URL}/public/vapor.html?v=2` },
