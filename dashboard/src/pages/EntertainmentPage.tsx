@@ -245,28 +245,6 @@ export default function EntertainmentPage() {
                     {powerOn ? (
                       /* ON: channel + OSD + enhanced CRT effects */
                       <>
-                        {/* Scanlines — finer, more authentic */}
-                        <div className="absolute inset-0 pointer-events-none z-10" style={{
-                          backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px)",
-                          opacity: 0.4,
-                        }} />
-                        {/* Horizontal scan line animation */}
-                        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-                          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-b from-emerald-400/10 to-transparent animate-[scan_3s_linear_infinite]" style={{
-                            animationName: 'scan',
-                            animationDuration: '3s',
-                            animationTimingFunction: 'linear',
-                            animationIterationCount: 'infinite'
-                          }} />
-                        </div>
-                        {/* Vignette — deeper corner shadows */}
-                        <div className="absolute inset-0 rounded pointer-events-none z-10" style={{
-                          background: "radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0,0,0,0.35) 100%)",
-                        }} />
-                        {/* Subtle screen glow */}
-                        <div className="absolute inset-0 pointer-events-none z-5 rounded" style={{
-                          boxShadow: "inset 0 0 60px rgba(16, 185, 129, 0.06)",
-                        }} />
                         {/* Channel content */}
                         <div className="absolute inset-0">
                           <ChannelRenderer channel={activeChannel} isPlaying={isPlaying} volume={volume} isMuted={isMuted} />
