@@ -27,7 +27,7 @@
     var tweetH = iframe.offsetHeight || 700;
     var scaleX = window.innerWidth / tweetW;
     var scaleY = window.innerHeight / tweetH;
-    var scale = Math.min(scaleX, scaleY);
+    var scale = Math.min(scaleX, scaleY) * 1.4;
     wrap.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
   }
   window.addEventListener('resize', fitToScreen);
