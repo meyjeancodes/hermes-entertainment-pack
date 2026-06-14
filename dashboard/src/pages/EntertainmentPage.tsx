@@ -16,16 +16,16 @@ export interface Channel {
 }
 
 const CHANNELS: Channel[] = [
-  { id: "ch1", name: "Static", type: "noise", color: "#111" },
-  { id: "ch2", name: "Nous Network", type: "video", src: `${PLUGIN_URL}/media/NousNetwork.mp4`, color: "#0a0a1a" },
-  { id: "ch3", name: "Music Scene", type: "iframe", src: "https://www.youtube.com/embed/NhheiPTdZCw?si=l0t7VslIKlOQ2wTC&controls=0" },
-  { id: "ch4", name: "Weather Retro", type: "iframe", src: "https://weather.com/retro/" },
-  { id: "ch5", name: "Nature", type: "iframe", src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0", autoplay: true },
-  { id: "ch6", name: "Aethereon", type: "iframe", src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0", autoplay: true },
-  { id: "ch7", name: "Flight Watch", type: "iframe", src: "https://globe.adsbexchange.com/?lat=39&lon=-30&zoom=3" },
-  { id: "ch8", name: "Local 58", type: "iframe", src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q", autoplay: true },
-  { id: "ch9", name: "CNN Teletext", type: "canvas", color: "#000080" },
-  { id: "ch10", name: "Vapor FM", type: "iframe", src: `${PLUGIN_URL}/public/vapor.html` },
+  { id: "ch1",  name: "Static",      type: "noise",   color: "#111" },
+  { id: "ch2",  name: "Nous Network",type: "video",   src: "https://video.twimg.com/amplify_video/2054680803716612096/vid/avc1/1080x1080/FYL3QgQLEZ8ZKJOh.mp4?tag=27", color: "#0a0a1a" },
+  { id: "ch3",  name: "Music Scene", type: "iframe",  src: "https://www.youtube.com/embed/NhheiPTdZCw?si=l0t7VslIKlOQ2wTC&controls=1" },
+  { id: "ch4",  name: "Weather Retro", type: "iframe", src: `${PLUGIN_URL}/public/weather.html` },
+  { id: "ch5",  name: "Nature",      type: "iframe",  src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0&autoplay=1&mute=1", autoplay: true },
+  { id: "ch6",  name: "Aethereon",   type: "iframe",  src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0&autoplay=1&mute=1", autoplay: true },
+  { id: "ch7",  name: "Flight Watch",type: "video",   src: `${PLUGIN_URL}/media/NousNetwork.mp4`, color: "#0a0a1a" },
+  { id: "ch8",  name: "Local 58",    type: "iframe",  src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q&autoplay=1&mute=1", autoplay: true },
+  { id: "ch9",  name: "HNN Teletext",type: "canvas",  color: "#000033" },
+  { id: "ch10", name: "Vapor FM",    type: "iframe",  src: `${PLUGIN_URL}/public/vapor.html?v=2` },
 ];
 const GAMEBOY_GAMES = [
   { id: "g1", name: "Pong",        src: `${PLUGIN_URL}/games/pong.html`,   icon: "pong" },
@@ -38,9 +38,9 @@ export default function EntertainmentPage() {
   const [activeChannelId, setActiveChannelId] = useState(CHANNELS[1].id);
   const [activeGameId, setActiveGameId] = useState<string>("g1");
   const [powerOn, setPowerOn] = useState(false);
-   const [volume, setVolume] = useState(50);
-   const [isPlaying, setIsPlaying] = useState(false);
-   const [isMuted, setIsMuted] = useState(false);
+  const [volume, setVolume] = useState(50);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const [, setForceUpdate] = useState(0);
 
   // Video playback progress state (for scroller)
@@ -50,7 +50,7 @@ export default function EntertainmentPage() {
 
   const activeIdx = CHANNELS.findIndex((ch) => ch.id === activeChannelId);
   const activeChannel = CHANNELS[activeIdx];
-  const isVideoChannel = activeChannel.type === 'video' || activeChannel.src?.includes('youtube.com/embed');
+  const isVideoChannel = activeChannel.type === 'video';
 
   const prevVolumeRef = useRef(50);
 
@@ -64,7 +64,6 @@ export default function EntertainmentPage() {
         savePosition(activeChannel.id, video.currentTime);
       }
     }
-    // YouTube position is saved continuously by the player effect
 
     setActiveChannelId(CHANNELS[newIdx].id);
   };
@@ -73,23 +72,13 @@ export default function EntertainmentPage() {
     e.stopPropagation();
     if (e.shiftKey) {
       clearPosition(channelId);
-      // If clearing the currently active channel, reset playback to start
-      if (channelId === activeChannelId) {
-        if (activeChannel.type === 'video') {
-          const video = document.querySelector('video');
-          if (video) {
-            video.currentTime = 0;
-            savePosition(channelId, 0);
-          }
-        } else if (activeChannel.type === 'iframe' && activeChannel.src?.includes('youtube.com/embed')) {
-          const player = getYTPlayer(channelId);
-          try {
-            player?.seekTo?.(0);
-            savePosition(channelId, 0);
-          } catch {}
+      if (channelId === activeChannelId && activeChannel.type === 'video') {
+        const video = document.querySelector('video');
+        if (video) {
+          video.currentTime = 0;
+          savePosition(channelId, 0);
         }
       }
-      // Force UI refresh to remove resume badge
       setForceUpdate(k => k + 1);
     }
   };
@@ -99,10 +88,6 @@ export default function EntertainmentPage() {
     changeChannel(newIdx);
   };
 
-  // Transport handlers that bridge to YouTube when on a YouTube channel
-  const isYouTubeChannel = activeChannel.src?.includes('youtube.com/embed');
-
-  // Mute toggle — separate state, preserves volume
   const toggleMute = () => {
     if (volume > 0) {
       prevVolumeRef.current = volume;
@@ -121,33 +106,15 @@ export default function EntertainmentPage() {
   };
 
   const handleRewind = () => {
-    if (isYouTubeChannel) {
-      const player = getYTPlayer(activeChannel.id);
-      player?.previousVideo?.();
-    } else {
-      changeChannel((activeIdx - 2 + CHANNELS.length) % CHANNELS.length);
-    }
+    changeChannel((activeIdx - 1 + CHANNELS.length) % CHANNELS.length);
   };
 
   const handlePlayPause = () => {
-    if (isYouTubeChannel) {
-      const player = getYTPlayer(activeChannel.id);
-      if (isPlaying) {
-        player?.pauseVideo?.();
-      } else {
-        player?.playVideo?.();
-      }
-    }
     setIsPlaying(!isPlaying);
   };
 
   const handleNext = () => {
-    if (isYouTubeChannel) {
-      const player = getYTPlayer(activeChannel.id);
-      player?.nextVideo?.();
-    } else {
-      nextChannel();
-    }
+    nextChannel();
   };
 
 
@@ -190,16 +157,15 @@ export default function EntertainmentPage() {
           savePosition(activeChannel.id, video.currentTime);
         }
       }
-      // YouTube saves continuously via polling
     };
     window.addEventListener('beforeunload', handleUnload);
     return () => window.removeEventListener('beforeunload', handleUnload);
   }, [activeChannel]);
 
-  // Track current playback time and duration for progress scroller
+  // Track current playback time and duration for progress scroller (HTML5 video only)
   useEffect(() => {
+    if (activeChannel.type !== 'video') return;
     const updateProgress = () => {
-      // HTML5 video
       const video = document.querySelector('video');
       if (video && video.duration && isFinite(video.duration)) {
         setDuration(video.duration);
@@ -207,26 +173,9 @@ export default function EntertainmentPage() {
         setProgressPct((video.currentTime / video.duration) * 100);
         return true;
       }
-      // YouTube iframe
-      if (activeChannel.src?.includes('youtube.com/embed')) {
-        const player = getYTPlayer(activeChannel.id);
-        if (player) {
-          try {
-            const dur = player.getDuration?.();
-            const cur = player.getCurrentTime?.();
-            if (dur && cur && isFinite(dur) && isFinite(cur) && dur > 0) {
-              setDuration(dur);
-              setVideoTime(cur);
-              setProgressPct((cur / dur) * 100);
-              return true;
-            }
-          } catch {}
-        }
-      }
       return false;
     };
 
-    // Initial poll until metadata is ready
     let ready = updateProgress();
     if (!ready) {
       const waitIv = setInterval(() => {
@@ -235,10 +184,9 @@ export default function EntertainmentPage() {
       return () => clearInterval(waitIv);
     }
 
-    // Continuous updates every second
     const iv = setInterval(updateProgress, 1000);
     return () => clearInterval(iv);
-  }, [activeChannelId, activeChannel.src]);
+  }, [activeChannelId, activeChannel.type]);
 
 
   return (
@@ -385,7 +333,7 @@ export default function EntertainmentPage() {
                       {/* Play/Pause — larger pill */}
                       <button onClick={handlePlayPause} title={isPlaying ? "Pause" : "Play"}
                         className="flex-shrink-0 flex items-center gap-2 px-5 h-10 rounded-full border-2 active:scale-95 transition-all select-none"
-                        style={{ background: 'rgba(168,85,247,0.18)', borderColor: 'rgba(168,85,247,0.45)', color: '#d8b4fe', boxShadow: '0 0 18px rgba(168,85,247,0.2)' }}>
+                        style={{ background: 'rgba(56,189,248,0.18)', borderColor: 'rgba(56,189,248,0.45)', color: '#bae6fd', boxShadow: '0 0 18px rgba(56,189,248,0.2)' }}>
                         {isPlaying ? (
                           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
                         ) : (
@@ -430,23 +378,23 @@ export default function EntertainmentPage() {
                       </button>
                     </div>
 
-                    {/* Channel pills — glass SVG pill style */}
-                    <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                    {/* Channel pills — scrollable single row */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                       {CHANNELS.map((ch, i) => (
                         <button
                           key={ch.id}
                           onClick={() => changeChannel(i)}
-                          className="relative flex items-center gap-1.5 font-mono text-[0.58rem] active:scale-95 transition-all select-none rounded-full px-2.5 h-7 border"
+                          className="relative flex-shrink-0 flex items-center gap-1.5 font-mono text-[0.58rem] active:scale-95 transition-all select-none rounded-full px-2.5 h-7 border"
                           style={{
-                            background: activeIdx === i ? 'rgba(168,85,247,0.22)' : 'rgba(255,255,255,0.04)',
-                            borderColor: activeIdx === i ? 'rgba(168,85,247,0.55)' : 'rgba(255,255,255,0.08)',
+                            background: activeIdx === i ? 'rgba(56,189,248,0.22)' : 'rgba(255,255,255,0.04)',
+                            borderColor: activeIdx === i ? 'rgba(56,189,248,0.55)' : 'rgba(255,255,255,0.08)',
                             color: activeIdx === i ? '#e9d5ff' : 'rgba(255,255,255,0.38)',
-                            boxShadow: activeIdx === i ? '0 0 14px rgba(168,85,247,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
+                            boxShadow: activeIdx === i ? '0 0 14px rgba(56,189,248,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
                           }}>
                           <ChannelIcon channel={ch} size={10} />
                           <span>{String(i + 1).padStart(2, "0")}</span>
                           {activeIdx === i && (
-                            <span className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: '#a855f7', boxShadow: '0 0 4px #a855f7' }} />
+                            <span className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: '#38bdf8', boxShadow: '0 0 4px #38bdf8' }} />
                           )}
                         </button>
                       ))}
@@ -488,14 +436,8 @@ export default function EntertainmentPage() {
                               video.currentTime = seekTo;
                               setVideoTime(seekTo);
                             }
-                          } else if (activeChannel.src?.includes('youtube.com/embed')) {
-                            const player = getYTPlayer(activeChannel.id);
-                            try {
-                              player?.seekTo?.(seekTo);
-                              setVideoTime(seekTo);
-                            } catch {}
+                            savePosition(activeChannel.id, seekTo);
                           }
-                          savePosition(activeChannel.id, seekTo);
                         }}
                         className="flex-1 h-1.5 bg-slate-800 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-400 [&::-webkit-slider-thumb]:shadow-[0_0_6px_rgba(74,222,128,0.8)] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-emerald-400 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-[0_0_6px_rgba(74,222,128,0.8)]"
                       />
@@ -631,6 +573,14 @@ function ChannelIcon({ channel, size = 16 }: { channel: Channel; size?: number }
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 14.36c-.19.3-.55.39-.85.2-2.35-1.44-5.31-1.76-8.79-.97-.34.08-.66-.14-.74-.48-.08-.34.14-.66.48-.74 3.64-.85 6.89-.47 9.42 1.15.31.2.39.55.2.85zm1.08-2.34c-.24.37-.68.49-1.05.24-2.69-1.65-6.79-2.13-9.97-1.16-.42.13-.86-.11-.99-.53-.13-.42.11-.86.53-.99 3.58-1.07 7.79-.54 10.75 1.3.37.24.49.68.24 1.05zm.12-2.41c-3.35-1.94-8.86-2.1-11.19-1.15-.5.2-1.06-.16-1.26-.66-.2-.5.16-1.06.66-1.26 2.72-1.03 8.35-.74 11.31 1.38.48.34.64 1 .3 1.49-.34.48-1 .64-1.49.3z" />
         </svg>
       );
+    case "ch11": // NOUS-DOS
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="3" width="20" height="15" rx="2"/>
+          <path d="M6 8l4 4-4 4"/>
+          <line x1="12" y1="16" x2="18" y2="16"/>
+        </svg>
+      );
     default:
       return (
         <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
@@ -680,6 +630,24 @@ function GameIcon({ icon, size = 16 }: { icon: string; size?: number }) {
           <path d="M13.5 16.5l4 2-1.5 1.5z" fill="#f97316" stroke="none" />
         </svg>
       );
+    case "snake":
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor">
+          <rect x="3" y="11" width="14" height="3" rx="1.5"/>
+          <rect x="14" y="8" width="3" height="6" rx="1.5"/>
+          <rect x="14" y="5" width="6" height="3" rx="1.5"/>
+          <circle cx="5" cy="12.5" r="1.2" fill="white" opacity="0.8"/>
+        </svg>
+      );
+    case "2048":
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor">
+          <rect x="2" y="2" width="9" height="9" rx="1.5" opacity="0.4"/>
+          <rect x="13" y="2" width="9" height="9" rx="1.5" opacity="0.65"/>
+          <rect x="2" y="13" width="9" height="9" rx="1.5" opacity="0.8"/>
+          <rect x="13" y="13" width="9" height="9" rx="1.5"/>
+        </svg>
+      );
     default:
       return <svg width={s} height={s} viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8" /></svg>;
   }
@@ -687,172 +655,6 @@ function GameIcon({ icon, size = 16 }: { icon: string; size?: number }) {
 
 
 /* ─────────────── Channel renderers ─────────────── */
-
-// YouTube Player API — global registry
-type YTPlayerInstance = any;
-const ytPlayerRegistry = new Map<string, YTPlayerInstance>();
-function registerYTPlayer(id: string, player: YTPlayerInstance) { ytPlayerRegistry.set(id, player); }
-function getYTPlayer(id: string) { return ytPlayerRegistry.get(id); }
-
-let ytApiLoaded = false;
-let ytPlayerCounter = 0;
-
-function loadYTAPI() {
-  if (ytApiLoaded) return;
-  const tag = document.createElement('script');
-  tag.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(tag);
-  ytApiLoaded = true;
-}
-
-// Global callback — YouTube iframe API calls this once when ready
-function onYouTubeIframeAPIReady() {
-  // No-op — individual players are created via YT.Player constructors
-}
-(window as any).onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-
-// YouTube-controlled iframe wrapper
-function YouTubePlayer({ channel, isPlaying, volume, isMuted }: { channel: Channel; isPlaying: boolean; volume: number; isMuted: boolean }) {
-  const playerRef = useRef<YTPlayerInstance | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [ready, setReady] = useState(false);
-  const saveRef = useRef<number | null>(null);
-
-  useEffect(() => { loadYTAPI(); }, []);
-
-  // Create player once when channel mounts
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const createPlayer = () => {
-      if (!containerRef.current) return;
-      const playerId = `yt-${channel.id}-${ytPlayerCounter++}`;
-
-      // Detect mode: playlist (videoseries URL or ?list=) vs single video
-      const src = channel.src || '';
-      const isPlaylist = src.includes('videoseries') || (src.includes('list=') && !src.match(/\/embed\/[^?]+/));
-      let videoId = '';
-      let playerVars: Record<string, any> = {
-        controls: 0,
-        autoplay: channel.autoplay ? 1 : 0,
-        mute: 0,
-        loop: 1,
-        modestbranding: 1,
-        rel: 0,
-      };
-
-      if (isPlaylist) {
-        playerVars.listType = 'playlist';
-        playerVars.list = src.split('list=')[1];
-      } else {
-        // Single video: extract ID from /embed/VIDEO_ID path
-        const match = src.match(/\/embed\/([^?&]+)/);
-        videoId = match ? match[1] : '';
-      }
-
-      // Restore saved position if available
-      const saved = getSavedPosition(channel.id);
-      if (saved > 2) {
-        playerVars.start = saved;
-      }
-
-      playerRef.current = new (window as any).YT.Player(playerId, {
-        videoId,
-        playerVars,
-        events: {
-          onReady: () => {
-            setReady(true);
-            registerYTPlayer(channel.id, playerRef.current);
-          },
-        },
-      });
-    };
-
-    // If API already loaded, create immediately; else wait for global callback
-    if ((window as any).YT) {
-      createPlayer();
-    } else {
-      const original = (window as any).onYouTubeIframeAPIReady;
-      (window as any).onYouTubeIframeAPIReady = () => {
-        original?.();
-        createPlayer();
-      };
-    }
-
-    return () => {
-      if (playerRef.current) {
-        playerRef.current.destroy();
-      }
-    };
-  }, [channel.id, channel.src]);
-
-  // Sync play state when `isPlaying` changes
-  useEffect(() => {
-    if (!ready || !playerRef.current) return;
-    if (isPlaying) {
-      playerRef.current.playVideo();
-    } else {
-      playerRef.current.pauseVideo();
-    }
-  }, [isPlaying, ready]);
-
-  // Sync volume / mute to YouTube player
-  useEffect(() => {
-    if (!ready || !playerRef.current) return;
-    const player = playerRef.current;
-    if (isMuted) {
-      player.mute();
-    } else {
-      player.unMute();
-      player.setVolume(volume);
-    }
-  }, [volume, isMuted, ready]);
-
-  // Throttled position saver: poll every 5s while playing
-  useEffect(() => {
-    if (!ready || !playerRef.current) return;
-
-    const tick = () => {
-      try {
-        const time = playerRef.current?.getCurrentTime?.();
-        if (typeof time === 'number' && time > 0) {
-          savePosition(channel.id, time);
-        }
-      } catch {}
-      saveRef.current = window.setTimeout(tick, 5000);
-    };
-
-    if (isPlaying) {
-      tick();
-    } else {
-      if (saveRef.current) clearTimeout(saveRef.current);
-    }
-
-    return () => {
-      if (saveRef.current) clearTimeout(saveRef.current);
-    };
-  }, [isPlaying, ready, channel.id]);
-
-  // Save on unmount
-  useEffect(() => {
-    return () => {
-      if (playerRef.current) {
-        try {
-          const time = playerRef.current.getCurrentTime?.();
-          if (typeof time === 'number') {
-            savePosition(channel.id, time);
-          }
-        } catch {}
-      }
-    };
-  }, [channel.id]);
-
-  return (
-    <div ref={containerRef} className="absolute inset-0">
-      <div id={`yt-${channel.id}-${ytPlayerCounter}`} className="w-full h-full" />
-    </div>
-  );
-}
 
 /* ─────────────── Playback position persistence ─────────────── */
 
@@ -895,6 +697,7 @@ function formatTime(seconds: number): string {
 }
 
 function ChannelRenderer({ channel, isPlaying, volume, isMuted }: { channel: Channel; isPlaying: boolean; volume: number; isMuted: boolean }) {
+  console.log('[ENT] ChannelRenderer', { id: channel.id, name: channel.name, type: channel.type, src: channel.src?.slice(0, 80) });
   switch (channel.type) {
     case "noise":
       return <StaticNoise />;
@@ -907,20 +710,20 @@ function ChannelRenderer({ channel, isPlaying, volume, isMuted }: { channel: Cha
         case "CORE BREATHWORK": return <CoreBreathworkCanvas canvasId={`canvas-${channel.id}`} />;
         case "NEO NEWSWIRE": return <NeoNewswireCanvas canvasId={`canvas-${channel.id}`} />;
         case "CHAOS MATRIX": return <ChaosMatrixCanvas canvasId={`canvas-${channel.id}`} />;
-        case "CNN Teletext": return <CNNTeletextCanvas />;
+        case "HNN Teletext": return <HNNTeletextCanvas />;
         case "Bloom Terminal": return <BloombergCanvas canvasId={`canvas-${channel.id}`} />;
         default: return <FallbackScreen name={channel.name} />;
       }
     case "video":
       return channel.src ? <VideoPlayer src={channel.src} isPlaying={isPlaying} channelId={channel.id} volume={volume} isMuted={isMuted} /> : <FallbackScreen name={channel.name} />;
     case "iframe":
-      // YouTube embeds → use YouTubePlayer with API control
-      if (channel.src?.includes('youtube.com/embed')) {
-        return <YouTubePlayer channel={channel} isPlaying={isPlaying} volume={volume} isMuted={isMuted} />;
-      }
-      // Non-YouTube iframes (Spotify, Weather) keep standard embed
       return channel.src ? (
-        <iframe src={channel.src} className="absolute inset-0 w-full h-full border-0" allowFullScreen title={channel.name} />
+        <iframe
+          src={channel.src}
+          className="absolute inset-0 w-full h-full border-0"
+          allowFullScreen
+          title={channel.name}
+        />
       ) : <FallbackScreen name={channel.name} />;
     default:
       return <FallbackScreen name={channel.name} />;
@@ -1600,6 +1403,7 @@ function NousBoySection({
   const activeGameIdx = GAMEBOY_GAMES.findIndex(g => g.id === activeGameId);
   const [gbPower, setGbPower] = useState(true);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   const sendKey = (key: string, down: boolean) => {
     try {
@@ -1609,7 +1413,7 @@ function NousBoySection({
     } catch {}
   };
 
-  // Forward physical keyboard to iframe when power is on
+  // Forward physical keyboard to iframe only when NousBoy section is focused
   useEffect(() => {
     if (!gbPower) return;
     const GAME_KEYS = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'z', 'Z', 'x', 'X', ' ', 'Enter']);
@@ -1617,6 +1421,10 @@ function NousBoySection({
       if (!GAME_KEYS.has(e.key)) return;
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      // Only intercept if focus is inside the NousBoy section or its game iframe
+      const section = sectionRef.current;
+      const active = document.activeElement;
+      if (section && active && !section.contains(active) && active !== iframeRef.current) return;
       const doc = iframeRef.current?.contentDocument;
       if (!doc) return;
       e.preventDefault();
@@ -1632,10 +1440,10 @@ function NousBoySection({
   }, [gbPower]);
 
   return (
-    <div className="flex flex-col items-center gap-0 w-full">
+    <div ref={sectionRef} className="flex flex-col items-center gap-0 w-full">
       {/* Section header */}
       <div className="w-full flex items-center gap-3 pb-4 pt-2">
-        <div className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+        <div className="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]" />
         <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">Nous Boy</h2>
         <div className="flex-1 h-px bg-border/30" />
         <span className="text-[0.6rem] font-mono text-muted-foreground/40 uppercase tracking-widest">
@@ -1822,7 +1630,7 @@ function NousBoySection({
                 {GAMEBOY_GAMES.map((_, i) => (
                   <div key={i} className={`w-1.5 h-4 rounded-full transition-all
                     ${activeGameIdx === i
-                      ? 'bg-purple-400 shadow-[0_0_6px_rgba(168,85,247,0.6)]'
+                      ? 'bg-sky-400 shadow-[0_0_6px_rgba(56,189,248,0.6)]'
                       : 'bg-slate-700'}`} />
                 ))}
               </div>
@@ -1835,14 +1643,14 @@ function NousBoySection({
                 onClick={() => setActiveGameId(game.id)}
                 className={`relative flex-shrink-0 flex items-center gap-2 px-3 h-8 rounded-full font-mono text-[0.63rem] border transition-all select-none active:scale-95 whitespace-nowrap
                   ${activeGameIdx === i
-                    ? 'bg-purple-500/10 text-foreground border-purple-500/50'
+                    ? 'bg-sky-500/10 text-foreground border-sky-500/50'
                     : 'bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted hover:text-foreground hover:border-foreground/20'
                   }`}
               >
                 <GameIcon icon={game.icon} size={13} />
                 <span>{game.name}</span>
                 {activeGameIdx === i && (
-                  <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-purple-400 shadow-[0_0_5px_rgba(168,85,247,0.9)]" />
+                  <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-sky-400 shadow-[0_0_5px_rgba(56,189,248,0.9)]" />
                 )}
               </button>
             ))}
@@ -1869,6 +1677,16 @@ function NousBoySection({
                 <span className="text-muted-foreground/80">Flappy Bird</span> · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> or Click to flap · Opens at flappybird.io
               </p>
             )}
+            {activeGame.id === 'g5' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Snake</span> · ← → ↑ ↓ Turn · <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Z</kbd> or <kbd style={{background:'rgba(255,255,255,0.06)',borderRadius:3,padding:'0 4px'}}>Space</kbd> Start / Restart · Walls wrap around · High score saved locally
+              </p>
+            )}
+            {activeGame.id === 'g6' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">2048</span> · ← → ↑ ↓ Slide tiles · Combine matching numbers · Reach 2048 to win · Opens at play2048.co
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -1876,11 +1694,11 @@ function NousBoySection({
   );
 }
 
-/* ─────────────── CNN Teletext ─────────────── */
+/* ─────────────── HNN Teletext ─────────────── */
 
-const CNN_TICKER = "BREAKING: AI MODELS SURPASS HUMAN BENCHMARKS IN REASONING  ●  S&P 500 CLOSES AT RECORD HIGH  ●  FED HOLDS RATES STEADY — SIGNALS CUTS AHEAD  ●  SPACEX LAUNCHES 23 STARLINK SATELLITES  ●  NVIDIA UNVEILS NEXT-GEN AI CHIP — SHARES SURGE 9%  ●  BITCOIN TOPS $90,000 ON INSTITUTIONAL DEMAND  ●  NOUS RESEARCH RELEASES HERMES-3 OPEN-SOURCE MODEL  ●  ";
+const HNN_TICKER = "◈ BREAKING: AI MODELS SURPASS HUMAN BENCHMARKS IN REASONING  ◈  S&P 500 CLOSES AT RECORD HIGH  ◈  FED HOLDS RATES — SIGNALS CUTS AHEAD  ◈  NOUS RESEARCH RELEASES HERMES-3 OPEN-SOURCE MODEL  ◈  SPACEX LAUNCHES 23 STARLINK SATELLITES  ◈  BITCOIN SURGES PAST $90K ON INSTITUTIONAL DEMAND  ◈  NVIDIA UNVEILS NEXT-GEN AI CHIP — SHARES SURGE 9%  ◈  CONGRESS PASSES INFRASTRUCTURE BILL  ◈  MAJOR BREAKTHROUGH IN FUSION ENERGY ANNOUNCED  ◈  ";
 
-const CNN_FALLBACK: Record<string, string[]> = {
+const HNN_FALLBACK: Record<string, string[]> = {
   top: [
     "GLOBAL AI SAFETY SUMMIT REACHES LANDMARK AGREEMENT ON STANDARDS",
     "FEDERAL RESERVE HOLDS RATES AS INFLATION EASES TO 2.4%",
@@ -1888,72 +1706,111 @@ const CNN_FALLBACK: Record<string, string[]> = {
     "MAJOR CYBERATTACK DISRUPTS INFRASTRUCTURE ACROSS THREE NATIONS",
     "RECORD HEATWAVE GRIPS SOUTHERN EUROPE — TEMPERATURES HIT 47°C",
     "INTERNATIONAL SPACE STATION CREW COMPLETES HISTORIC SPACEWALK",
+    "PRESIDENT SIGNS EXECUTIVE ORDER ON CRITICAL INFRASTRUCTURE",
+  ],
+  world: [
+    "EUROPE: NATO SUMMIT CONCLUDES WITH INCREASED DEFENSE PLEDGES",
+    "ASIA: SOUTH KOREA ELECTIONS — OPPOSITION WINS PARLIAMENT",
+    "MIDEAST: DIPLOMATIC TALKS RESUME IN CAIRO — TRUCE HOLDS",
+    "AFRICA: AFRICAN UNION LAUNCHES $20B CLIMATE ADAPTATION FUND",
+    "AMERICAS: CANADA ANNOUNCES NEW IMMIGRATION REFORM PACKAGE",
+    "PACIFIC: AUSTRALIA REPORTS RECORD TRADE SURPLUS WITH ASIA",
+    "EUROPE: GERMANY UNVEILS €200B INDUSTRIAL TRANSFORMATION PLAN",
   ],
   business: [
-    "S&P 500 HITS ALL-TIME HIGH AS EARNINGS SEASON BEATS EXPECTATIONS",
+    "S&P 500 HITS ALL-TIME HIGH AS EARNINGS SEASON BEATS FORECASTS",
     "FEDERAL RESERVE SIGNALS RATE CUTS AS INFLATION COOLS TO 2.4%",
     "OIL PRICES SLIDE ON OPEC DISPUTE — BRENT CRUDE AT $78/BBL",
     "AMAZON ANNOUNCES $5B INVESTMENT IN NEW DATA CENTER EXPANSION",
     "SEMICONDUCTOR SECTOR SURGES ON STRONG AI CHIP DEMAND OUTLOOK",
-    "GLOBAL TRADE VOLUMES RISE 3.2% IN Q1 DESPITE TARIFF UNCERTAINTY",
+    "GLOBAL TRADE VOLUMES RISE 3.2% IN Q1 DESPITE TARIFF TENSIONS",
+    "EURO STRENGTHENS AS ECB HOLDS RATES — USD INDEX FALLS 0.4%",
   ],
   tech: [
-    "GOOGLE UNVEILS GEMINI ULTRA 2 — BREAKTHROUGH MULTIMODAL REASONING",
+    "GOOGLE UNVEILS GEMINI ULTRA 2 WITH BREAKTHROUGH REASONING",
     "OPENAI RELEASES NEW MODEL WITH EXTENDED 200K CONTEXT WINDOW",
     "APPLE SILICON M4 DELIVERS 40% PERFORMANCE BOOST OVER PRIOR GEN",
     "QUANTUM MILESTONE: IBM ACHIEVES STABLE 1000-QUBIT PROCESSOR",
     "EU FINALIZES AI ACT ENFORCEMENT — FINES UP TO 7% OF REVENUE",
     "STARTUP RAISES $500M TO DEPLOY HUMANOID ROBOTS IN WAREHOUSES",
+    "META RELEASES OPEN-SOURCE 70B PARAMETER MULTIMODAL MODEL",
+  ],
+  sports: [
+    "NBA PLAYOFFS: CELTICS ADVANCE TO CONFERENCE FINALS IN 5",
+    "NFL DRAFT: TEAMS TRADE UP FOR TOP QUARTERBACK PROSPECTS",
+    "MLB: YANKEES EXTEND WIN STREAK TO 9 — LEAD AL EAST BY 3",
+    "PREMIER LEAGUE: ARSENAL CLOSE GAP ON LEADERS WITH 3-1 WIN",
+    "F1: VERSTAPPEN TAKES POLE IN MONACO — RACE SUNDAY 3PM EST",
+    "TENNIS: DJOKOVIC WITHDRAWS FROM FRENCH OPEN — KNEE INJURY",
+    "GOLF: MCILROY LEADS BY TWO STROKES HEADING INTO FINAL ROUND",
   ],
 };
 
-const CNN_PAGES = [
-  { num: 100, title: "HEADLINE NEWS", cat: "top",      accent: "#FFD700" },
-  { num: 200, title: "WORLD REPORT",  cat: "top",      accent: "#00FFFF" },
-  { num: 300, title: "MARKETS",       cat: "business", accent: "#00FF7F" },
-  { num: 400, title: "TECHNOLOGY",    cat: "tech",     accent: "#FF8C00" },
+const HNN_PAGES = [
+  { num: 100, title: "HNN INDEX",      cat: "top",      accent: "#FFE066", strip: "#1a0a00" },
+  { num: 101, title: "HEADLINE NEWS",  cat: "top",      accent: "#FF6B6B", strip: "#1a0000" },
+  { num: 200, title: "WORLD REPORT",   cat: "world",    accent: "#4DFFFF", strip: "#00131a" },
+  { num: 300, title: "MARKETS",        cat: "business", accent: "#50FF9A", strip: "#001a08" },
+  { num: 400, title: "TECHNOLOGY",     cat: "tech",     accent: "#FFAA44", strip: "#1a0800" },
+  { num: 500, title: "SPORTS",         cat: "sports",   accent: "#FF88CC", strip: "#1a0012" },
 ];
 
-const CNN_INIT_PRICES = [
+const HNN_INIT_PRICES = [
   { s: "S&P 500",  p: 5847.32,  c:  0.74 },
   { s: "NASDAQ",   p: 18943.21, c:  1.12 },
   { s: "DOW",      p: 42318.65, c:  0.31 },
-  { s: "BTC/USD",  p: 89542.10, c:  2.41 },
-  { s: "ETH/USD",  p: 3284.55,  c:  1.87 },
   { s: "NVIDIA",   p: 142.86,   c:  3.24 },
   { s: "APPLE",    p: 213.42,   c:  0.55 },
   { s: "TESLA",    p: 248.77,   c: -1.32 },
+  { s: "MSFT",     p: 415.20,   c:  0.92 },
+  { s: "BTC/USD",  p: 89542.10, c:  2.41 },
+  { s: "ETH/USD",  p: 3284.55,  c:  1.87 },
+  { s: "SOL/USD",  p: 182.33,   c:  4.12 },
 ];
 
-function CNNTeletextCanvas() {
+const HNN_REGION_COLORS: Record<string, string> = {
+  "EUROPE:": "#4DFFFF", "ASIA:": "#FFE066", "MIDEAST:": "#FFAA44",
+  "AFRICA:": "#50FF9A", "AMERICAS:": "#FF88CC", "PACIFIC:": "#CC99FF",
+};
+
+function HNNTeletextCanvas() {
   const [pidx, setPidx] = useState(0);
   const [now, setNow] = useState(new Date());
-  const [dot, setDot] = useState(true);
-  const [news, setNews] = useState<Record<string, string[]>>(CNN_FALLBACK);
-  const [prices, setPrices] = useState(CNN_INIT_PRICES);
+  const [blink, setBlink] = useState(true);
+  const [flash, setFlash] = useState(false);
+  const [news, setNews] = useState<Record<string, string[]>>(HNN_FALLBACK);
+  const [prices, setPrices] = useState(HNN_INIT_PRICES);
+  const [tickerText, setTickerText] = useState(HNN_TICKER);
   const wrapRef = useRef<HTMLDivElement>(null);
   const tickRef = useRef<HTMLSpanElement>(null);
   const raf = useRef(0);
-  const pg = CNN_PAGES[pidx];
+  const pg = HNN_PAGES[pidx];
+
+  const MONO: React.CSSProperties = { fontFamily:'"Courier New",Courier,monospace', fontWeight:700 };
 
   useEffect(() => { const iv = setInterval(() => setNow(new Date()), 1000); return () => clearInterval(iv); }, []);
-  useEffect(() => { const iv = setInterval(() => setDot(d => !d), 550); return () => clearInterval(iv); }, []);
-  useEffect(() => { const iv = setInterval(() => setPidx(i => (i + 1) % CNN_PAGES.length), 12000); return () => clearInterval(iv); }, []);
+  useEffect(() => { const iv = setInterval(() => setBlink(b => !b), 700); return () => clearInterval(iv); }, []);
+  useEffect(() => { const iv = setInterval(() => setPidx(i => (i + 1) % HNN_PAGES.length), 13000); return () => clearInterval(iv); }, []);
   useEffect(() => {
     const iv = setInterval(() => setPrices(prev => prev.map(p => ({
-      ...p, p: p.p * (1 + (Math.random() - 0.499) * 0.0025),
-      c: parseFloat((p.c + (Math.random() - 0.5) * 0.06).toFixed(2)),
-    }))), 2800);
+      ...p,
+      p: p.p * (1 + (Math.random() - 0.499) * 0.003),
+      c: parseFloat((p.c + (Math.random() - 0.5) * 0.1).toFixed(2)),
+    }))), 2500);
     return () => clearInterval(iv);
   }, []);
 
-  // Ticker via RAF — no state updates, direct DOM
+  const changePage = (i: number) => {
+    setFlash(true);
+    setTimeout(() => { setPidx(i); setFlash(false); }, 70);
+  };
+
   useEffect(() => {
     const el = tickRef.current; const wrap = wrapRef.current;
     if (!el || !wrap) return;
     let pos = 0;
     const loop = () => {
-      pos += 0.9;
+      pos += 1.2;
       if (pos > el.offsetWidth + wrap.clientWidth) pos = 0;
       el.style.transform = `translateX(${wrap.clientWidth - pos}px)`;
       raf.current = requestAnimationFrame(loop);
@@ -1963,94 +1820,210 @@ function CNNTeletextCanvas() {
   }, []);
 
   useEffect(() => {
-    (['top', 'business', 'tech'] as const).forEach(async cat => {
+    (['top', 'world', 'business', 'tech', 'sports'] as const).forEach(async cat => {
       try {
         const tok = (window as any).__HERMES_SESSION_TOKEN__;
         const h: Record<string, string> = tok ? { 'X-Hermes-Session-Token': tok } : {};
         const r = await fetch(`/api/plugins/hermes-entertainment-pack/teletext/news?category=${cat}`, { headers: h });
-        if (r.ok) { const d = await r.json(); if (d.headlines?.length >= 3) setNews(prev => ({ ...prev, [cat]: d.headlines })); }
+        if (r.ok) {
+          const d = await r.json();
+          if (d.headlines?.length >= 3) {
+            setNews(prev => ({ ...prev, [cat]: d.headlines }));
+            if (cat === 'top') {
+              setTickerText(d.headlines.map((hl: string) => `◈ ${hl.toUpperCase()}  `).join('  '));
+            }
+          }
+        }
       } catch {}
     });
   }, []);
 
-  const lines = news[pg.cat] ?? CNN_FALLBACK[pg.cat] ?? [];
+  const lines = news[pg.cat] ?? HNN_FALLBACK[pg.cat as keyof typeof HNN_FALLBACK] ?? [];
   const ts = now.toLocaleTimeString('en-US', { hour12: false });
-  const ds = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+  const ds = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }).toUpperCase();
+
+  /* reusable row strip */
+  const Row = ({ bg, children, py=3 }: { bg:string; children:React.ReactNode; py?:number }) => (
+    <div style={{ background:bg, padding:`${py}px 10px`, flexShrink:0 }}>{children}</div>
+  );
 
   return (
-    <div ref={wrapRef} style={{ position:'absolute', inset:0, background:'#000080', fontFamily:'"Courier New",Courier,monospace', color:'#fff', overflow:'hidden', display:'flex', flexDirection:'column', userSelect:'none' }}>
+    <div ref={wrapRef} style={{ ...MONO, position:'absolute', inset:0, background:'#000018', color:'#fff', overflow:'hidden', display:'flex', flexDirection:'column', userSelect:'none', fontSize:12 }}>
 
-      {/* CNN header */}
-      <div style={{ background:'#CC0000', display:'flex', alignItems:'center', padding:'3px 8px', gap:7, flexShrink:0 }}>
-        <div style={{ background:'#fff', color:'#CC0000', fontWeight:900, fontSize:'0.9rem', padding:'0 5px', lineHeight:1.25, fontFamily:'Arial Black,Arial,sans-serif', flexShrink:0 }}>CNN</div>
-        <span style={{ color:'#FFD700', fontSize:'0.38rem', fontWeight:700, letterSpacing:'0.3em', flex:1 }}>HEADLINE NEWS · TELETEXT SERVICE</span>
-        <span style={{ color:dot?'#FF5555':'transparent', fontSize:'0.4rem' }}>●</span>
-        <span style={{ color:'#FFAAAA', fontSize:'0.33rem', fontWeight:700, letterSpacing:'0.22em', marginRight:8 }}>LIVE</span>
-        <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end' }}>
-          <span style={{ color:'#FFD700', fontSize:'0.4rem', fontWeight:700 }}>P{pg.num}</span>
-          <span style={{ color:'rgba(255,255,255,0.6)', fontSize:'0.35rem' }}>{ts}</span>
+      {flash && <div style={{ position:'absolute', inset:0, background:'#fff', zIndex:99, opacity:0.55, pointerEvents:'none' }} />}
+
+      {/* ══ MASTHEAD ══ */}
+      <div style={{ background:'linear-gradient(90deg,#1a0050 0%,#000080 40%,#001a60 100%)', display:'flex', alignItems:'stretch', flexShrink:0, borderBottom:'2px solid #FFE06688' }}>
+        {/* HNN Logo block */}
+        <div style={{ background:'#FFE066', color:'#000', fontFamily:'"Arial Black",Arial,sans-serif', fontWeight:900, fontSize:20, padding:'4px 10px', letterSpacing:'-0.02em', display:'flex', alignItems:'center', flexShrink:0, lineHeight:1 }}>HNN</div>
+        <div style={{ width:2, background:'#FFE066', flexShrink:0 }} />
+        <div style={{ flex:1, display:'flex', flexDirection:'column', justifyContent:'center', padding:'3px 10px' }}>
+          <div style={{ color:'#FFE066', fontSize:9, letterSpacing:'0.3em', lineHeight:1 }}>HERMES NEWS NETWORK</div>
+          <div style={{ color:'rgba(255,224,102,0.45)', fontSize:8, letterSpacing:'0.18em', marginTop:2 }}>TELETEXT INFORMATION SERVICE</div>
+        </div>
+        <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', justifyContent:'center', padding:'3px 10px', gap:2 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+            <span style={{ background:blink?'#FF4444':'transparent', color:'#fff', fontSize:8, padding:'0 4px', letterSpacing:'0.15em', transition:'background 0.1s' }}>● LIVE</span>
+            <span style={{ color:'#FFE066', fontSize:11, letterSpacing:'0.05em', fontVariantNumeric:'tabular-nums' }}>P{pg.num}</span>
+          </div>
+          <span style={{ color:'rgba(255,224,102,0.5)', fontSize:9, fontVariantNumeric:'tabular-nums' }}>{ts}</span>
         </div>
       </div>
 
-      {/* Date + page nav */}
-      <div style={{ background:'#000060', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'2px 8px', flexShrink:0, borderBottom:'1px solid #AA0000' }}>
-        <span style={{ color:'#00CCFF', fontSize:'0.35rem', letterSpacing:'0.12em' }}>{ds}</span>
-        <div style={{ display:'flex', gap:3 }}>
-          {CNN_PAGES.map((p, i) => (
-            <button key={p.num} onClick={() => setPidx(i)} style={{ background:i===pidx?p.accent:'transparent', color:i===pidx?'#000':'#445', border:'none', cursor:'pointer', padding:'0 5px', fontSize:'0.35rem', fontFamily:'monospace', fontWeight:700, borderRadius:1, lineHeight:1.6 }}>{p.num}</button>
+      {/* ══ DATE + PAGE SELECTOR ══ */}
+      <div style={{ background:'#0a0030', display:'flex', alignItems:'center', padding:'2px 10px', gap:8, flexShrink:0, borderBottom:'1px solid rgba(255,224,102,0.15)' }}>
+        <span style={{ color:'rgba(100,160,255,0.7)', fontSize:9, letterSpacing:'0.12em', flex:1 }}>{ds}</span>
+        <div style={{ display:'flex', gap:2 }}>
+          {HNN_PAGES.map((p, i) => (
+            <button key={p.num} onClick={() => changePage(i)}
+              style={{ background:i===pidx?p.accent:'rgba(255,255,255,0.07)', color:i===pidx?'#000':'rgba(255,255,255,0.4)', border:'none', cursor:'pointer', padding:'1px 5px', fontSize:9, fontFamily:'"Courier New",monospace', fontWeight:900, borderRadius:1, lineHeight:1.6, transition:'all 0.12s' }}>
+              {p.num}
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Page title */}
-      <div style={{ background:'#000070', padding:'4px 8px', display:'flex', alignItems:'center', gap:7, flexShrink:0, borderBottom:`2px solid ${pg.accent}44` }}>
-        <div style={{ background:'#CC0000', color:'#fff', padding:'1px 5px', fontSize:'0.37rem', fontWeight:900, letterSpacing:'0.18em', lineHeight:1.5, flexShrink:0 }}>BREAKING</div>
-        <span style={{ color:pg.accent, fontSize:'0.58rem', fontWeight:700, letterSpacing:'0.2em', textShadow:`0 0 10px ${pg.accent}66`, flex:1 }}>{pg.title}</span>
-        <span style={{ color:'#223', fontSize:'0.3rem' }}>CNN.COM</span>
+      {/* ══ PAGE TITLE STRIP ══ */}
+      <div style={{ background:pg.strip, borderBottom:`2px solid ${pg.accent}`, padding:'4px 10px', display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
+        <div style={{ background:pg.accent, color:'#000', fontSize:8, fontWeight:900, padding:'1px 6px', letterSpacing:'0.2em', lineHeight:1.7, flexShrink:0 }}>
+          {pg.num===300?'LIVE MKT':pg.num===500?'SCORES':pg.num===100?'INDEX':'LATEST'}
+        </div>
+        <span style={{ color:pg.accent, fontSize:14, fontWeight:900, letterSpacing:'0.14em', flex:1, textShadow:`0 0 18px ${pg.accent}66` }}>{pg.title}</span>
+        <span style={{ color:'rgba(255,255,255,0.18)', fontSize:8, letterSpacing:'0.1em' }}>HNN.NET</span>
       </div>
 
-      {/* Content */}
-      <div style={{ flex:1, padding:'7px 8px 22px', overflow:'hidden', display:'flex', flexDirection:'column', gap:4 }}>
-        {pg.cat === 'business' ? (
-          <div style={{ display:'flex', gap:10, height:'100%' }}>
-            <div style={{ flex:1, display:'flex', flexDirection:'column', gap:3 }}>
-              <span style={{ color:pg.accent, fontSize:'0.36rem', fontWeight:700, letterSpacing:'0.2em', borderBottom:`1px solid ${pg.accent}33`, paddingBottom:2, marginBottom:2 }}>LIVE MARKETS</span>
-              {prices.map(q => (
-                <div key={q.s} style={{ display:'flex', alignItems:'center', gap:4 }}>
-                  <span style={{ color:'#FFD700', fontWeight:700, minWidth:72, fontSize:'0.37rem' }}>{q.s}</span>
-                  <span style={{ color:'#fff', minWidth:58, fontSize:'0.41rem', fontVariantNumeric:'tabular-nums' }}>{q.p >= 1000 ? q.p.toFixed(0) : q.p.toFixed(2)}</span>
-                  <span style={{ color:q.c>=0?'#00FF7F':'#FF4444', fontSize:'0.36rem', fontWeight:700 }}>{q.c>=0?'▲':'▼'}{Math.abs(q.c).toFixed(2)}%</span>
+      {/* ══ CONTENT ══ */}
+      <div style={{ flex:1, overflow:'hidden', display:'flex', flexDirection:'column' }}>
+
+        {/* INDEX 100 */}
+        {pg.num === 100 && (
+          <>
+            {/* Top headline highlighted */}
+            <div style={{ background:'#1a0020', borderBottom:'1px solid #FFE06633', padding:'6px 10px' }}>
+              <div style={{ color:'#FF6B6B', fontSize:8, letterSpacing:'0.22em', marginBottom:3 }}>◈ BREAKING NOW</div>
+              <div style={{ color:'#FFE066', fontSize:13, lineHeight:1.35, fontWeight:900 }}>{(lines[0]||'').toUpperCase()}</div>
+            </div>
+            {/* Menu */}
+            {[
+              { num:101, label:'HEADLINE NEWS',      sub:'TOP STORIES',    accent:'#FF6B6B' },
+              { num:200, label:'WORLD REPORT',        sub:'INTERNATIONAL',  accent:'#4DFFFF' },
+              { num:300, label:'MARKETS & FINANCE',   sub:'LIVE DATA',      accent:'#50FF9A' },
+              { num:400, label:'TECHNOLOGY',          sub:'AI & SCIENCE',   accent:'#FFAA44' },
+              { num:500, label:'SPORTS',              sub:'SCORES & NEWS',  accent:'#FF88CC' },
+            ].map((item, ii) => (
+              <div key={item.num}
+                onClick={() => changePage(HNN_PAGES.findIndex(p=>p.num===item.num))}
+                style={{ display:'flex', alignItems:'center', gap:0, cursor:'pointer', background:ii%2===0?'rgba(255,255,255,0.025)':'transparent', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ background:item.accent, color:'#000', fontWeight:900, fontSize:10, padding:'5px 8px', minWidth:36, textAlign:'center', lineHeight:1, flexShrink:0 }}>{item.num}</div>
+                <div style={{ width:3, background:`${item.accent}44`, alignSelf:'stretch', flexShrink:0 }} />
+                <span style={{ color:'#fff', fontSize:12, padding:'5px 8px', flex:1, letterSpacing:'0.04em' }}>{item.label}</span>
+                <span style={{ color:item.accent, fontSize:8, letterSpacing:'0.14em', padding:'0 10px', opacity:0.65 }}>{item.sub} ›</span>
+              </div>
+            ))}
+            <div style={{ padding:'5px 10px', color:'rgba(255,255,255,0.2)', fontSize:8, letterSpacing:'0.14em', marginTop:'auto' }}>
+              AUTO-ROTATE ON · SELECT PAGE ABOVE · FASTEXT BELOW
+            </div>
+          </>
+        )}
+
+        {/* NEWS 101 */}
+        {pg.num === 101 && lines.map((h, i) => (
+          <div key={i} style={{ display:'flex', alignItems:'stretch', background:i===0?'#1a0010':i%2===0?'rgba(255,255,255,0.02)':'transparent', borderBottom:`1px solid ${i===0?'#FF6B6B44':'rgba(255,255,255,0.05)'}` }}>
+            <div style={{ background:i===0?'#FF6B6B':i===1?'#88334488':i<4?'rgba(255,107,107,0.15)':'transparent', width:4, flexShrink:0 }} />
+            <div style={{ padding:'5px 8px', display:'flex', gap:7, alignItems:'flex-start', flex:1 }}>
+              <span style={{ color:i===0?'#FF6B6B':i===1?'rgba(255,107,107,0.6)':'rgba(255,255,255,0.2)', fontSize:i===0?14:10, flexShrink:0, lineHeight:1.4 }}>{i===0?'◈':i===1?'▶':'·'}</span>
+              <span style={{ color:i===0?'#FFE066':i<3?'#fff':'rgba(180,200,255,0.6)', fontSize:i===0?13:i<3?11:10, lineHeight:1.45, fontWeight:i===0?900:i<3?700:400 }}>{h.toUpperCase()}</span>
+            </div>
+          </div>
+        ))}
+
+        {/* WORLD 200 */}
+        {pg.num === 200 && lines.map((h, i) => {
+          const rk = Object.keys(HNN_REGION_COLORS).find(k => h.toUpperCase().startsWith(k));
+          const rc = rk ? HNN_REGION_COLORS[rk] : null;
+          const rl = rk ? rk.replace(':','') : null;
+          const txt = rk ? h.toUpperCase().replace(rk.toUpperCase(),'').trim() : h.toUpperCase();
+          return (
+            <div key={i} style={{ display:'flex', alignItems:'stretch', background:i%2===0?'rgba(0,30,40,0.5)':'transparent', borderBottom:'1px solid rgba(77,255,255,0.08)' }}>
+              {rc && <div style={{ background:`${rc}22`, width:3, flexShrink:0 }} />}
+              <div style={{ padding:'5px 8px', display:'flex', gap:7, alignItems:'flex-start', flex:1 }}>
+                {rl
+                  ? <div style={{ background:rc!, color:'#000', fontSize:7, fontWeight:900, padding:'2px 5px', alignSelf:'flex-start', lineHeight:1.5, flexShrink:0, marginTop:1, letterSpacing:'0.1em' }}>{rl}</div>
+                  : <span style={{ color:'rgba(77,255,255,0.3)', fontSize:9, flexShrink:0 }}>◈</span>
+                }
+                <span style={{ color:i===0?'#FFE066':'rgba(220,240,255,0.82)', fontSize:i===0?12:11, lineHeight:1.4, fontWeight:i===0?900:400 }}>{txt}</span>
+              </div>
+            </div>
+          );
+        })}
+
+        {/* MARKETS 300 */}
+        {pg.num === 300 && (
+          <div style={{ display:'flex', flex:1, overflow:'hidden' }}>
+            {/* Price table */}
+            <div style={{ flex:1, display:'flex', flexDirection:'column' }}>
+              <div style={{ background:'#001a08', padding:'3px 8px', borderBottom:'1px solid #50FF9A33' }}>
+                <span style={{ color:'#50FF9A', fontSize:8, letterSpacing:'0.22em' }}>◈ LIVE MARKETS</span>
+              </div>
+              {prices.map((q, i) => (
+                <div key={q.s} style={{ display:'flex', alignItems:'center', padding:'3px 8px', background:i%2===0?'rgba(0,40,15,0.4)':'transparent', borderBottom:'1px solid rgba(80,255,154,0.06)' }}>
+                  <span style={{ color:'#FFE066', fontSize:10, minWidth:58, letterSpacing:'0.02em' }}>{q.s}</span>
+                  <span style={{ color:'#fff', fontSize:11, flex:1, fontVariantNumeric:'tabular-nums', textAlign:'right', letterSpacing:'0.02em' }}>
+                    {q.p >= 10000 ? q.p.toFixed(0) : q.p >= 1000 ? q.p.toFixed(0) : q.p.toFixed(2)}
+                  </span>
+                  <div style={{ minWidth:60, textAlign:'right' }}>
+                    <span style={{ color:q.c>=0?'#50FF9A':'#FF5555', fontSize:10, fontWeight:900 }}>
+                      {q.c>=0?'▲':'▼'} {Math.abs(q.c).toFixed(2)}%
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
-            <div style={{ width:'40%', display:'flex', flexDirection:'column', gap:3 }}>
-              <span style={{ color:'#00CCFF', fontSize:'0.36rem', fontWeight:700, letterSpacing:'0.2em', borderBottom:'1px solid #00CCFF33', paddingBottom:2, marginBottom:2 }}>BIZ WIRE</span>
-              {lines.slice(0,5).map((h, i) => (
-                <div key={i} style={{ display:'flex', gap:4 }}>
-                  <span style={{ color:'#445', fontSize:'0.36rem' }}>▶</span>
-                  <span style={{ color:'rgba(190,205,255,0.75)', fontSize:'0.36rem', lineHeight:1.4 }}>{h.toUpperCase()}</span>
+            {/* Business headlines */}
+            <div style={{ width:1, background:'rgba(80,255,154,0.15)', flexShrink:0 }} />
+            <div style={{ width:'38%', display:'flex', flexDirection:'column' }}>
+              <div style={{ background:'#001a08', padding:'3px 8px', borderBottom:'1px solid #4DFFFF33' }}>
+                <span style={{ color:'#4DFFFF', fontSize:8, letterSpacing:'0.22em' }}>◈ BIZ WIRE</span>
+              </div>
+              {lines.slice(0,6).map((h,i) => (
+                <div key={i} style={{ padding:'4px 8px', borderBottom:'1px solid rgba(255,255,255,0.05)', background:i%2===0?'rgba(0,20,30,0.4)':'transparent' }}>
+                  <span style={{ color:i===0?'#fff':'rgba(190,215,255,0.65)', fontSize:9, lineHeight:1.4, display:'block' }}>{h.toUpperCase()}</span>
                 </div>
               ))}
             </div>
           </div>
-        ) : (
-          lines.slice(0,6).map((h, i) => (
-            <div key={i} style={{ display:'flex', gap:6, alignItems:'flex-start' }}>
-              <span style={{ color:i===0?'#CC0000':'#445', fontSize:'0.4rem', flexShrink:0, marginTop:1 }}>{i===0?'▶▶':'▶'}</span>
-              <span style={{ color:i===0?'#FFD700':i<3?'#fff':'rgba(190,205,255,0.6)', fontSize:i===0?'0.52rem':'0.44rem', lineHeight:1.45, fontWeight:i===0?700:400 }}>
-                {h.toUpperCase()}
-              </span>
-            </div>
-          ))
         )}
+
+        {/* TECH 400 */}
+        {pg.num === 400 && lines.map((h, i) => (
+          <div key={i} style={{ display:'flex', alignItems:'stretch', background:i===0?'rgba(26,12,0,0.8)':i%2===0?'rgba(255,170,68,0.03)':'transparent', borderBottom:`1px solid ${i===0?'#FFAA4444':'rgba(255,170,68,0.07)'}` }}>
+            <div style={{ background:i===0?'#FFAA44':i<3?`#FFAA44${i===1?'66':'33'}`:'transparent', width:3, flexShrink:0 }} />
+            <div style={{ padding:'5px 8px', display:'flex', gap:7, alignItems:'flex-start', flex:1 }}>
+              <span style={{ color:i===0?'#FFAA44':i<3?'rgba(255,170,68,0.5)':'rgba(255,255,255,0.2)', fontSize:i===0?13:10, flexShrink:0 }}>{i===0?'◈':i===1?'▶':'·'}</span>
+              <span style={{ color:i===0?'#FFE066':i<3?'#fff':'rgba(190,200,255,0.55)', fontSize:i===0?13:i<3?11:10, lineHeight:1.45, fontWeight:i===0?900:i<3?700:400 }}>{h.toUpperCase()}</span>
+            </div>
+          </div>
+        ))}
+
+        {/* SPORTS 500 */}
+        {pg.num === 500 && lines.map((h, i) => (
+          <div key={i} style={{ display:'flex', alignItems:'stretch', background:i===0?'rgba(26,0,18,0.8)':i%2===0?'rgba(255,136,204,0.03)':'transparent', borderBottom:`1px solid ${i===0?'#FF88CC44':'rgba(255,136,204,0.07)'}` }}>
+            <div style={{ background:i===0?'#FF88CC':i<3?`#FF88CC${i===1?'55':'28'}`:'transparent', width:3, flexShrink:0 }} />
+            <div style={{ padding:'5px 8px', display:'flex', gap:7, alignItems:'flex-start', flex:1 }}>
+              <span style={{ color:i===0?'#FF88CC':i<3?'rgba(255,136,204,0.5)':'rgba(255,255,255,0.2)', fontSize:i===0?13:10, flexShrink:0 }}>{i===0?'◈':i===1?'▶':'·'}</span>
+              <span style={{ color:i===0?'#FFE066':i<3?'#fff':'rgba(220,190,255,0.55)', fontSize:i===0?13:i<3?11:10, lineHeight:1.45, fontWeight:i===0?900:i<3?700:400 }}>{h.toUpperCase()}</span>
+            </div>
+          </div>
+        ))}
+
       </div>
 
-      {/* Scrolling ticker */}
-      <div style={{ position:'absolute', bottom:0, left:0, right:0, background:'#990000', display:'flex', alignItems:'center', height:18, overflow:'hidden' }}>
-        <div style={{ background:'#FFD700', color:'#000', fontWeight:900, padding:'0 8px', fontSize:'0.37rem', whiteSpace:'nowrap', height:'100%', display:'flex', alignItems:'center', letterSpacing:'0.1em', flexShrink:0 }}>NEWS</div>
+      {/* ══ TICKER ══ */}
+      <div style={{ background:'#0d0030', borderTop:'1px solid rgba(255,224,102,0.3)', display:'flex', alignItems:'center', height:18, overflow:'hidden', flexShrink:0 }}>
+        <div style={{ background:'#FFE066', color:'#000', fontWeight:900, padding:'0 8px', fontSize:10, whiteSpace:'nowrap', height:'100%', display:'flex', alignItems:'center', letterSpacing:'0.08em', flexShrink:0 }}>◈ HNN</div>
         <div style={{ flex:1, overflow:'hidden', position:'relative', height:'100%' }}>
-          <span ref={tickRef} style={{ position:'absolute', top:'50%', left:0, whiteSpace:'nowrap', fontSize:'0.39rem', color:'#fff', fontWeight:600, letterSpacing:'0.05em', willChange:'transform' }}>
-            {CNN_TICKER}
+          <span ref={tickRef} style={{ position:'absolute', top:'50%', left:0, transform:'translateY(-50%)', whiteSpace:'nowrap', fontSize:10, color:'rgba(255,230,100,0.85)', fontWeight:600, letterSpacing:'0.04em', willChange:'transform' }}>
+            {tickerText}
           </span>
         </div>
       </div>

@@ -506,10 +506,47 @@
   width: 100%;
 }
 
-.cassetteSvg {
+/* 3D flip container */
+.cassetteFlipContainer {
   width: 100%;
   max-width: 360px;
+  aspect-ratio: 320 / 200;
+  perspective: 700px;
+  cursor: pointer;
   filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.22));
+}
+
+.cassetteFlipContainer:hover {
+  filter: drop-shadow(0 0 28px rgba(56, 189, 248, 0.36));
+}
+
+.cassetteFlipInner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flipped {
+  transform: rotateY(180deg);
+}
+
+.cassetteFaceFront,
+.cassetteFaceBack {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.cassetteFaceBack {
+  transform: rotateY(180deg);
+}
+
+.cassetteSvg {
+  width: 100%;
+  height: 100%;
 }
 
 .reel {

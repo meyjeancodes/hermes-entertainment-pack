@@ -37,10 +37,10 @@ export default function CDSpinner({
     >
       {/* Disc — spinning gradient */}
       <div
-        className="absolute inset-0 rounded-full shadow-[0_0_40px_rgba(168,85,247,0.4)]"
+        className="absolute inset-0 rounded-full shadow-[0_0_40px_rgba(56,189,248,0.4)]"
         style={{
           background:
-            "conic-gradient(from 0deg, #a855f7 0deg 90deg, #06b6d4 90deg 180deg, #f97316 180deg 270deg, #a855f7 270deg 360deg)",
+            "conic-gradient(from 0deg, #38bdf8 0deg 90deg, #06b6d4 90deg 180deg, #0ea5e9 180deg 270deg, #38bdf8 270deg 360deg)",
           animation: spinning ? "spin 8s linear infinite" : "none",
         }}
       />

@@ -21,6 +21,24 @@ const WarnIcon = () => (
   </svg>
 );
 
+const HISTORY_KEY = 'hermes-mixtape-history';
+const HISTORY_MAX = 24;
+
+interface HistoryEntry { name: string; artists: string[]; duration_ms: number; played_at: string }
+
+function loadHistory(): HistoryEntry[] {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
+}
+
+function pushHistory(track: { name: string; artists: string[]; duration_ms?: number }): void {
+  try {
+    const hist = loadHistory();
+    if (hist[0]?.name === track.name) return;
+    hist.unshift({ name: track.name, artists: track.artists, duration_ms: track.duration_ms || 0, played_at: new Date().toISOString() });
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(hist.slice(0, HISTORY_MAX)));
+  } catch {}
+}
+
 const TRACKS = [
   { n: '01', title: 'Neural Drift', duration: '3:42' },
   { n: '02', title: 'Midnight Signal', duration: '4:17' },
@@ -39,15 +57,27 @@ function fmtMs(ms: number): string {
 
 interface CassetteTrack { name: string; artists: string[] }
 
-function CassetteWidget({ playing, track }: { playing: boolean; track: CassetteTrack | null }) {
+function CassetteWidget({ playing, track, bSide }: { playing: boolean; track: CassetteTrack | null; bSide: HistoryEntry[] }) {
+  const [flipped, setFlipped] = useState(false);
   const reelCls = `${styles.reel}${playing ? '' : ` ${styles.reelPaused}`}`;
   const label = track?.name?.toUpperCase() || 'HERMES MIXTAPE VOL. I';
   const artist = (track?.artists?.join(' · ') || 'VARIOUS ARTISTS').toUpperCase();
   const labelLine1 = label.slice(0, 26);
   const labelLine2 = label.length > 26 ? label.slice(26, 52) : null;
 
+  const bTracks = bSide.slice(0, 7);
+
   return (
     <div className={styles.cassetteWrap}>
+      <div
+        className={styles.cassetteFlipContainer}
+        onClick={() => setFlipped(f => !f)}
+        title={flipped ? 'Click to flip back to A-side' : 'Click to flip to B-side'}
+      >
+        <div className={`${styles.cassetteFlipInner}${flipped ? ` ${styles.flipped}` : ''}`}>
+
+        {/* ── FRONT FACE (A-SIDE) ── */}
+        <div className={styles.cassetteFaceFront}>
       <svg viewBox="0 0 320 200" className={styles.cassetteSvg} xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="cBodyGrad" x1="0" y1="0" x2="0.3" y2="1">
@@ -169,8 +199,119 @@ function CassetteWidget({ playing, track }: { playing: boolean; track: CassetteT
           </circle>
         )}
       </svg>
+        </div>{/* end cassetteFaceFront */}
+
+        {/* ── BACK FACE (B-SIDE) ── */}
+        <div className={styles.cassetteFaceBack}>
+          <svg viewBox="0 0 320 200" className={styles.cassetteSvg} xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bBodyGrad" x1="0" y1="0" x2="0.3" y2="1">
+                <stop offset="0%" stopColor="#0c1e3a"/>
+                <stop offset="45%" stopColor="#06102a"/>
+                <stop offset="100%" stopColor="#030814"/>
+              </linearGradient>
+              <linearGradient id="bLabelGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#0a2040"/>
+                <stop offset="100%" stopColor="#040e22"/>
+              </linearGradient>
+              <radialGradient id="bHubGrad" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stopColor="#67e8f9"/>
+                <stop offset="100%" stopColor="#164e63"/>
+              </radialGradient>
+            </defs>
+            {/* Shell */}
+            <rect x="2" y="2" width="316" height="196" rx="11" fill="url(#bBodyGrad)" stroke="rgba(34,211,238,0.5)" strokeWidth="1.5"/>
+            <rect x="2" y="2" width="316" height="52" rx="11" fill="rgba(34,211,238,0.07)"/>
+            {/* Top metal strip */}
+            <rect x="10" y="7" width="300" height="22" rx="3" fill="rgba(0,0,0,0.42)" stroke="rgba(34,211,238,0.1)" strokeWidth="0.5"/>
+            {/* Drive holes */}
+            <circle cx="96" cy="18" r="9" fill="#02050f" stroke="rgba(34,211,238,0.22)" strokeWidth="1"/>
+            <circle cx="96" cy="18" r="3.5" fill="#010309"/>
+            <circle cx="224" cy="18" r="9" fill="#02050f" stroke="rgba(34,211,238,0.22)" strokeWidth="1"/>
+            <circle cx="224" cy="18" r="3.5" fill="#010309"/>
+            {/* Label area */}
+            <rect x="14" y="34" width="292" height="86" rx="4" fill="url(#bLabelGrad)" stroke="rgba(34,211,238,0.18)" strokeWidth="1"/>
+            {/* Label accent bars - teal for B-side */}
+            <rect x="14" y="34" width="292" height="7" rx="4" fill="rgba(34,211,238,0.28)"/>
+            <rect x="14" y="38" width="292" height="3" fill="rgba(34,211,238,0.28)"/>
+            <rect x="14" y="112" width="292" height="8" fill="rgba(34,211,238,0.12)"/>
+            <rect x="14" y="116" width="292" height="4" fill="rgba(34,211,238,0.08)"/>
+            {/* Brand */}
+            <text x="160" y="48" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="5.5" fill="rgba(34,211,238,0.38)" letterSpacing="3">HERMES TYPE-IV CHROME · 90 MIN</text>
+            {/* B-SIDE header */}
+            <text x="160" y="66" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="12" fontWeight="bold" fill="#22d3ee"
+              style={{ textShadow: '0 0 8px rgba(34,211,238,0.6)' }}>◄ B-SIDE ►</text>
+            {/* Track list or placeholder */}
+            {bTracks.length === 0 ? (
+              <>
+                <text x="160" y="86" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="8" fill="rgba(34,211,238,0.28)">CONNECT SPOTIFY TO POPULATE</text>
+                <text x="160" y="100" textAnchor="middle" fontFamily="'Courier New',monospace" fontSize="7" fill="rgba(34,211,238,0.18)">TRACKS RECORDED AS YOU LISTEN</text>
+              </>
+            ) : bTracks.map((t, i) => (
+              <text key={i} x="26" y={80 + i * 11} fontFamily="'Courier New',monospace" fontSize="7.5" fill={i === 0 ? '#67e8f9' : 'rgba(34,211,238,0.5)'}>
+                {`${String(i+1).padStart(2,'0')}  ${t.name.slice(0,30).toUpperCase()}`}
+              </text>
+            ))}
+            {/* Reel window */}
+            <rect x="14" y="124" width="292" height="62" rx="4" fill="#02050d" stroke="rgba(34,211,238,0.1)" strokeWidth="1"/>
+            {/* Tape path */}
+            <path d="M108,174 Q160,168 212,174" fill="none" stroke="rgba(34,211,238,0.18)" strokeWidth="1.5"/>
+            {/* Tape head */}
+            <rect x="128" y="164" width="64" height="16" rx="3" fill="#01030a" stroke="rgba(34,211,238,0.22)" strokeWidth="1"/>
+            <line x1="160" y1="165" x2="160" y2="179" stroke="rgba(34,211,238,0.14)" strokeWidth="1"/>
+            {/* Left reel */}
+            <g className={reelCls}>
+              <circle cx="90" cy="154" r="28" fill="none" stroke="rgba(34,211,238,0.24)" strokeWidth="1.5"/>
+              <circle cx="90" cy="154" r="15" fill="none" stroke="rgba(34,211,238,0.1)" strokeWidth="0.7" strokeDasharray="3 2"/>
+              <circle cx="90" cy="154" r="9" fill="url(#bHubGrad)" stroke="rgba(34,211,238,0.4)" strokeWidth="1"/>
+              <line x1="99" y1="154" x2="118" y2="154" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+              <line x1="95" y1="162" x2="104" y2="178" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+              <line x1="85" y1="162" x2="76" y2="178" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+              <line x1="81" y1="154" x2="62" y2="154" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+              <line x1="85" y1="146" x2="76" y2="130" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+              <line x1="95" y1="146" x2="104" y2="130" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+            </g>
+            {/* Right reel */}
+            <g className={reelCls}>
+              <circle cx="230" cy="154" r="28" fill="none" stroke="rgba(34,211,238,0.24)" strokeWidth="1.5"/>
+              <circle cx="230" cy="154" r="15" fill="none" stroke="rgba(34,211,238,0.1)" strokeWidth="0.7" strokeDasharray="3 2"/>
+              <circle cx="230" cy="154" r="9" fill="url(#bHubGrad)" stroke="rgba(34,211,238,0.4)" strokeWidth="1"/>
+              <line x1="239" y1="154" x2="258" y2="154" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+              <line x1="235" y1="162" x2="244" y2="178" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+              <line x1="225" y1="162" x2="216" y2="178" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+              <line x1="221" y1="154" x2="202" y2="154" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+              <line x1="225" y1="146" x2="216" y2="130" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+              <line x1="235" y1="146" x2="244" y2="130" stroke="rgba(34,211,238,0.2)" strokeWidth="1.2"/>
+            </g>
+            {/* Screws */}
+            <circle cx="12" cy="12" r="5" fill="#01030a" stroke="rgba(34,211,238,0.15)" strokeWidth="1"/>
+            <line x1="9.5" y1="9.5" x2="14.5" y2="14.5" stroke="rgba(34,211,238,0.12)" strokeWidth="0.8"/>
+            <line x1="14.5" y1="9.5" x2="9.5" y2="14.5" stroke="rgba(34,211,238,0.12)" strokeWidth="0.8"/>
+            <circle cx="308" cy="12" r="5" fill="#01030a" stroke="rgba(34,211,238,0.15)" strokeWidth="1"/>
+            <line x1="305.5" y1="9.5" x2="310.5" y2="14.5" stroke="rgba(34,211,238,0.12)" strokeWidth="0.8"/>
+            <line x1="310.5" y1="9.5" x2="305.5" y2="14.5" stroke="rgba(34,211,238,0.12)" strokeWidth="0.8"/>
+            <circle cx="12" cy="190" r="5" fill="#01030a" stroke="rgba(34,211,238,0.15)" strokeWidth="1"/>
+            <line x1="9.5" y1="187.5" x2="14.5" y2="192.5" stroke="rgba(34,211,238,0.12)" strokeWidth="0.8"/>
+            <line x1="14.5" y1="187.5" x2="9.5" y2="192.5" stroke="rgba(34,211,238,0.12)" strokeWidth="0.8"/>
+            <circle cx="308" cy="190" r="5" fill="#01030a" stroke="rgba(34,211,238,0.15)" strokeWidth="1"/>
+            <line x1="305.5" y1="187.5" x2="310.5" y2="192.5" stroke="rgba(34,211,238,0.12)" strokeWidth="0.8"/>
+            <line x1="310.5" y1="187.5" x2="305.5" y2="192.5" stroke="rgba(34,211,238,0.12)" strokeWidth="0.8"/>
+            <circle cx="160" cy="190" r="5" fill="#01030a" stroke="rgba(34,211,238,0.15)" strokeWidth="1"/>
+            <line x1="157.5" y1="187.5" x2="162.5" y2="192.5" stroke="rgba(34,211,238,0.12)" strokeWidth="0.8"/>
+            <line x1="162.5" y1="187.5" x2="157.5" y2="192.5" stroke="rgba(34,211,238,0.12)" strokeWidth="0.8"/>
+          </svg>
+        </div>{/* end cassetteFaceBack */}
+
+        </div>{/* end cassetteFlipInner */}
+      </div>{/* end cassetteFlipContainer */}
+
       <p className={styles.cassetteStatus}>
-        {playing ? <><span className={styles.cassettePlaying}>▶ REC</span>{' '}NOW PLAYING</> : '■ STANDBY'}
+        {flipped
+          ? <><span className={styles.cassettePlaying}>◄ B-SIDE ►</span>{' '}TAP TO FLIP BACK</>
+          : playing
+            ? <><span className={styles.cassettePlaying}>▶ REC</span>{' '}NOW PLAYING · TAP TO FLIP</>
+            : '■ STANDBY · TAP TO FLIP'
+        }
       </p>
     </div>
   );
@@ -180,7 +321,8 @@ export default function MusicPortalPage() {
   const [time, setTime] = useState('');
   const playerRef = useRef<HTMLDivElement>(null);
   const [cassetteState, setCassetteState] = useState<{ playing: boolean; track: CassetteTrack | null }>({ playing: false, track: null });
-  const [bSide, setBSide] = useState<{ name: string; artists: string[]; duration_ms: number }[]>([]);
+  const [bSide, setBSide] = useState<HistoryEntry[]>(() => loadHistory());
+  const prevTrackRef = useRef<string | null>(null);
 
   useEffect(() => {
     const tick = () =>
@@ -199,7 +341,13 @@ export default function MusicPortalPage() {
         const r = await fetch('/api/plugins/hermes-entertainment-pack/spotify/now-playing', { headers });
         if (r.ok) {
           const d = await r.json();
-          setCassetteState({ playing: d.playing ?? false, track: d.track ?? null });
+          const track = d.track ?? null;
+          setCassetteState({ playing: d.playing ?? false, track });
+          if (d.playing && track?.name && track.name !== prevTrackRef.current) {
+            prevTrackRef.current = track.name;
+            pushHistory({ name: track.name, artists: track.artists || [], duration_ms: track.duration_ms });
+            setBSide(loadHistory());
+          }
         }
       } catch {}
     };
@@ -215,7 +363,16 @@ export default function MusicPortalPage() {
         const headers: Record<string, string> = {};
         if (token) headers['X-Hermes-Session-Token'] = token;
         const r = await fetch('/api/plugins/hermes-entertainment-pack/spotify/recently-played', { headers });
-        if (r.ok) setBSide(await r.json());
+        if (r.ok) {
+          const server: HistoryEntry[] = await r.json();
+          setBSide(prev => {
+            const combined = [...prev];
+            for (const t of server) {
+              if (!combined.some(x => x.name === t.name)) combined.push(t);
+            }
+            return combined.slice(0, HISTORY_MAX);
+          });
+        }
       } catch {}
     };
     load();
@@ -254,7 +411,7 @@ export default function MusicPortalPage() {
           </div>
           <p className={styles.tapeBrand}>HERMES TYPE-IV CHROME · 90 MIN</p>
           <p className={styles.tapeWarning}><WarnIcon /> REWIND BEFORE PLAYING</p>
-          <CassetteWidget playing={cassetteState.playing} track={cassetteState.track} />
+          <CassetteWidget playing={cassetteState.playing} track={cassetteState.track} bSide={bSide} />
         </div>
 
         {/* Right: Ad copy */}
