@@ -3,12 +3,36 @@
 <head>
 <meta charset="utf-8">
 <style>
-  html, body { margin:0; padding:0; height:100%; background:#000; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-  .twitter-tweet { margin: 0 auto !important; }
+  html, body { margin:0; padding:0; width:100%; height:100%; background:#000; overflow:hidden; }
+  #wrap {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .twitter-tweet { margin: 0 !important; }
+  .twitter-tweet-rendered { display: block !important; }
 </style>
 </head>
 <body>
+<div id="wrap">
 <blockquote class="twitter-tweet" data-media-max-width="560"><p lang="en" dir="ltr">The Hermes Agent Creative Hackathon sponsored by <a href="https://x.com/Kimi_Moonshot?ref_src=twsrc%5Etfw">@Kimi_Moonshot</a> has ended!<br><br>Finalists were selected by Nous and Kimi staff out of 227 submissions on creativity, usefulness and presentation.<br><br>We were absolutely blown away by the creativity of the things you all built using Hermes.… <a href="https://t.co/ZTbCDQjNPi">pic.twitter.com/ZTbCDQjNPi</a></p>&mdash; Nous Research (@NousResearch) <a href="https://x.com/NousResearch/status/2054681410368164018?ref_src=twsrc%5Etfw">May 13, 2026</a></blockquote>
+</div>
 <script async src="https://platform.x.com/widgets.js" charset="utf-8"></script>
+<script>
+  function fitToScreen() {
+    var wrap = document.getElementById('wrap');
+    var iframe = document.querySelector('.twitter-tweet-rendered');
+    if (!iframe) { setTimeout(fitToScreen, 200); return; }
+    var tweetW = iframe.offsetWidth || 550;
+    var tweetH = iframe.offsetHeight || 700;
+    var scaleX = window.innerWidth / tweetW;
+    var scaleY = window.innerHeight / tweetH;
+    var scale = Math.min(scaleX, scaleY);
+    wrap.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+  }
+  window.addEventListener('resize', fitToScreen);
+  setTimeout(fitToScreen, 800);
+  setTimeout(fitToScreen, 1800);
+</script>
 </body>
 </html>
