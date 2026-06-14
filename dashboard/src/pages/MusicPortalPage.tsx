@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import styles from './MusicPortalPage.module.css';
 import { PLUGIN_URL } from '@/lib/plugin';
 import { SpotifyNowPlaying } from '@/components/SpotifyNowPlaying';
+import { useSpotifyPlayer } from '@/hooks/useSpotifyPlayer';
+import { Play, Pause, SkipForward, SkipBack } from 'lucide-react';
 
 const StarIcon = () => (
   <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginBottom: '2px' }}>
@@ -317,6 +319,45 @@ function CassetteWidget({ playing, track, bSide }: { playing: boolean; track: Ca
   );
 }
 
+function MiniPlayer({ onJump }: { onJump: () => void }) {
+  const { state, togglePlayPause, next, previous, loading, error } = useSpotifyPlayer({ refreshInterval: 5000 });
+
+  if (loading || error === 'auth_required' || !state?.track) return null;
+
+  const { track, playing, progress_ms } = state;
+  const pct = track.duration_ms ? Math.min(100, (progress_ms / track.duration_ms) * 100) : 0;
+
+  return (
+    <div className={styles.miniPlayer}>
+      <div className={styles.miniPlayerProgress} style={{ width: `${pct}%` }} />
+      <div className={styles.miniPlayerInner}>
+        <button className={styles.miniPlayerArt} onClick={onJump} title="Jump to player">
+          {track.image ? (
+            <img src={track.image} alt={track.album} className={styles.miniPlayerArtImg} />
+          ) : (
+            <div className={styles.miniPlayerArtPlaceholder} />
+          )}
+        </button>
+        <button className={styles.miniPlayerInfo} onClick={onJump} title="Jump to player">
+          <span className={styles.miniPlayerTitle}>{track.name}</span>
+          <span className={styles.miniPlayerArtist}>{track.artists.join(', ')}</span>
+        </button>
+        <div className={styles.miniPlayerControls}>
+          <button className={styles.miniPlayerBtn} onClick={previous} title="Previous">
+            <SkipBack size={14} fill="currentColor" />
+          </button>
+          <button className={styles.miniPlayerBtnPrimary} onClick={togglePlayPause} title={playing ? 'Pause' : 'Play'}>
+            {playing ? <Pause size={15} fill="currentColor" /> : <Play size={15} fill="currentColor" />}
+          </button>
+          <button className={styles.miniPlayerBtn} onClick={next} title="Next">
+            <SkipForward size={14} fill="currentColor" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function MusicPortalPage() {
   const [time, setTime] = useState('');
   const playerRef = useRef<HTMLDivElement>(null);
@@ -394,6 +435,9 @@ export default function MusicPortalPage() {
         <span className={styles.broadcastInfo}>HERMES BROADCASTING NETWORK · HBN-4</span>
         <span className={styles.clock}>{time}</span>
       </div>
+
+      {/* Section 01 — Ad layout */}
+      <p className={styles.sectionTag}>— SEGMENT 01 · THE PITCH —</p>
 
       {/* Main two-column ad layout */}
       <div className={styles.adLayout}>
@@ -478,7 +522,8 @@ export default function MusicPortalPage() {
         </div>
       </div>
 
-      {/* CTA section */}
+      {/* Section 02 — CTA */}
+      <p className={styles.sectionTag}>— SEGMENT 02 · TUNE IN —</p>
       <div className={styles.ctaSection}>
         <div className={styles.ctaDivider} />
         <p className={styles.operatorsTag}>
@@ -491,7 +536,8 @@ export default function MusicPortalPage() {
         </button>
       </div>
 
-      {/* Vapor FM player */}
+      {/* Section 03 — Vapor FM player */}
+      <p className={styles.sectionTag}>— SEGMENT 03 · LIVE BROADCAST —</p>
       <div className={styles.playerSection} ref={playerRef}>
         <p className={styles.playerLabel}>— LIVE ON VAPOR FM · CHANNEL 10 —</p>
         <iframe
@@ -503,7 +549,8 @@ export default function MusicPortalPage() {
         />
       </div>
 
-      {/* Spotify Now Playing */}
+      {/* Section 04 — Spotify Now Playing */}
+      <p className={styles.sectionTag}>— SEGMENT 04 · YOUR SPOTIFY —</p>
       <div className={styles.spotifySection}>
         <div className={styles.spotifyDivider} />
         <p className={styles.spotifyLabel}>— YOUR SPOTIFY · NOW PLAYING —</p>
@@ -519,6 +566,10 @@ export default function MusicPortalPage() {
         Batteries not included. Void where prohibited by reality. TM &amp; © Hermes Broadcasting Network.
         All rights reserved. Some rights reversed.
       </div>
+
+      {/* Sticky mini-player */}
+      <MiniPlayer onJump={scrollToPlayer} />
+      <div className={styles.miniPlayerSpacer} />
     </div>
   );
 }
