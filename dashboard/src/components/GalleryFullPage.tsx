@@ -4,18 +4,20 @@ import { useState, useEffect, useRef } from "react";
 import styles from "./GalleryFullPage.module.css";
 import { PLUGIN_URL } from "@/lib/plugin";
 
+const GALLERY_BASE = `${PLUGIN_URL}/gallery`;
+
 // ── Image data ──────────────────────────────────────────────────────────────
 const GALLERY_IMAGES = [
   {
     id: "bg",
-    url: `${PLUGIN_URL}/gallery/G7RS46uWcAEndez.jpeg`,
+    url: `${GALLERY_BASE}/G7RS46uWcAEndez.jpeg`,
     title: "Background",
     subtitle: "Ambient",
     type: "background",
   },
   {
     id: "9",
-    url: `${PLUGIN_URL}/gallery/nous-3.jpg`,
+    url: `${GALLERY_BASE}/nous-3.jpg`,
     title: "NOUS STUDIES — ISSUE 002",
     subtitle: "",
     type: "card",
@@ -23,7 +25,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "nous-2",
-    url: `${PLUGIN_URL}/gallery/nous-2.jpg`,
+    url: `${GALLERY_BASE}/nous-2.jpg`,
     title: "Hermes Desktop Blueprint",
     subtitle: "NOUS ISSUE 002",
     type: "card",
@@ -31,7 +33,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "nous-7",
-    url: `${PLUGIN_URL}/gallery/nous-7.jpg`,
+    url: `${GALLERY_BASE}/nous-7.jpg`,
     title: "Cognitive Weather Proof",
     subtitle: "NOUS ISSUE 002",
     type: "card",
@@ -39,7 +41,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "nous-10",
-    url: `${PLUGIN_URL}/gallery/nous-10.jpg`,
+    url: `${GALLERY_BASE}/nous-10.jpg`,
     title: "Memory Leak",
     subtitle: "NOUS ISSUE 002",
     type: "card",
@@ -47,7 +49,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "nous-9",
-    url: `${PLUGIN_URL}/gallery/nous-9.jpg`,
+    url: `${GALLERY_BASE}/nous-9.jpg`,
     title: "Who Observes the Observer",
     subtitle: "NOUS ISSUE 002",
     type: "card",
@@ -55,7 +57,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "nous-5",
-    url: `${PLUGIN_URL}/gallery/nous-5.jpg`,
+    url: `${GALLERY_BASE}/nous-5.jpg`,
     title: "Spectral Proof",
     subtitle: "NOUS ISSUE 002",
     type: "card",
@@ -63,7 +65,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "nous-1",
-    url: `${PLUGIN_URL}/gallery/nous-1.jpg`,
+    url: `${GALLERY_BASE}/nous-1.jpg`,
     title: "NOUS Studies — Filler",
     subtitle: "NOUS ISSUE 002",
     type: "card",
@@ -71,7 +73,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "nous-4",
-    url: `${PLUGIN_URL}/gallery/nous-4.jpg`,
+    url: `${GALLERY_BASE}/nous-4.jpg`,
     title: "NOUS Studies — Filler",
     subtitle: "NOUS ISSUE 002",
     type: "card",
@@ -79,7 +81,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "nous-6",
-    url: `${PLUGIN_URL}/gallery/nous-6.jpg`,
+    url: `${GALLERY_BASE}/nous-6.jpg`,
     title: "NOUS Studies — Filler",
     subtitle: "NOUS ISSUE 002",
     type: "card",
@@ -87,7 +89,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "nous-8",
-    url: `${PLUGIN_URL}/gallery/nous-8.jpg`,
+    url: `${GALLERY_BASE}/nous-8.jpg`,
     title: "NOUS Studies — Filler",
     subtitle: "NOUS ISSUE 002",
     type: "card",
@@ -95,16 +97,24 @@ const GALLERY_IMAGES = [
   },
   {
     id: "the-artist",
-    url: `${PLUGIN_URL}/gallery/the-artist.jpg`,
+    url: `${GALLERY_BASE}/the-artist.jpg`,
     title: "The Artist",
     subtitle: "",
+    type: "card",
+    orientation: "landscape",
+  },
+  {
+    id: "composer-2026-06-13",
+    url: `${GALLERY_BASE}/composer_2026-06-13_10-44-01-683_d13351.png`,
+    title: "Composer Capture",
+    subtitle: "Generated",
     type: "card",
     orientation: "landscape",
   },
   // ── EXISTING IMAGES ──
   {
     id: "1",
-    url: `${PLUGIN_URL}/gallery/G7bqBeqXoAAtPDp.jpeg`,
+    url: `${GALLERY_BASE}/G7bqBeqXoAAtPDp.jpeg`,
     title: "Nous Racing",
     subtitle: "Intelligence in Motion",
     type: "card",
@@ -112,7 +122,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "2",
-    url: `${PLUGIN_URL}/gallery/G7_ghAxXgAIU50n.jpeg`,
+    url: `${GALLERY_BASE}/G7_ghAxXgAIU50n.jpeg`,
     title: "Portal",
     subtitle: "To the Unknown",
     type: "card",
@@ -120,7 +130,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "4",
-    url: `${PLUGIN_URL}/gallery/G7VnBFrXwAQI6l4.jpeg`,
+    url: `${GALLERY_BASE}/G7VnBFrXwAQI6l4.jpeg`,
     title: "Retro-Future Intelligence",
     subtitle: "v0.11.0 Architecture",
     type: "card",
@@ -128,7 +138,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "7",
-    url: `${PLUGIN_URL}/gallery/GeYAtoLXEAATM7r.png`,
+    url: `${GALLERY_BASE}/GeYAtoLXEAATM7r.png`,
     title: "System Architecture (v0.11)",
     subtitle: "Pipeline Diagram",
     type: "card",
@@ -136,7 +146,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "10",
-    url: `${PLUGIN_URL}/gallery/GwempU9bEAEwDq4.jpeg`,
+    url: `${GALLERY_BASE}/GwempU9bEAEwDq4.jpeg`,
     title: "Blueprint Series",
     subtitle: "Openclaw Protocol",
     type: "card",
@@ -144,7 +154,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "5",
-    url: `${PLUGIN_URL}/gallery/GvRbdvLXUAAbIQU.jpeg`,
+    url: `${GALLERY_BASE}/GvRbdvLXUAAbIQU.jpeg`,
     title: "Latent Space Minimalism",
     subtitle: "Thinking in Embeddings",
     type: "card",
@@ -152,7 +162,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "6",
-    url: `${PLUGIN_URL}/gallery/GWkiKOpb0AAsnBg.jpeg`,
+    url: `${GALLERY_BASE}/GWkiKOpb0AAsnBg.jpeg`,
     title: "Team Hermes at Nous HQ",
     subtitle: "October 2024",
     type: "card",
@@ -160,7 +170,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "11",
-    url: `${PLUGIN_URL}/gallery/HBi6R5xWEAAWLvZ.jpeg`,
+    url: `${GALLERY_BASE}/HBi6R5xWEAAWLvZ.jpeg`,
     title: "Morning Routine",
     subtitle: "Daily Standup",
     type: "card",
@@ -168,7 +178,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "8",
-    url: `${PLUGIN_URL}/gallery/Gssq-8iXwAAaLlb.jpeg`,
+    url: `${GALLERY_BASE}/Gssq-8iXwAAaLlb.jpeg`,
     title: "The Whiteboard Chronicles",
     subtitle: "Strategy Sessions",
     type: "card",
@@ -176,7 +186,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "issue1-9",
-    url: `${PLUGIN_URL}/gallery/GuYLrlGWMAAYMcu copy.jpeg`,
+    url: `${GALLERY_BASE}/GuYLrlGWMAAYMcu copy.jpeg`,
     title: "Untitled Fragment",
     subtitle: "Work in Progress",
     type: "card",
@@ -184,7 +194,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "13",
-    url: `${PLUGIN_URL}/gallery/IMG_4D9E27515C6D-1.jpeg`,
+    url: `${GALLERY_BASE}/IMG_4D9E27515C6D-1.jpeg`,
     title: "Manga Interlude",
     subtitle: "Otaku Mode",
     type: "card",
@@ -192,7 +202,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "19",
-    url: `${PLUGIN_URL}/gallery/GyVuMgfa4AIYlsO.jpeg`,
+    url: `${GALLERY_BASE}/GyVuMgfa4AIYlsO.jpeg`,
     title: "Hidden Layer",
     subtitle: "Nous Archive",
     type: "card",
@@ -200,7 +210,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "20",
-    url: `${PLUGIN_URL}/gallery/HBi6R5xWEAAWLvZ copy.jpeg`,
+    url: `${GALLERY_BASE}/HBi6R5xWEAAWLvZ copy.jpeg`,
     title: "Fragment",
     subtitle: "Nous Archive",
     type: "card",
@@ -208,7 +218,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "21",
-    url: `${PLUGIN_URL}/gallery/HEsUWTOXEAAsNdf.jpeg`,
+    url: `${GALLERY_BASE}/HEsUWTOXEAAsNdf.jpeg`,
     title: "Raw Data",
     subtitle: "Nous Archive",
     type: "card",
@@ -216,7 +226,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "22",
-    url: `${PLUGIN_URL}/gallery/HEv4IwZbEAAj0QV.jpeg`,
+    url: `${GALLERY_BASE}/HEv4IwZbEAAj0QV.jpeg`,
     title: "System Glitch",
     subtitle: "Nous Archive",
     type: "card",
@@ -224,7 +234,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "23",
-    url: `${PLUGIN_URL}/gallery/HFhHPZObYAAeA_M.jpeg`,
+    url: `${GALLERY_BASE}/HFhHPZObYAAeA_M.jpeg`,
     title: "Memory Leak",
     subtitle: "Nous Archive",
     type: "card",
@@ -232,7 +242,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "24",
-    url: `${PLUGIN_URL}/gallery/HFjlPSLakAMHOCJ.jpeg`,
+    url: `${GALLERY_BASE}/HFjlPSLakAMHOCJ.jpeg`,
     title: "Deep Memory",
     subtitle: "Nous Archive",
     type: "card",
@@ -240,7 +250,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "25",
-    url: `${PLUGIN_URL}/gallery/IMG_BC48B855ED62-1.jpeg`,
+    url: `${GALLERY_BASE}/IMG_BC48B855ED62-1.jpeg`,
     title: "Shadow Data",
     subtitle: "Nous Archive",
     type: "card",
@@ -248,7 +258,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "26",
-    url: `${PLUGIN_URL}/gallery/IMG_DE0F102C31BA-1.jpeg`,
+    url: `${GALLERY_BASE}/IMG_DE0F102C31BA-1.jpeg`,
     title: "Protocol",
     subtitle: "Nous Archive",
     type: "card",
@@ -256,7 +266,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "27",
-    url: `${PLUGIN_URL}/gallery/054dc020ec7e03b17efb4f96d56a0d04.jpg`,
+    url: `${GALLERY_BASE}/054dc020ec7e03b17efb4f96d56a0d04.jpg`,
     title: "Fragment — 001",
     subtitle: "Unpublished",
     type: "card",
@@ -264,7 +274,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "28",
-    url: `${PLUGIN_URL}/gallery/1d1210673d4cb650dba75676a4182d32.jpg`,
+    url: `${GALLERY_BASE}/1d1210673d4cb650dba75676a4182d32.jpg`,
     title: "Fragment — 002",
     subtitle: "Unpublished",
     type: "card",
@@ -272,7 +282,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "29",
-    url: `${PLUGIN_URL}/gallery/7612f4dba422c1b77b959ea4b3a3425f.jpg`,
+    url: `${GALLERY_BASE}/7612f4dba422c1b77b959ea4b3a3425f.jpg`,
     title: "Fragment — 003",
     subtitle: "Unpublished",
     type: "card",
@@ -280,7 +290,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "30",
-    url: `${PLUGIN_URL}/gallery/HFahjjvWIAEa_rk.jpeg`,
+    url: `${GALLERY_BASE}/HFahjjvWIAEa_rk.jpeg`,
     title: "Fragment — 004",
     subtitle: "Unpublished",
     type: "card",
@@ -288,7 +298,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "31",
-    url: `${PLUGIN_URL}/gallery/a330885a47ac0c6e4b7e2235f191f5bc.jpg`,
+    url: `${GALLERY_BASE}/a330885a47ac0c6e4b7e2235f191f5bc.jpg`,
     title: "Fragment — 005",
     subtitle: "Unpublished",
     type: "card",
@@ -296,7 +306,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "32",
-    url: `${PLUGIN_URL}/gallery/fa455690328ce2d385e87df708c59574.jpg`,
+    url: `${GALLERY_BASE}/fa455690328ce2d385e87df708c59574.jpg`,
     title: "Fragment — 006",
     subtitle: "Unpublished",
     type: "card",
@@ -304,7 +314,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "14",
-    url: `${PLUGIN_URL}/gallery/G-ARBtaXEAAf69p.jpeg`,
+    url: `${GALLERY_BASE}/G-ARBtaXEAAf69p.jpeg`,
     title: "Aesthetic Study",
     subtitle: "Mood Board",
     type: "card",
@@ -312,7 +322,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "16",
-    url: `${PLUGIN_URL}/gallery/G6ncNTRWEAA8OWk.jpeg`,
+    url: `${GALLERY_BASE}/G6ncNTRWEAA8OWk.jpeg`,
     title: "Nous Moment",
     subtitle: "Nous Archive",
     type: "card",
@@ -320,7 +330,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "17",
-    url: `${PLUGIN_URL}/gallery/GuYLrlGWMAAYMcu.jpeg`,
+    url: `${GALLERY_BASE}/GuYLrlGWMAAYMcu.jpeg`,
     title: "Unseen Frame",
     subtitle: "Nous Archive",
     type: "card",
@@ -328,7 +338,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "18",
-    url: `${PLUGIN_URL}/gallery/Gv6qOA0WIAAJVgs.jpeg`,
+    url: `${GALLERY_BASE}/Gv6qOA0WIAAJVgs.jpeg`,
     title: "Archive Snapshot",
     subtitle: "Nous Archive",
     type: "card",
@@ -336,7 +346,7 @@ const GALLERY_IMAGES = [
   },
   {
     id: "15",
-    url: `${PLUGIN_URL}/gallery/HF04pTEXwAEO3Vi.jpeg`,
+    url: `${GALLERY_BASE}/HF04pTEXwAEO3Vi.jpeg`,
     title: "The Hermes Chronicle",
     subtitle: "Archive",
     type: "card",
@@ -350,9 +360,6 @@ export default function GalleryFullPage() {
   const [visibleCards, setVisibleCards] = useState<Set<string>>(new Set());
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const lightboxImages = GALLERY_IMAGES.filter(
-    (img) => img.type === "card"
-  );
 
   const getLightboxIndex = useRef<number>(0);
   const [lightboxIndex, setLightboxIndex] = useState<number>(0);
@@ -500,123 +507,117 @@ export default function GalleryFullPage() {
             </div>
           </div>
 
-          <div className={viewMode === "grid" ? styles.cardsStack : styles.cardsStackList}>
-            {GALLERY_IMAGES.filter((img) => img.type === "card" && img.id !== "14").map((img, idx) => (
-              <article
+          <div
+            className={
+              viewMode === "grid"
+                ? styles.cardsStack
+                : `${styles.cardsStack} ${styles.cardsStackList}`
+            }
+          >
+            {GALLERY_IMAGES.filter((img) => img.type === "card").map((img, idx) => (
+              <div
                 key={img.id}
-                ref={(el) => { cardRefs.current[idx] = el; }}
+                ref={(el) => {
+                  cardRefs.current[idx] = el;
+                }}
                 data-card-id={img.id}
-                style={{ transitionDelay: `${(idx % 4) * 80}ms` }}
-                className={`${styles.card} ${styles[`card--${img.orientation}`]} ${styles.fadeInUp} ${
-                  visibleCards.has(img.id) ? styles.visible : ""
-                }`}
+                className={`${styles.card} ${styles[`card--${img.orientation || "landscape"}`]}`}
+                onClick={() => openLightbox(img.url)}
               >
                 <div className={styles.cardImageWrapper}>
                   <img
                     src={img.url}
                     alt={img.title}
+                    loading="lazy"
                     onLoad={() => handleImageLoad(img.id)}
-                    onClick={() => openLightbox(img.url)}
                     className={`${styles.cardImage} transition-opacity duration-500 ${
                       loaded[img.id] ? "opacity-100" : "opacity-0"
                     }`}
-                    style={{ cursor: "pointer" }}
                   />
                   <div className={styles.cardOverlay} />
                 </div>
                 <div className={styles.cardMeta}>
-                  <h3 className={styles.cardTitle}>{img.title}</h3>
-                  <p className={styles.cardSubtitle}>{img.subtitle}</p>
+                  <p className={styles.cardTitle}>{img.title}</p>
+                  {img.subtitle ? (
+                    <p className={styles.cardSubtitle}>{img.subtitle}</p>
+                  ) : null}
                 </div>
-              </article>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* ── AESTHETIC STUDY / MOOD BOARD — FOOTER HERO ── */}
+        {/* ── AESTHETIC STUDY FOOTER ── */}
         <section className={styles.aestheticFooter}>
-          <div className={styles.aestheticFooterInner}>
+          <div
+            className={styles.aestheticFooterInner}
+            onClick={() => openLightbox(aestheticImg.url)}
+          >
             <img
               src={aestheticImg.url}
               alt={aestheticImg.title}
               onLoad={() => handleImageLoad(aestheticImg.id)}
-              onClick={() => setSelectedImage(aestheticImg.url)}
-              className={styles.aestheticImage}
+              className={`${styles.aestheticImage} transition-opacity duration-700 ${
+                loaded[aestheticImg.id] ? "opacity-100" : "opacity-0"
+              }`}
             />
             <div className={styles.aestheticOverlay} />
             <div className={styles.aestheticText}>
-              <h2 className={styles.aestheticTitle}>{aestheticImg.title}</h2>
-              <p className={styles.aestheticSubtitle}>{aestheticImg.subtitle}</p>
+              <h3 className={styles.aestheticTitle}>{aestheticImg.title}</h3>
+              {aestheticImg.subtitle ? (
+                <p className={styles.aestheticSubtitle}>{aestheticImg.subtitle}</p>
+              ) : null}
             </div>
           </div>
         </section>
       </div>
 
-      {/* Full-screen image modal */}
-      {selectedImage && (
+      {/* ── LIGHTBOX OVERLAY ── */}
+      {selectedImage ? (
         <div
-          className={styles.modalBackdrop}
+          className={styles.lightbox}
           onClick={() => setSelectedImage(null)}
         >
-          <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
+          <div
+            className={styles.lightboxContent}
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
+              className={styles.lightboxClose}
               onClick={() => setSelectedImage(null)}
-              aria-label="Close"
-              className={styles.modalClose}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              ✕
             </button>
-
             <button
+              className={`${styles.lightboxNav} ${styles.prev}`}
               onClick={prevLightbox}
-              aria-label="Previous image"
-              className={`${styles.modalArrow} ${styles.modalArrowPrev}`}
-              type="button"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
+              ‹
             </button>
             <button
+              className={`${styles.lightboxNav} ${styles.next}`}
               onClick={nextLightbox}
-              aria-label="Next image"
-              className={`${styles.modalArrow} ${styles.modalArrowNext}`}
-              type="button"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
+              ›
             </button>
-
             <img
-              src={
-                lightboxImages[lightboxIndex]?.url ??
-                selectedImage
-              }
-              alt={lightboxImages[lightboxIndex]?.title ?? ""}
-              className={styles.modalImage}
+              src={lightboxImages[lightboxIndex]?.url}
+              alt={lightboxImages[lightboxIndex]?.title}
+              className={styles.lightboxImage}
             />
-            <div className={styles.modalMeta}>
-              <div>
-                <p className={styles.modalTitle}>
-                  {lightboxImages[lightboxIndex]?.title}
-                </p>
-                {lightboxImages[lightboxIndex]?.subtitle ? (
-                  <p className={styles.modalSubtitle}>
-                    {lightboxImages[lightboxIndex]?.subtitle}
-                  </p>
-                ) : null}
-              </div>
-              <p className={styles.modalCounter}>
-                {lightboxIndex + 1}/{lightboxImages.length}
+            <div className={styles.lightboxCaption}>
+              <p className={styles.lightboxTitle}>
+                {lightboxImages[lightboxIndex]?.title}
               </p>
+              {lightboxImages[lightboxIndex]?.subtitle ? (
+                <p className={styles.lightboxSubtitle}>
+                  {lightboxImages[lightboxIndex]?.subtitle}
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
