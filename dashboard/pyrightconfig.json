@@ -1,0 +1,9 @@
+{
+  "include": [
+    ".",
+    "C:/Users/kyoun/.hermes/hermes-agent"
+  ],
+  "extraPaths": [
+    "C:/Users/kyoun/.hermes/hermes-agent"
+  ]
+}
