@@ -5,7 +5,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "postbuild": "mv dist/index.iife.js dist/index.js 2>/dev/null || true && node -e \"const fs=require('fs'),m=JSON.parse(fs.readFileSync('manifest.json'));m.entry='dist/index.js?v='+Date.now();fs.writeFileSync('manifest.json',JSON.stringify(m,null,2));\""
+    "postbuild": "mv dist/index.iife.js dist/index.js 2>/dev/null || true"
   },
   "dependencies": {
     "clsx": "^2.1.1",

@@ -356,6 +356,7 @@ const GALLERY_IMAGES = [
 
 export default function GalleryFullPage() {
   const [loaded, setLoaded] = useState<Record<string, boolean>>({});
+  const [failed, setFailed] = useState<Record<string, boolean>>({});
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
   const [visibleCards, setVisibleCards] = useState<Set<string>>(new Set());
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -365,7 +366,7 @@ export default function GalleryFullPage() {
   const [lightboxIndex, setLightboxIndex] = useState<number>(0);
 
   const openLightbox = (url: string) => {
-    const idx = lightboxImages.findIndex((img) => img.url === url);
+    const idx = GALLERY_IMAGES.findIndex((img) => img.url === url);
     if (idx >= 0) setLightboxIndex(idx);
     setSelectedImage(url);
   };
@@ -373,14 +374,14 @@ export default function GalleryFullPage() {
   const prevLightbox = () => {
     if (!selectedImage) return;
     setLightboxIndex((prev) => {
-      const next = (prev - 1 + lightboxImages.length) % lightboxImages.length;
+      const next = (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length;
       return next;
     });
   };
 
   const nextLightbox = () => {
     if (!selectedImage) return;
-    setLightboxIndex((prev) => (prev + 1) % lightboxImages.length);
+    setLightboxIndex((prev) => (prev + 1) % GALLERY_IMAGES.length);
   };
 
   useEffect(() => {
@@ -415,11 +416,13 @@ export default function GalleryFullPage() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [selectedImage, lightboxImages.length]);
+  }, [selectedImage, GALLERY_IMAGES.length]);
 
-  const handleImageLoad = (id: string) => {
-    setLoaded((prev) => ({ ...prev, [id]: true }));
-  };
+  const handleImageLoad = (id: string) => setLoaded((prev) => ({ ...prev, [id]: true }));
+  const handleImageError = (id: string) => setFailed((prev) => ({ ...prev, [id]: true }));
+
+  const srcFor = (img: { id: string; url: string }) =>
+    failed[img.id] ? `${PLUGIN_URL}/public/mixtape.jpeg` : img.url;
 
   const hero = GALLERY_IMAGES.find((img) => img.id === "9") || GALLERY_IMAGES.find((img) => img.id === "new-1") || GALLERY_IMAGES.find((img) => img.id === "1")!;
   const aestheticImg = GALLERY_IMAGES.find((img) => img.id === "14")!;
@@ -431,9 +434,10 @@ export default function GalleryFullPage() {
         {GALLERY_IMAGES.filter((img) => img.type === "background").map((img) => (
           <div key={img.id} className={styles.bgImageWrapper}>
             <img
-              src={img.url}
+              src={srcFor(img)}
               alt={img.title}
               onLoad={() => handleImageLoad(img.id)}
+              onError={() => handleImageError(img.id)}
               className={styles.bgImage}
             />
             <div className={styles.bgOverlay} />
@@ -448,9 +452,10 @@ export default function GalleryFullPage() {
           <div className={styles.heroCard}>
             <div className={styles.heroImageContainer}>
               <img
-                src={hero.url}
+                src={srcFor(hero)}
                 alt={hero.title}
                 onLoad={() => handleImageLoad(hero.id)}
+                onError={() => handleImageError(hero.id)}
                 onClick={() => openLightbox(hero.url)}
                 className={`${styles.heroImage} transition-opacity duration-700 ${
                   loaded[hero.id] ? "opacity-100" : "opacity-0"
@@ -526,10 +531,11 @@ export default function GalleryFullPage() {
               >
                 <div className={styles.cardImageWrapper}>
                   <img
-                    src={img.url}
+                    src={srcFor(img)}
                     alt={img.title}
                     loading="lazy"
                     onLoad={() => handleImageLoad(img.id)}
+                    onError={() => handleImageError(img.id)}
                     className={`${styles.cardImage} transition-opacity duration-500 ${
                       loaded[img.id] ? "opacity-100" : "opacity-0"
                     }`}
@@ -554,9 +560,10 @@ export default function GalleryFullPage() {
             onClick={() => openLightbox(aestheticImg.url)}
           >
             <img
-              src={aestheticImg.url}
+              src={srcFor(aestheticImg)}
               alt={aestheticImg.title}
               onLoad={() => handleImageLoad(aestheticImg.id)}
+              onError={() => handleImageError(aestheticImg.id)}
               className={`${styles.aestheticImage} transition-opacity duration-700 ${
                 loaded[aestheticImg.id] ? "opacity-100" : "opacity-0"
               }`}
@@ -601,17 +608,17 @@ export default function GalleryFullPage() {
               ›
             </button>
             <img
-              src={lightboxImages[lightboxIndex]?.url}
-              alt={lightboxImages[lightboxIndex]?.title}
+              src={GALLERY_IMAGES[lightboxIndex]?.url}
+              alt={GALLERY_IMAGES[lightboxIndex]?.title}
               className={styles.lightboxImage}
             />
             <div className={styles.lightboxCaption}>
               <p className={styles.lightboxTitle}>
-                {lightboxImages[lightboxIndex]?.title}
+                {GALLERY_IMAGES[lightboxIndex]?.title}
               </p>
-              {lightboxImages[lightboxIndex]?.subtitle ? (
+              {GALLERY_IMAGES[lightboxIndex]?.subtitle ? (
                 <p className={styles.lightboxSubtitle}>
-                  {lightboxImages[lightboxIndex]?.subtitle}
+                  {GALLERY_IMAGES[lightboxIndex]?.subtitle}
                 </p>
               ) : null}
             </div>

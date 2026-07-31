@@ -8,6 +8,7 @@ from __future__ import annotations
 import sys
 import os
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 router = APIRouter()
@@ -16,6 +17,25 @@ router = APIRouter()
 @router.get("/health")
 async def health():
     return {"status": "ok", "plugin": "hermes-entertainment-pack", "version": "1.0.0"}
+
+
+# ── Local video streaming (mp4) ──────────────────────────────────────────────
+# The dashboard's static asset route (/dashboard-plugins/...) blocks .mp4 by
+# design (suffix allowlist), so we serve promo videos from this plugin API
+# endpoint instead. The frontend fetches with the session token and renders via
+# a blob URL (see VideoPlayer in EntertainmentPage.tsx).
+_VIDEO_DIR = os.path.join(os.path.dirname(__file__), "dist")
+
+
+@router.get("/video/{filename}")
+async def serve_video(filename: str):
+    # Restrict to the dist/ dir; block path traversal.
+    if "/" in filename or "\\" in filename or ".." in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    path = os.path.abspath(os.path.join(_VIDEO_DIR, filename))
+    if not path.startswith(os.path.abspath(_VIDEO_DIR)) or not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Video not found")
+    return FileResponse(path, media_type="video/mp4", filename=filename)
 
 
 # ── Spotify passthrough endpoints ─────────────────────────────────────────────
@@ -372,10 +392,8 @@ import html as _html
 
 _TELETEXT_FEEDS = {
     "top":      "https://feeds.bbci.co.uk/news/rss.xml",
-    "world":    "https://feeds.bbci.co.uk/news/world/rss.xml",
     "business": "https://feeds.bbci.co.uk/news/business/rss.xml",
     "tech":     "https://feeds.bbci.co.uk/news/technology/rss.xml",
-    "sports":   "https://feeds.bbci.co.uk/sport/rss.xml",
 }
 
 
@@ -395,6 +413,74 @@ async def teletext_news(category: str = "top"):
         return {"headlines": headlines}
     except Exception as exc:
         return {"headlines": [], "error": str(exc)}
+
+
+# ── Static asset serving for desktop plugin ─────────────────────────────────
+# The dashboard resolves assets via PLUGIN_URL (e.g. /public/gallery/x.jpg),
+# but the desktop plugin has no PLUGIN_URL — it reaches the backend only
+# through ctx.rest, which is JSON-only. These routes serve the same local
+# binaries the dashboard uses, scoped to this plugin's own namespace, with
+# path-traversal protection. The desktop plugin fetches them via ctx.rest and
+# renders through blob URLs (the same trick the dashboard's VideoPlayer uses).
+
+_DASHBOARD_DIR = os.path.dirname(__file__)
+
+
+def _safe_file(subdir: str, filename: str, media_type: str):
+    """Resolve `filename` under dashboard/<subdir>; block traversal."""
+    if not filename or "/" in filename or "\\" in filename or ".." in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    base = os.path.abspath(os.path.join(_DASHBOARD_DIR, subdir))
+    path = os.path.abspath(os.path.join(base, filename))
+    if not path.startswith(base) or not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Asset not found")
+    return FileResponse(path, media_type=media_type)
+
+
+@router.get("/games/{filename}")
+async def serve_game(filename: str):
+    # .html game shells
+    return _safe_file("games", filename, "text/html")
+
+
+@router.get("/gallery/{filename}")
+async def serve_gallery_image(filename: str):
+    lower = filename.lower()
+    if lower.endswith((".jpg", ".jpeg")):
+        mt = "image/jpeg"
+    elif lower.endswith(".png"):
+        mt = "image/png"
+    elif lower.endswith(".gif"):
+        mt = "image/gif"
+    elif lower.endswith(".webp"):
+        mt = "image/webp"
+    else:
+        mt = "application/octet-stream"
+    return _safe_file(os.path.join("public", "gallery"), filename, mt)
+
+
+@router.get("/page/{filename}")
+async def serve_page(filename: str):
+    # weather.html, vapor.html, artemis.html, channel-*.html, etc.
+    return _safe_file("public", filename, "text/html")
+
+
+@router.get("/gallery-list")
+async def gallery_list():
+    """Return the list of gallery image filenames so the plugin renders a grid
+    without hardcoding paths."""
+    import os as _os
+
+    gal = os.path.join(_DASHBOARD_DIR, "public", "gallery")
+    if not os.path.isdir(gal):
+        return {"images": []}
+    skip = {"the-artist.jpg"}  # reserved/modified asset; skip in grid
+    imgs = sorted(
+        f for f in os.listdir(gal)
+        if f.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp"))
+        and f not in skip
+    )
+    return {"images": imgs}
 
 
 @router.post("/discord/send")
