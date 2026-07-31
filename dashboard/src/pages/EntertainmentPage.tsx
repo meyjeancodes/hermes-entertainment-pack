@@ -27,6 +27,7 @@ const CHANNELS: Channel[] = [
   { id: "ch9",  name: "HNN Teletext",type: "canvas",  color: "#000033" },
   { id: "ch10", name: "Vapor FM",    type: "iframe",  src: `${PLUGIN_URL}/public/vapor.html?v=2` },
   { id: "ch11", name: "Ballad of Hermes", type: "iframe", src: `${PLUGIN_URL}/public/ballad-hermes.html`, color: "#0a0a1a" },
+  { id: "ch12", name: "Nous Promo", type: "iframe", src: `${PLUGIN_URL}/public/channel-promo-tweet.html`, color: "#0a0a1a" },
 ];
 const GAMEBOY_GAMES = [
   { id: "g1", name: "Pong",        src: `${PLUGIN_URL}/games/pong.html`,   icon: "pong" },
@@ -206,16 +207,17 @@ export default function EntertainmentPage() {
                 {/* Hide YouTube large play button overlay */}
                 <style>{`.ytp-large-play-button { display: none !important; }`}</style>
 
-                {/* ── TV HOUSING — frosted glass ── */}
-                <div className="relative rounded-[28px]"
+                {/* ── TV HOUSING — molded hardware bezel ── */}
+                <div className="relative rounded-[32px]"
                      style={{
-                       background: 'rgba(10, 10, 24, 0.55)',
-                       backdropFilter: 'blur(24px) saturate(160%)',
-                       WebkitBackdropFilter: 'blur(24px) saturate(160%)',
-                       border: '1px solid rgba(255,255,255,0.09)',
-                       boxShadow: '0 20px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.3)',
-                       padding: '14px 14px 20px',
+                       background: 'linear-gradient(160deg,#2a2a33 0%,#16161c 42%,#0c0c11 100%)',
+                       border: '1px solid rgba(255,255,255,0.10)',
+                       boxShadow: '0 30px 80px rgba(0,0,0,0.6), inset 0 2px 0 rgba(255,255,255,0.14), inset 0 -3px 8px rgba(0,0,0,0.55), inset 0 0 0 6px rgba(0,0,0,0.35)',
+                       padding: '18px 18px 22px',
                      }}>
+                  {/* metallic trim ring */}
+                  <div className="absolute inset-0 rounded-[32px] pointer-events-none"
+                       style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06)' }} />
 
                   {/* Top accent strip */}
                   <div className="absolute top-0 left-8 right-8 h-px rounded-full"
@@ -227,9 +229,13 @@ export default function EntertainmentPage() {
                     <span className="text-[0.6rem] font-mono tracking-[0.5em] uppercase font-bold" style={{ color: 'rgba(255,255,255,0.65)' }}>NOUS</span>
                   </div>
 
-                  {/* CRT bezel — deeply recessed */}
-                  <div className="relative rounded-[16px] mt-3 shadow-[inset_0_4px_20px_rgba(0,0,0,0.95),inset_0_0_0_2px_rgba(0,0,0,0.8)]"
-                       style={{ background: '#080604', padding: '20px' }}>
+                  {/* CRT bezel — molded, deeply recessed */}
+                  <div className="relative rounded-[18px] mt-3"
+                       style={{
+                         background: 'linear-gradient(145deg,#1c1c22,#0a0a0e)',
+                         padding: '22px',
+                         boxShadow: 'inset 0 6px 24px rgba(0,0,0,0.95), inset 0 0 0 2px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.05), 0 1px 0 rgba(255,255,255,0.06)',
+                       }}>
                     {/* Subtle phosphor glow around screen */}
                     <div className="absolute inset-0 rounded-[16px] pointer-events-none"
                          style={{ boxShadow: powerOn ? 'inset 0 0 40px rgba(74,222,128,0.06)' : 'none' }} />
@@ -266,6 +272,16 @@ export default function EntertainmentPage() {
                   </div>
 
                   </div>{/* close CRT bezel */}
+
+                  {/* ── Speaker grille + power LED ── */}
+                  <div className="flex items-center justify-between mt-3 px-1">
+                    <div className="flex items-center gap-[3px]" style={{ opacity: 0.5 }}>
+                      {Array.from({ length: 30 }).map((_, i) => (
+                        <span key={i} className="w-[3px] h-3.5 rounded-full" style={{ background: 'rgba(255,255,255,0.16)' }} />
+                      ))}
+                    </div>
+                    <div className={`w-2 h-2 rounded-full ${powerOn ? 'bg-emerald-400 shadow-[0_0_8px_#4ade80]' : 'bg-red-600'}`} title="Power" />
+                  </div>
 
                   {/* ── Control panel — glass ── */}
                   <div className="mt-3 rounded-[12px] px-4 py-4"
