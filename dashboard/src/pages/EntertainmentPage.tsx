@@ -18,16 +18,12 @@ export interface Channel {
 const CHANNELS: Channel[] = [
   { id: "ch1", name: "Hackathon Anime", type: "iframe", src: `${PLUGIN_URL}/public/hackathon-anime.html`, color: "#0a0a1a" },
   { id: "ch2", name: "Signal", type: "iframe", src: `${PLUGIN_URL}/public/twitter-embed.html`, color: "#0a0a1a" },
-  { id: "ch3",  name: "Music Scene", type: "iframe",  src: "https://www.youtube.com/embed/NhheiPTdZCw?si=l0t7VslIKlOQ2wTC&controls=1" },
-  { id: "ch4",  name: "Weather Retro", type: "iframe", src: `${PLUGIN_URL}/public/weather.html` },
-  { id: "ch5",  name: "Nature",      type: "iframe",  src: "https://www.youtube.com/embed/JfKtk3Ch5KA?controls=0&autoplay=1&mute=1", autoplay: true },
-  { id: "ch6",  name: "Aethereon",   type: "iframe",  src: "https://www.youtube.com/embed/DdM4_pYLvko?si=Ffw8S3W4U0zEA_Co&controls=0&autoplay=1&mute=1", autoplay: true },
-  { id: "ch7", name: "Nous Network", type: "iframe", src: `${PLUGIN_URL}/public/nous-network-tweet.html`, color: "#0a0a1a" },
-  { id: "ch8",  name: "Local 58",    type: "iframe",  src: "https://www.youtube.com/embed/videoseries?si=ZtbDWE2VlafUuQ0Z&controls=0&list=PLgni59iOLrDCTZB6HV6v349i2e1eyx-0Q&autoplay=1&mute=1", autoplay: true },
-  { id: "ch9",  name: "HNN Teletext",type: "canvas",  color: "#000033" },
-  { id: "ch10", name: "Vapor FM",    type: "iframe",  src: `${PLUGIN_URL}/public/vapor.html?v=2` },
-  { id: "ch11", name: "Ballad of Hermes", type: "iframe", src: `${PLUGIN_URL}/public/ballad-hermes.html`, color: "#0a0a1a" },
-  { id: "ch12", name: "Nous Promo", type: "iframe", src: `${PLUGIN_URL}/public/channel-promo-tweet.html`, color: "#0a0a1a" },
+  { id: "ch3",  name: "Weather Retro", type: "iframe", src: `${PLUGIN_URL}/public/weather.html` },
+  { id: "ch4", name: "Nous Network", type: "iframe", src: `${PLUGIN_URL}/public/nous-network-tweet.html`, color: "#0a0a1a" },
+  { id: "ch5",  name: "HNN Teletext",type: "canvas",  color: "#000033" },
+  { id: "ch6", name: "Vapor FM", type: "iframe", src: `${PLUGIN_URL}/public/vapor.html?v=2` },
+  { id: "ch7", name: "Ballad of Hermes", type: "iframe", src: `${PLUGIN_URL}/public/ballad-hermes.html`, color: "#0a0a1a" },
+  { id: "ch8", name: "Nous Promo", type: "iframe", src: `${PLUGIN_URL}/public/channel-promo-tweet.html`, color: "#0a0a1a" },
 ];
 const GAMEBOY_GAMES = [
   { id: "g1", name: "Pong",        src: `${PLUGIN_URL}/games/pong.html`,   icon: "pong" },
