@@ -17,3 +17,7 @@ Thumbs.db
 *.log
 .idea/
 .vscode/
+
+# Desktop chat attachments dropped into the plugin tree (screen recordings etc.)
+dashboard/.hermes/
+

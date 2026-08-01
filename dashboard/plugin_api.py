@@ -483,6 +483,65 @@ async def gallery_list():
     return {"images": imgs}
 
 
+# ── JSON-enveloped asset doors (desktop plugin surface) ──────────────────────
+# The dashboard fetches assets over plain HTTP (/dashboard-plugins/...), but the
+# DESKTOP plugin can only reach this backend through ctx.rest, and the Electron
+# bridge JSON-parses every response body (apps/desktop/electron/main.ts). A raw
+# FileResponse therefore always throws there. These endpoints return the same
+# bytes wrapped in JSON so the desktop plugin can rebuild a blob/data URL.
+
+
+def _asset_payload(subdir: str, filename: str, media_type: str, as_text: bool) -> dict:
+    """Resolve an asset under dashboard/<subdir> and return it JSON-encoded."""
+    if not filename or "/" in filename or "\\" in filename or ".." in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    base = os.path.abspath(os.path.join(_DASHBOARD_DIR, subdir))
+    path = os.path.abspath(os.path.join(base, filename))
+    if not path.startswith(base) or not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Asset not found")
+    if as_text:
+        with open(path, "r", encoding="utf-8", errors="replace") as fh:
+            return {"name": filename, "mediaType": media_type, "encoding": "utf-8", "content": fh.read()}
+    import base64 as _b64
+
+    with open(path, "rb") as fh:
+        return {
+            "name": filename,
+            "mediaType": media_type,
+            "encoding": "base64",
+            "content": _b64.b64encode(fh.read()).decode("ascii"),
+        }
+
+
+@router.get("/asset/page/{filename}")
+async def asset_page(filename: str):
+    """HTML channel page as JSON text (desktop)."""
+    return _asset_payload("public", filename, "text/html", as_text=True)
+
+
+@router.get("/asset/game/{filename}")
+async def asset_game(filename: str):
+    """HTML game shell as JSON text (desktop)."""
+    return _asset_payload("games", filename, "text/html", as_text=True)
+
+
+@router.get("/asset/gallery/{filename}")
+async def asset_gallery(filename: str):
+    """Gallery image as base64 JSON (desktop)."""
+    lower = filename.lower()
+    if lower.endswith((".jpg", ".jpeg")):
+        mt = "image/jpeg"
+    elif lower.endswith(".png"):
+        mt = "image/png"
+    elif lower.endswith(".gif"):
+        mt = "image/gif"
+    elif lower.endswith(".webp"):
+        mt = "image/webp"
+    else:
+        raise HTTPException(status_code=404, detail="Asset not found")
+    return _asset_payload(os.path.join("public", "gallery"), filename, mt, as_text=False)
+
+
 @router.post("/discord/send")
 async def discord_send(payload: DiscordSendPayload):
     token = _discord_bot_token()
