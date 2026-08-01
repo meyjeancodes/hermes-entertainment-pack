@@ -21,3 +21,5 @@ Thumbs.db
 # Desktop chat attachments dropped into the plugin tree (screen recordings etc.)
 dashboard/.hermes/
 
+dashboard/dist/
+dashboard/.hermes/
