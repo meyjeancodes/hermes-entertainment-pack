@@ -526,8 +526,14 @@ async def asset_game(filename: str):
 
 
 @router.get("/asset/gallery/{filename}")
-async def asset_gallery(filename: str):
-    """Gallery image as base64 JSON (desktop)."""
+async def asset_gallery(filename: str, w: int = 0):
+    """Gallery image as base64 JSON (desktop).
+
+    ``w`` downscales to that pixel width before encoding. The grid asks for
+    ``?w=400``: the full set is ~47 MB (~63 MB once base64'd), which is far too
+    much to push over the Electron IPC bridge for a thumbnail wall. The
+    lightbox omits ``w`` and gets the original bytes.
+    """
     lower = filename.lower()
     if lower.endswith((".jpg", ".jpeg")):
         mt = "image/jpeg"
@@ -539,7 +545,55 @@ async def asset_gallery(filename: str):
         mt = "image/webp"
     else:
         raise HTTPException(status_code=404, detail="Asset not found")
+
+    if w and w > 0:
+        thumb = _thumbnail_payload(filename, w)
+        if thumb is not None:
+            return thumb
+
     return _asset_payload(os.path.join("public", "gallery"), filename, mt, as_text=False)
+
+
+def _thumbnail_payload(filename: str, width: int) -> dict | None:
+    """Downscale a gallery image to `width` and return it base64/JPEG.
+
+    Returns None when Pillow is unavailable or the image can't be decoded, so
+    the caller falls back to serving the original bytes.
+    """
+    if not filename or "/" in filename or "\\" in filename or ".." in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    base = os.path.abspath(os.path.join(_DASHBOARD_DIR, "public", "gallery"))
+    path = os.path.abspath(os.path.join(base, filename))
+    if not path.startswith(base) or not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Asset not found")
+
+    try:
+        import base64 as _b64
+        import io as _io
+
+        from PIL import Image
+    except Exception:
+        return None
+
+    width = max(64, min(int(width), 2000))
+    # Pillow >=10 moved the filter enum to Image.Resampling; keep both paths.
+    resample = getattr(getattr(Image, "Resampling", Image), "LANCZOS", 1)
+    try:
+        with Image.open(path) as im:
+            im = im.convert("RGB")
+            if im.width > width:
+                im = im.resize((width, max(1, round(im.height * width / im.width))), resample)
+            buf = _io.BytesIO()
+            im.save(buf, format="JPEG", quality=82, optimize=True)
+    except Exception:
+        return None
+
+    return {
+        "name": filename,
+        "mediaType": "image/jpeg",
+        "encoding": "base64",
+        "content": _b64.b64encode(buf.getvalue()).decode("ascii"),
+    }
 
 
 @router.post("/discord/send")
