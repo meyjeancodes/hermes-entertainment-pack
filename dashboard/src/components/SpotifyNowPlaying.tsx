@@ -86,6 +86,8 @@ export function SpotifyNowPlaying() {
     actings,
     volume,
     setVolume,
+    devices,
+    activeDeviceId,
     fetchState,
     togglePlayPause,
     next,
@@ -93,6 +95,8 @@ export function SpotifyNowPlaying() {
     toggleShuffle,
     toggleRepeat,
     setVolumeAndSend,
+    seek,
+    transfer,
   } = useSpotifyPlayer({ refreshInterval: 8000 });
 
   const [localProgress, setLocalProgress] = useState(0);
@@ -235,9 +239,19 @@ export function SpotifyNowPlaying() {
             </div>
           </div>
 
-          {/* Progress bar */}
+          {/* Progress bar (click to seek) */}
           <div style={{ padding: '2px 0 0' }}>
-            <div style={{ height: 2, background: 'rgba(255,255,255,0.07)', borderRadius: 1, overflow: 'hidden' }}>
+            <div
+              onClick={(e) => {
+                if (!trackDuration) return;
+                const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+                const pct = (e.clientX - rect.left) / rect.width;
+                const pos = Math.max(0, Math.min(1, pct)) * trackDuration;
+                seek(pos);
+                setLocalProgress(pos);
+              }}
+              style={{ height: 6, background: 'rgba(255,255,255,0.07)', borderRadius: 1, overflow: 'hidden', cursor: 'pointer' }}
+            >
               <div style={{ height: '100%', width: `${progressPct}%`, background: '#1DB954', borderRadius: 1, transition: 'width 0.6s linear' }} />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
@@ -245,6 +259,24 @@ export function SpotifyNowPlaying() {
               <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.18)', fontVariantNumeric: 'tabular-nums' as const }}>{fmtMs(trackDuration)}</span>
             </div>
           </div>
+
+          {/* Device picker */}
+          {devices.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6 }}>
+              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>📡</span>
+              <select
+                value={activeDeviceId ?? ''}
+                onChange={(e) => { const id = (e.target as HTMLSelectElement).value; if (id) transfer(id); }}
+                style={{ flex: 1, fontSize: 11, background: '#151525', color: '#fff', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6, padding: '4px 6px' }}
+              >
+                {devices.map((d) => (
+                  <option key={d.id ?? d.name} value={d.id ?? ''} style={{ color: '#000' }}>
+                    {d.is_active ? '▣ ' : ''}{d.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -145,13 +145,47 @@ export function useSpotifyPlayer(options: UseSpotifyPlayerOptions = {}) {
     },
     [callSpotifyControl]
   );
+  const seek = useCallback(
+    (positionMs: number) =>
+      callSpotifyControl("/api/plugins/hermes-entertainment-pack/spotify/seek", "seek", {
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ position_ms: Math.max(0, Math.round(positionMs)) }),
+      }),
+    [callSpotifyControl]
+  );
+
+  // Devices: list + transfer
+  const [devices, setDevices] = useState<{ id: string | null; name: string; is_active: boolean }[]>([]);
+  const [activeDeviceId, setActiveDeviceId] = useState<string | null>(null);
+  const fetchDevices = useCallback(async () => {
+    try {
+      const res = await authenticatedFetch("/api/plugins/hermes-entertainment-pack/spotify/devices");
+      if (res.ok) {
+        const data = await res.json();
+        const list = (data.devices || []) as { id: string | null; name: string; is_active: boolean }[];
+        setDevices(list);
+        const active = list.find((d) => d.is_active);
+        setActiveDeviceId(active?.id ?? null);
+      }
+    } catch { /* ignore */ }
+  }, [authenticatedFetch]);
+  const transfer = useCallback(
+    (deviceId: string) =>
+      callSpotifyControl("/api/plugins/hermes-entertainment-pack/spotify/transfer", "transfer", {
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ device_id: deviceId }),
+      }).then(() => fetchDevices()),
+    [callSpotifyControl, fetchDevices]
+  );
 
   // Polling lifecycle
   useEffect(() => {
     fetchState();
+    fetchDevices();
     const interval = setInterval(fetchState, refreshInterval);
-    return () => clearInterval(interval);
-  }, [fetchState, refreshInterval]);
+    const devInterval = setInterval(fetchDevices, 20000);
+    return () => { clearInterval(interval); clearInterval(devInterval); };
+  }, [fetchState, fetchDevices, refreshInterval]);
 
   return {
     // State
@@ -161,8 +195,11 @@ export function useSpotifyPlayer(options: UseSpotifyPlayerOptions = {}) {
     actings,
     volume,
     setVolume,
+    devices,
+    activeDeviceId,
     // Controls
     fetchState,
+    fetchDevices,
     play,
     pause,
     togglePlayPause,
@@ -171,5 +208,7 @@ export function useSpotifyPlayer(options: UseSpotifyPlayerOptions = {}) {
     toggleShuffle,
     toggleRepeat,
     setVolumeAndSend,
+    seek,
+    transfer,
   };
 }

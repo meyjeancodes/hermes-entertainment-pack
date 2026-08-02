@@ -384,7 +384,17 @@ export default function MusicPortalPage() {
   const [cassetteState, setCassetteState] = useState<{ playing: boolean; track: CassetteTrack | null }>({ playing: false, track: null });
   const [bSide, setBSide] = useState<HistoryEntry[]>(() => loadHistory());
   const prevTrackRef = useRef<string | null>(null);
-  const [provider, setProvider] = useState<'spotify' | 'apple'>('spotify');
+  const [provider, setProvider] = useState<'spotify' | 'apple'>(() => {
+    try {
+      const p = localStorage.getItem('hermes-mixtape-provider');
+      if (p === 'spotify' || p === 'apple') return p;
+    } catch {}
+    return 'spotify';
+  });
+  const chooseProvider = (p: 'spotify' | 'apple') => {
+    setProvider(p);
+    try { localStorage.setItem('hermes-mixtape-provider', p); } catch {}
+  };
   const sessionToken = (window as any).__HERMES_SESSION_TOKEN__;
 
   useEffect(() => {
@@ -578,7 +588,7 @@ export default function MusicPortalPage() {
         {(['spotify', 'apple'] as const).map(p => (
           <button
             key={p}
-            onClick={() => setProvider(p)}
+            onClick={() => chooseProvider(p)}
             style={{
               fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase',
               padding: '6px 14px', borderRadius: 8, cursor: 'pointer',

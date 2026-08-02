@@ -223,6 +223,51 @@ async def spotify_volume(payload: VolumePayload):
         raise HTTPException(status_code=502, detail={"message": str(exc)})
 
 
+@router.get("/spotify/devices")
+async def spotify_devices():
+    try:
+        client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    try:
+        data = client.get_devices()
+    except SpotifyAuthRequiredError:
+        raise HTTPException(status_code=401, detail={"error": "auth_required"})
+    except SpotifyAPIError as exc:
+        raise HTTPException(status_code=502, detail={"message": str(exc)})
+    devices = (data or {}).get("devices", [])
+    return {
+        "devices": [
+            {
+                "id": d.get("id"),
+                "name": d.get("name", "Unknown"),
+                "type": d.get("type", ""),
+                "is_active": bool(d.get("is_active")),
+                "volume_percent": d.get("volume_percent"),
+            }
+            for d in devices
+        ]
+    }
+
+
+class TransferPayload(BaseModel):
+    device_id: str
+
+
+@router.post("/spotify/transfer")
+async def spotify_transfer(payload: TransferPayload):
+    try:
+        client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    try:
+        return client.transfer_playback(device_id=payload.device_id, play=False)
+    except SpotifyAuthRequiredError:
+        raise HTTPException(status_code=401, detail={"error": "auth_required"})
+    except SpotifyAPIError as exc:
+        raise HTTPException(status_code=502, detail={"message": str(exc)})
+
+
 @router.get("/spotify/recently-played")
 async def spotify_recently_played(limit: int = 8):
     try:
@@ -538,6 +583,9 @@ async def teletext_news(category: str = "top"):
 
 _DASHBOARD_DIR = os.path.dirname(__file__)
 
+# Reserved/modified asset to skip in the gallery grid.
+_GALLERY_SKIP = {"the-artist.jpg"}
+
 
 def _safe_file(subdir: str, filename: str, media_type: str):
     """Resolve `filename` under dashboard/<subdir>; block traversal."""
@@ -587,13 +635,50 @@ async def gallery_list():
     gal = os.path.join(_DASHBOARD_DIR, "public", "gallery")
     if not os.path.isdir(gal):
         return {"images": []}
-    skip = {"the-artist.jpg"}  # reserved/modified asset; skip in grid
+    skip = _GALLERY_SKIP  # reserved/modified asset; skip in grid
     imgs = sorted(
         f for f in os.listdir(gal)
         if f.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp"))
         and f not in skip
     )
     return {"images": imgs}
+
+
+from fastapi import UploadFile, File as _FastAPIFile
+
+
+@router.post("/gallery/upload")
+async def gallery_upload(file: UploadFile = _FastAPIFile(...)):
+    """Upload a new gallery image (jpg/png/gif/webp) into public/gallery/.
+    Persists across reloads. Returns the new filename and refreshed list."""
+    import os as _os
+    import re as _re
+
+    raw = file.filename or "upload.bin"
+    # Keep only a safe basename; avoid collisions with a timestamp suffix.
+    base, ext = _os.path.splitext(_os.path.basename(raw))
+    ext = ext.lower()
+    if ext not in (".jpg", ".jpeg", ".png", ".gif", ".webp"):
+        raise HTTPException(status_code=400, detail={"error": "Unsupported type", "message": "Use jpg, png, gif, or webp."})
+    safe_base = _re.sub(r"[^a-z0-9_-]", "-", base.lower()) or "image"
+    stamp = _os.urandom(3).hex()
+    fname = f"{safe_base}-{stamp}{ext}"
+    gal = _os.path.join(_DASHBOARD_DIR, "public", "gallery")
+    _os.makedirs(gal, exist_ok=True)
+    dest = _os.path.abspath(_os.path.join(gal, fname))
+    if not dest.startswith(_os.path.abspath(gal)):
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    data = await file.read()
+    if len(data) > 25 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="Image too large (max 25 MB).")
+    with open(dest, "wb") as fh:
+        fh.write(data)
+    # Refresh the list.
+    imgs = sorted(
+        f for f in _os.listdir(gal)
+        if f.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp")) and f not in _GALLERY_SKIP
+    )
+    return {"filename": fname, "images": imgs}
 
 
 # ── JSON-enveloped asset doors (desktop plugin surface) ──────────────────────
