@@ -106,6 +106,24 @@ async def spotify_play():
         raise HTTPException(status_code=502, detail={"message": str(exc)})
 
 
+class SeekPayload(BaseModel):
+    position_ms: int
+
+
+@router.post("/spotify/seek")
+async def spotify_seek(payload: SeekPayload):
+    try:
+        client, SpotifyAuthRequiredError, SpotifyAPIError = _spotify_client()
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail={"message": str(exc)})
+    try:
+        return client.seek(position_ms=max(0, int(payload.position_ms)))
+    except SpotifyAuthRequiredError:
+        raise HTTPException(status_code=401, detail={"error": "auth_required"})
+    except SpotifyAPIError as exc:
+        raise HTTPException(status_code=502, detail={"message": str(exc)})
+
+
 @router.post("/spotify/pause")
 async def spotify_pause():
     try:
