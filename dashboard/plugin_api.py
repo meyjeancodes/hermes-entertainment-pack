@@ -239,6 +239,101 @@ async def spotify_recently_played(limit: int = 8):
     return result
 
 
+# ── Apple Music passthrough endpoints ─────────────────────────────────────────
+# Apple Music has no OAuth helper in hermes auth, so we read a MusicKit developer
+# token from the environment. With it we can hit the Apple Music API (catalog,
+# recently played, search). Playback itself is handed off to the Music app via
+# the music:// URL scheme, since full in-tab playback needs a user token from
+# MusicKit JS (Apple Developer account). When no token is set we return a
+# clear "connect" signal instead of faking data.
+import urllib.request as _am_req
+import urllib.error as _am_err
+import json as _am_json
+
+_APPLE_TOKEN = os.environ.get("APPLE_MUSIC_DEVELOPER_TOKEN")
+
+# Apple Music catalog/library endpoints use the developer token as a Bearer
+# header and require an Accept: application/json plus a music-user-token header
+# for user-specific data. We hit the public catalog + the recently-played
+# library endpoint (needs a user token, gracefully degrades if absent).
+_AM_BASE = "https://api.music.apple.com/v1"
+
+
+def _am_call(path, user_token=None):
+    """GET an Apple Music API path; return parsed JSON or raise RuntimeError."""
+    url = _AM_BASE + path
+    req = _am_req.Request(url, headers={
+        "Authorization": f"Bearer {_APPLE_TOKEN}",
+        "Accept": "application/json",
+    })
+    if user_token:
+        req.add_header("Music-User-Token", user_token)
+    with _am_req.urlopen(req, timeout=10) as resp:
+        return _am_json.loads(resp.read().decode("utf-8"))
+
+
+def _am_track(obj):
+    """Normalise an Apple Music song resource to the frontend track shape."""
+    attrs = obj.get("attributes", {})
+    artists = [a.get("name", "") for a in attrs.get("artistName", "").split(", ") if a]
+    if not artists and attrs.get("artistName"):
+        artists = [attrs["artistName"]]
+    artwork = attrs.get("artwork", {})
+    url = None
+    if artwork and artwork.get("url"):
+        # Apple artwork URLs are templated with {w}x{h}; substitute a real size.
+        url = artwork["url"].replace("{w}", "300").replace("{h}", "300")
+    return {
+        "id": obj.get("id"),
+        "name": attrs.get("name", ""),
+        "artists": artists or [attrs.get("artistName", "")],
+        "album": attrs.get("albumName", ""),
+        "image": url,
+        "url": attrs.get("url", ""),  # opens in Music app / music.apple.com
+        "duration_ms": int((attrs.get("durationInMillis", 0) or 0)),
+    }
+
+
+@router.get("/apple/status")
+async def apple_status():
+    return {"connected": bool(_APPLE_TOKEN), "provider": "apple-music"}
+
+
+@router.get("/apple/recently-played")
+async def apple_recently_played(limit: int = 12):
+    if not _APPLE_TOKEN:
+        raise HTTPException(status_code=401, detail={
+            "error": "auth_required",
+            "message": "Set APPLE_MUSIC_DEVELOPER_TOKEN to connect Apple Music.",
+        })
+    try:
+        # recently-played is a library endpoint; needs a user token, but we try
+        # the catalog-less history endpoint and degrade gracefully if 401.
+        user_token = os.environ.get("APPLE_MUSIC_USER_TOKEN")
+        data = _am_call(
+            f"/me/recent/played?limit={limit}",
+            user_token=user_token,
+        )
+        items = (data or {}).get("data", [])
+        result = []
+        seen = set()
+        for it in items:
+            tr = _am_track(it)
+            if not tr["name"] or tr["name"] in seen:
+                continue
+            seen.add(tr["name"])
+            result.append(tr)
+        return result
+    except _am_err.HTTPError as exc:
+        # 401/403 on the user endpoint: developer token is valid but no user
+        # library access — return empty with a note rather than erroring hard.
+        if exc.code in (401, 403):
+            return []
+        raise HTTPException(status_code=502, detail={"message": str(exc)})
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail={"message": str(exc)})
+
+
 # ── Discord passthrough endpoints ─────────────────────────────────────────────
 
 import json as _json
