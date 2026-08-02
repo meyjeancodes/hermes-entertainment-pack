@@ -15,6 +15,67 @@ const LightningIcon = () => (
   </svg>
 );
 
+// Apple Music panel — mirrors the desktop plugin's provider switcher. Reads the
+// backend /apple routes; shows recently played and deep-links to the Music app.
+function AppleMusicPanel({ token }: { token: string | undefined }) {
+  const [status, setStatus] = useState<{ connected: boolean } | null>(null);
+  const [tracks, setTracks] = useState<any[]>([]);
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const headers: Record<string, string> = {};
+    if (token) headers['X-Hermes-Session-Token'] = token;
+    (async () => {
+      try {
+        const s = await fetch('/api/plugins/hermes-entertainment-pack/apple/status', { headers });
+        const sd = await s.json();
+        if (cancelled) return;
+        setStatus(sd);
+        if (sd.connected) {
+          const r = await fetch('/api/plugins/hermes-entertainment-pack/apple/recently-played', { headers });
+          const rd = await r.json();
+          if (!cancelled) setTracks(Array.isArray(rd) ? rd : []);
+        }
+      } catch (e: any) {
+        if (!cancelled) setErr(String(e?.message || e));
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [token]);
+
+  if (status && !status.connected) {
+    return (
+      <div style={{ textAlign: 'center', margin: '16px 0', fontFamily: 'monospace', fontSize: 12, color: 'rgba(255,255,255,0.45)' }}>
+        Apple Music not connected — set APPLE_MUSIC_DEVELOPER_TOKEN in the dashboard env.
+      </div>
+    );
+  }
+  if (err) return <div style={{ textAlign: 'center', color: '#fb3b5c', fontFamily: 'monospace', fontSize: 12 }}>Apple Music error: {err}</div>;
+
+  return (
+    <div style={{ margin: '16px auto', maxWidth: 520 }}>
+      <p className={styles.spotifyLabel} style={{ color: '#fb3b5c' }}>— APPLE MUSIC · RECENTLY PLAYED —</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {tracks.length === 0 && <div style={{ fontFamily: 'monospace', fontSize: 12, color: 'rgba(255,255,255,0.4)', textAlign: 'center' }}>No recently played yet.</div>}
+        {tracks.slice(0, 12).map((t, i) => (
+          <button
+            key={(t.id || '') + i}
+            onClick={() => { if (t.url) window.open(t.url, '_blank'); }}
+            style={{ display: 'flex', alignItems: 'center', gap: 10, textAlign: 'left', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '8px 12px', cursor: 'pointer', color: '#fff' }}
+          >
+            {t.image && <img src={t.image} alt="" style={{ width: 36, height: 36, borderRadius: 4, objectFit: 'cover' }} />}
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.name}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{(t.artists || []).join(', ')}</div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const WarnIcon = () => (
   <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" style={{ display: 'inline', verticalAlign: 'middle', marginRight: '5px' }}>
     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -323,6 +384,8 @@ export default function MusicPortalPage() {
   const [cassetteState, setCassetteState] = useState<{ playing: boolean; track: CassetteTrack | null }>({ playing: false, track: null });
   const [bSide, setBSide] = useState<HistoryEntry[]>(() => loadHistory());
   const prevTrackRef = useRef<string | null>(null);
+  const [provider, setProvider] = useState<'spotify' | 'apple'>('spotify');
+  const sessionToken = (window as any).__HERMES_SESSION_TOKEN__;
 
   useEffect(() => {
     const tick = () =>
@@ -509,6 +572,27 @@ export default function MusicPortalPage() {
         <p className={styles.spotifyLabel}>— YOUR SPOTIFY · NOW PLAYING —</p>
         <SpotifyNowPlaying />
       </div>
+
+      {/* Provider toggle: Spotify | Apple Music */}
+      <div style={{ display: 'flex', gap: 8, justifyContent: 'center', margin: '24px 0 8px' }}>
+        {(['spotify', 'apple'] as const).map(p => (
+          <button
+            key={p}
+            onClick={() => setProvider(p)}
+            style={{
+              fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase',
+              padding: '6px 14px', borderRadius: 8, cursor: 'pointer',
+              background: provider === p ? (p === 'apple' ? 'rgba(253,53,80,0.18)' : 'rgba(29,185,84,0.18)') : 'rgba(255,255,255,0.04)',
+              color: provider === p ? (p === 'apple' ? '#fb3b5c' : '#1db954') : 'rgba(255,255,255,0.4)',
+              border: '1px solid rgba(255,255,255,0.1)',
+            }}
+          >{p === 'apple' ? 'Apple Music' : 'Spotify'}</button>
+        ))}
+      </div>
+
+      {provider === 'apple' && (
+        <AppleMusicPanel token={sessionToken} />
+      )}
 
       {/* Fine print */}
       <div className={styles.finePrint}>
