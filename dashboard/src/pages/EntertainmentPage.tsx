@@ -1440,6 +1440,26 @@ function NousBoySection({
     return () => { window.removeEventListener('keydown', dn); window.removeEventListener('keyup', up); };
   }, [gbPower]);
 
+  // Persist console + last-played game so reopening the tab restores state
+  const [nousStateReady, setNousStateReady] = useState(false);
+  useEffect(() => {
+    try {
+      const savedGame = localStorage.getItem('nousboy.game');
+      if (savedGame && GAMEBOY_GAMES.some(g => g.id === savedGame)) setActiveGameId(savedGame);
+      if (localStorage.getItem('nousboy.power') === '1') setGbPower(true);
+    } catch {}
+    setNousStateReady(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    if (!nousStateReady) return;
+    try { localStorage.setItem('nousboy.game', activeGameId); } catch {}
+  }, [activeGameId, nousStateReady]);
+  useEffect(() => {
+    if (!nousStateReady) return;
+    try { localStorage.setItem('nousboy.power', gbPower ? '1' : '0'); } catch {}
+  }, [gbPower, nousStateReady]);
+
   return (
     <div ref={sectionRef} className="flex flex-col items-center gap-0 w-full">
       {/* Section header */}
