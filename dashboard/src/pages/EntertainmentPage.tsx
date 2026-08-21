@@ -1511,7 +1511,7 @@ function NousBoySection({
                     sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
                   />
                 ) : (
-                  <iframe src="/dashboard-plugins/hermes-entertainment-pack/dist/nousboy-off.html" className="absolute inset-0 w-full h-full border-0" title="Off" />
+                  <iframe src="/dashboard-plugins/hermes-entertainment-pack/games/nous-off.html" className="absolute inset-0 w-full h-full border-0" title="Off" />
                 )}
               </div>
             </div>
