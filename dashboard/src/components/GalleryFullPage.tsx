@@ -111,6 +111,14 @@ const GALLERY_IMAGES = [
     type: "card",
     orientation: "landscape",
   },
+  {
+    id: "hermes-agent-idcard",
+    url: `${GALLERY_BASE}/hermes-agent-idcard.png`,
+    title: "Hermes Agent — ID",
+    subtitle: "The Everything Agent",
+    type: "card",
+    orientation: "landscape",
+  },
   // ── EXISTING IMAGES ──
   {
     id: "1",
