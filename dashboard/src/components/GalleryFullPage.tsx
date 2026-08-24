@@ -368,14 +368,6 @@ const GALLERY_IMAGES = [
     type: "card",
     orientation: "portrait",
   },
-  {
-    id: "nous-2026-08-23-b",
-    url: `${GALLERY_BASE}/nous-2026-08-23-b.jpg`,
-    title: "Trust Your Instincts — II",
-    subtitle: "Nous Research · 2026-08-23",
-    type: "card",
-    orientation: "portrait",
-  },
 ];
 
 export default function GalleryFullPage() {
