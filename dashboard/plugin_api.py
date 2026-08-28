@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import sys
 import os
+import json
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -711,10 +712,49 @@ def _asset_payload(subdir: str, filename: str, media_type: str, as_text: bool) -
         }
 
 
+@router.get("/nous-feed")
+async def nous_feed():
+    """Nous Network broadcast feed for the desktop plugin — returns headlines
+    and a base64 data URL for the hero art in a single call."""
+    import base64 as _b64
+    feed_path = os.path.join(_DASHBOARD_DIR, "public", "nous-feed.json")
+    try:
+        with open(feed_path, "r", encoding="utf-8") as f:
+            feed = json.load(f)
+    except Exception:
+        feed = {"headlines": [], "heroArt": ""}
+    headlines = feed.get("headlines", [])
+    hero_path = os.path.join(_DASHBOARD_DIR, "public", "feed", "nous-feed-20260823.png")
+    hero_art = ""
+    try:
+        with open(hero_path, "rb") as f:
+            hero_art = "data:image/png;base64," + _b64.b64encode(f.read()).decode("ascii")
+    except Exception:
+        pass
+    return {"headlines": headlines, "heroArt": hero_art}
+
+
 @router.get("/asset/page/{filename}")
 async def asset_page(filename: str):
     """HTML channel page as JSON text (desktop)."""
     return _asset_payload("public", filename, "text/html", as_text=True)
+
+
+@router.get("/asset/feed/{filename}")
+async def asset_feed(filename: str):
+    """Feed asset (hero art, audio, JSON) from public/feed/ (desktop)."""
+    lower = filename.lower()
+    if lower.endswith((".jpg", ".jpeg")):
+        mt = "image/jpeg"
+    elif lower.endswith(".png"):
+        mt = "image/png"
+    elif lower.endswith(".mp3"):
+        mt = "audio/mpeg"
+    elif lower.endswith(".json"):
+        mt = "application/json"
+    else:
+        raise HTTPException(status_code=404, detail="Asset not found")
+    return _asset_payload("public/feed", filename, mt, as_text=lower.endswith(".json"))
 
 
 @router.get("/asset/game/{filename}")
