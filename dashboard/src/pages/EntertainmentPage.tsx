@@ -19,13 +19,11 @@ const CHANNELS: Channel[] = [
   { id: "ch1", name: "Hackathon Anime", type: "iframe", src: `${PLUGIN_URL}/public/hackathon-anime.html`, color: "#0a0a1a" },
   { id: "ch2", name: "Signal", type: "iframe", src: `${PLUGIN_URL}/public/twitter-embed.html`, color: "#0a0a1a" },
   { id: "ch3",  name: "Weather Retro", type: "iframe", src: `${PLUGIN_URL}/public/weather.html` },
-  { id: "ch4", name: "Nous Network", type: "iframe", src: `${PLUGIN_URL}/public/nous-feed.html`, color: "#0a0a1a" },
+  { id: "ch4", name: "Nous Network", type: "iframe", src: `${PLUGIN_URL}/public/nous-network-tweet.html`, color: "#0a0a1a" },
   { id: "ch5",  name: "HNN Teletext",type: "canvas",  color: "#000033" },
   { id: "ch6", name: "Vapor FM", type: "iframe", src: `${PLUGIN_URL}/public/vapor.html?v=2` },
   { id: "ch7", name: "Ballad of Hermes", type: "iframe", src: `${PLUGIN_URL}/public/ballad-hermes.html`, color: "#0a0a1a" },
   { id: "ch8", name: "Nous Promo", type: "iframe", src: `${PLUGIN_URL}/public/channel-promo-tweet.html`, color: "#0a0a1a" },
-  { id: "ch9", name: "Dead Air", type: "noise", color: "#000" },
-  { id: "ch10", name: "Hermes TV", type: "iframe", src: `${PLUGIN_URL}/public/hermes-tv.html`, color: "#0a0a1a" },
 ];
 const GAMEBOY_GAMES = [
   { id: "g1", name: "Pong",        src: `${PLUGIN_URL}/games/pong.html`,   icon: "pong" },
