@@ -1,11 +1,11 @@
 {
-  "updated": "2026-08-21T00:00:00Z",
+  "updated": "2026-08-30T00:00:00+00:00",
   "headlines": [
-    "HERMES AGENT SHIPS OVERNIGHT: THE CHANNEL RAN ITSELF AGAIN",
-    "HACKATHON FLOOR HITS 3AM — EVERY DEMO BUILT BY AN AGENT",
-    "MUSIC SCENE: SYNTH SET GENERATED, MIXED AND AIRED IN ONE PASS",
-    "AETHEREON EXPANDS: NEW REGION RENDERED WHILE YOU SLEPT",
-    "LOCAL 58 SIGNAL RETURNS — HNN TELETEXT ADVISES: STAY TUNED"
+    "NOUS PROMO: Hermes Agent 2.0 — complete rebuild, zero debt",
+    "HACKATHON: Retro Terminal Jam — code in a 1980s CRT shell",
+    "MUSIC SCENE: Algorithmic Noise — live set by Nous Ensemble",
+    "NATURE: Deep Forest Tape — field recordings from the Pacific Northwest",
+    "AETHEREON: New frequency band opens for experimental broadcast"
   ],
-  "heroArt": "/public/feed/nous-feed-20260802.png"
+  "heroArt": "/public/feed/nous-feed-20260830.png"
 }
