@@ -1562,40 +1562,20 @@ function NousBoySection({
               </div>
             </div>
 
-            {/* Game Cartridge */}
-            <div className="flex justify-center mb-3" style={{ perspective: '600px' }}>
-              <div className="relative" style={{ width: 120, height: 80, transform: 'rotateX(5deg)' }}>
-                {/* Cartridge body */}
-                <div className="absolute inset-0 rounded-sm" style={{
-                  background: `linear-gradient(135deg, ${activeGame.color}33, ${activeGame.color}66)`,
-                  border: `2px solid ${activeGame.color}88`,
-                  boxShadow: `0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 20px ${activeGame.color}22`,
-                }}>
-                  {/* Cartridge label */}
-                  <div className="absolute inset-3 rounded-sm flex flex-col items-center justify-center" style={{
-                    background: `linear-gradient(180deg, ${activeGame.color}11, ${activeGame.color}22)`,
-                    border: `1px solid ${activeGame.color}44`,
+            {/* Scrollable cartridge bar */}
+            <div className="flex gap-1.5 overflow-x-auto py-1 mb-2" style={{ scrollbarWidth: 'thin', scrollbarColor: `${activeGame.color}33 transparent` }}>
+              {GAMEBOY_GAMES.map(g => (
+                <button key={g.id} onClick={() => setActiveGameId(g.id)} title={g.name}
+                  style={{
+                    flexShrink: 0, width: 46, height: 32, borderRadius: 4, cursor: 'pointer',
+                    background: `linear-gradient(135deg, ${g.color}33, ${g.color}66)`,
+                    border: `1.5px solid ${activeGameId === g.id ? g.color : `${g.color}44`}`,
+                    boxShadow: activeGameId === g.id ? `0 0 8px ${g.color}33` : 'none',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <span className="text-[0.45rem] font-mono font-bold uppercase tracking-wider" style={{ color: activeGame.color, textShadow: `0 0 8px ${activeGame.color}44` }}>
-                      {activeGame.name}
-                    </span>
-                    <div className="w-8 h-px mt-1" style={{ background: `${activeGame.color}44` }} />
-                    <span className="text-[0.3rem] font-mono tracking-wider uppercase" style={{ color: `${activeGame.color}66` }}>
-                      NOUS BOY
-                    </span>
-                  </div>
-                  {/* Notch */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-2 rounded-sm" style={{
-                    background: '#1a1a1a',
-                    border: `1px solid ${activeGame.color}44`,
-                  }} />
-                </div>
-                {/* Shadow */}
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-2 rounded-full" style={{
-                  background: `radial-gradient(ellipse, ${activeGame.color}22, transparent)`,
-                  filter: 'blur(4px)',
-                }} />
-              </div>
+                  <span style={{ fontSize: '0.35rem', fontFamily: 'monospace', fontWeight: 'bold', color: g.color, letterSpacing: '0.04em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 38 }}>{g.name.split(' ')[0]}</span>
+                </button>
+              ))}
             </div>
 
             {/* Controls row — 3-column grid: D-pad | SELECT+START | A+B */}
