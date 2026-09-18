@@ -576,6 +576,26 @@ export default function MusicPortalPage() {
         />
       </div>
 
+      {/* Radio Stations */}
+      <div className={styles.playerSection}>
+        <p className={styles.playerLabel}>— RADIO PLUGIN · NIGHTTRIDE / PARADISE / EVE —</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center', padding: '8px 16px 16px' }}>
+          {[
+            { id: 'chillsynth', name: 'CHILLSYNTH', col: '#a855f7' },
+            { id: 'nightride', name: 'NIGHTRIDE', col: '#e879f9' },
+            { id: 'darksynth', name: 'DARKSYNTH', col: '#f43f5e' },
+            { id: 'spacesynth', name: 'SPACESYNTH', col: '#38bdf8' },
+            { id: 'paradise-main', name: 'RADIO PARADISE', col: '#fbbf24' },
+            { id: 'eve-radio', name: 'EVE RADIO', col: '#34d399' },
+          ].map(st => (
+            <button key={st.id} onClick={() => { window.open(`https://stream.nightride.fm/${st.id === 'nightride' ? 'nightride' : st.id === 'chillsynth' ? 'chillsynth' : st.id === 'darksynth' ? 'darksynth' : st.id === 'spacesynth' ? 'spacesynth' : 'chillsynth'}.mp3`, '_blank'); }}
+              style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.1em', padding: '6px 12px', borderRadius: 4, cursor: 'pointer', background: `${st.col}11`, color: st.col, border: `1px solid ${st.col}33`, textTransform: 'uppercase' }}>
+              {st.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Spotify Now Playing */}
       <div className={styles.spotifySection}>
         <div className={styles.spotifyDivider} />

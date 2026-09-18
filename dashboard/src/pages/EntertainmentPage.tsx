@@ -11,6 +11,7 @@ export interface Channel {
   name: string;
   type: "static" | "canvas" | "iframe" | "noise" | "video";
   src?: string;
+  poster?: string;
   color?: string;
   autoplay?: boolean;
 }
@@ -19,19 +20,25 @@ const CHANNELS: Channel[] = [
   { id: "ch1", name: "Hackathon Anime", type: "iframe", src: `${PLUGIN_URL}/public/hackathon-anime.html`, color: "#0a0a1a" },
   { id: "ch2", name: "Signal", type: "iframe", src: `${PLUGIN_URL}/public/twitter-embed.html`, color: "#0a0a1a" },
   { id: "ch3",  name: "Weather Retro", type: "iframe", src: `${PLUGIN_URL}/public/weather.html` },
-  { id: "ch4", name: "Nous Network", type: "iframe", src: `${PLUGIN_URL}/public/nous-network-tweet.html`, color: "#0a0a1a" },
+  { id: "ch4", name: "Nous Network", type: "video", src: `${PLUGIN_URL}/public/NousNetwork.mp4`, poster: `${PLUGIN_URL}/branding/nous-network-ident.png`, color: "#0a0a1a" },
   { id: "ch5",  name: "HNN Teletext",type: "canvas",  color: "#000033" },
   { id: "ch6", name: "Vapor FM", type: "iframe", src: `${PLUGIN_URL}/public/vapor.html?v=2` },
   { id: "ch7", name: "Ballad of Hermes", type: "iframe", src: `${PLUGIN_URL}/public/ballad-hermes.html`, color: "#0a0a1a" },
   { id: "ch8", name: "Nous Promo", type: "iframe", src: `${PLUGIN_URL}/public/channel-promo-tweet.html`, color: "#0a0a1a" },
 ];
 const GAMEBOY_GAMES = [
-  { id: "g1", name: "Pong",        src: `${PLUGIN_URL}/games/pong.html`,   icon: "pong" },
-  { id: "g2", name: "Tetris",      src: `${PLUGIN_URL}/games/tetris.html`, icon: "tetris" },
-  { id: "g3", name: "Space Raid",  src: `${PLUGIN_URL}/games/space.html`,  icon: "space" },
-  { id: "g4", name: "Flappy Bird", src: "https://flappybird.io",           icon: "flappy" },
-  { id: "g5", name: "Snake",       src: `${PLUGIN_URL}/games/snake.html`,  icon: "snake" },
-  { id: "g6", name: "2048",        src: `${PLUGIN_URL}/games/2048.html`,  icon: "2048" },
+  { id: "g1", name: "Pong",        src: `${PLUGIN_URL}/games/pong.html`,   icon: "pong", color: "#9ca3af" },
+  { id: "g2", name: "Tetris",      src: `${PLUGIN_URL}/games/tetris.html`, icon: "tetris", color: "#60a5fa" },
+  { id: "g3", name: "Space Raid",  src: `${PLUGIN_URL}/games/space.html`,  icon: "space", color: "#4ade80" },
+  { id: "g4", name: "Flappy Bird", src: "https://flappybird.io",           icon: "flappy", color: "#fbbf24" },
+  { id: "g5", name: "Snake",       src: `${PLUGIN_URL}/games/snake.html`,  icon: "snake", color: "#34d399" },
+  { id: "g6", name: "2048",        src: `${PLUGIN_URL}/games/2048.html`,  icon: "2048", color: "#fb923c" },
+  { id: "g7", name: "Breakout",    src: `${PLUGIN_URL}/games/breakout.html`, icon: "breakout", color: "#f87171" },
+  { id: "g8", name: "Asteroids",   src: `${PLUGIN_URL}/games/asteroids.html`, icon: "asteroids", color: "#e879f9" },
+  { id: "g9", name: "Pac-Man",     src: `${PLUGIN_URL}/games/pacman.html`, icon: "pacman", color: "#facc15" },
+  { id: "g10", name: "NES",        src: `${PLUGIN_URL}/games/nes.html`, icon: "nes", color: "#a78bfa" },
+  { id: "g11", name: "Centipede",  src: `${PLUGIN_URL}/games/centipede.html`, icon: "centipede", color: "#22c55e" },
+  { id: "g12", name: "Space Invaders", src: `${PLUGIN_URL}/games/space-invaders.html`, icon: "space-invaders", color: "#22d3ee" },
 ];
 
 export default function EntertainmentPage() {
@@ -813,15 +820,34 @@ function VideoPlayer({ src, isPlaying, channelId, volume, isMuted }: { src: stri
   }, [volume, isMuted]);
 
   return (
-    <video
-      key={src}
-      ref={videoRef}
-      src={src}
-      className="absolute inset-0 w-full h-full object-cover"
-      loop
-      playsInline
-      autoPlay
-    />
+    <div className="absolute inset-0" style={{ background: '#000' }}>
+      <video
+        key={src}
+        ref={videoRef}
+        src={src}
+        className="absolute inset-0 w-full h-full object-cover"
+        loop
+        playsInline
+        autoPlay
+      />
+      {/* CRT scanline overlay */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px)',
+      }} />
+      {/* Bottom controls bar */}
+      <div className="absolute bottom-0 left-0 right-0 flex items-center gap-2 px-3 py-2" style={{
+        background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+      }}>
+        <button onClick={() => { const v = videoRef.current; if(v) v.paused ? v.play() : v.pause(); }}
+          className="text-[0.6rem] font-mono px-2 py-1 rounded border border-white/20 bg-white/10 text-white/80 hover:bg-white/20 transition-all select-none">
+          {isPlaying ? '❚❚' : '▶'}
+        </button>
+        <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-full bg-emerald-400/70 rounded-full" style={{ width: '30%' }} />
+        </div>
+        <span className="text-[0.5rem] font-mono text-white/50">0:00 / 0:00</span>
+      </div>
+    </div>
   );
 }
 
@@ -1536,6 +1562,42 @@ function NousBoySection({
               </div>
             </div>
 
+            {/* Game Cartridge */}
+            <div className="flex justify-center mb-3" style={{ perspective: '600px' }}>
+              <div className="relative" style={{ width: 120, height: 80, transform: 'rotateX(5deg)' }}>
+                {/* Cartridge body */}
+                <div className="absolute inset-0 rounded-sm" style={{
+                  background: `linear-gradient(135deg, ${activeGame.color}33, ${activeGame.color}66)`,
+                  border: `2px solid ${activeGame.color}88`,
+                  boxShadow: `0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 20px ${activeGame.color}22`,
+                }}>
+                  {/* Cartridge label */}
+                  <div className="absolute inset-3 rounded-sm flex flex-col items-center justify-center" style={{
+                    background: `linear-gradient(180deg, ${activeGame.color}11, ${activeGame.color}22)`,
+                    border: `1px solid ${activeGame.color}44`,
+                  }}>
+                    <span className="text-[0.45rem] font-mono font-bold uppercase tracking-wider" style={{ color: activeGame.color, textShadow: `0 0 8px ${activeGame.color}44` }}>
+                      {activeGame.name}
+                    </span>
+                    <div className="w-8 h-px mt-1" style={{ background: `${activeGame.color}44` }} />
+                    <span className="text-[0.3rem] font-mono tracking-wider uppercase" style={{ color: `${activeGame.color}66` }}>
+                      NOUS BOY
+                    </span>
+                  </div>
+                  {/* Notch */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-2 rounded-sm" style={{
+                    background: '#1a1a1a',
+                    border: `1px solid ${activeGame.color}44`,
+                  }} />
+                </div>
+                {/* Shadow */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-2 rounded-full" style={{
+                  background: `radial-gradient(ellipse, ${activeGame.color}22, transparent)`,
+                  filter: 'blur(4px)',
+                }} />
+              </div>
+            </div>
+
             {/* Controls row — 3-column grid: D-pad | SELECT+START | A+B */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 0 }}>
 
@@ -1658,17 +1720,15 @@ function NousBoySection({
               <button
                 key={game.id}
                 onClick={() => setActiveGameId(game.id)}
-                className={`relative flex-shrink-0 flex items-center gap-2 px-3 h-8 rounded-full font-mono text-[0.63rem] border transition-all select-none active:scale-95 whitespace-nowrap
+                className={`relative flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm font-mono text-[0.58rem] border transition-all select-none active:scale-95 whitespace-nowrap
                   ${activeGameIdx === i
-                    ? 'bg-sky-500/10 text-foreground border-sky-500/50'
-                    : 'bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted hover:text-foreground hover:border-foreground/20'
+                    ? 'border-current/50'
+                    : 'border-border/30 bg-muted/20 text-muted-foreground hover:bg-muted/40 hover:text-foreground'
                   }`}
+                style={activeGameIdx === i ? { borderColor: game.color + '88', background: game.color + '11', color: game.color, boxShadow: `0 0 12px ${game.color}22, inset 0 0 8px ${game.color}08` } : {}}
               >
-                <GameIcon icon={game.icon} size={13} />
+                <span className="inline-block w-2 h-2 rounded-sm" style={{ background: game.color, boxShadow: `0 0 6px ${game.color}66` }} />
                 <span>{game.name}</span>
-                {activeGameIdx === i && (
-                  <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-sky-400 shadow-[0_0_5px_rgba(56,189,248,0.9)]" />
-                )}
               </button>
             ))}
           </div>
@@ -1702,6 +1762,36 @@ function NousBoySection({
             {activeGame.id === 'g6' && (
               <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
                 <span className="text-muted-foreground/80">2048</span> · ← → ↑ ↓ Slide tiles · Combine matching numbers · Reach 2048 to win · Opens at play2048.co
+              </p>
+            )}
+            {activeGame.id === 'g7' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Breakout</span> · ← → MOVE · Z · SPACE FIRE · First to clear all bricks wins · High score saved locally
+              </p>
+            )}
+            {activeGame.id === 'g8' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Asteroids</span> · ← → ROTATE · ↑ THRUSTER · SPACE FIRE · Avoid asteroids · Score 500 for bonus wave
+              </p>
+            )}
+            {activeGame.id === 'g9' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Pac-Man</span> · ARROWS MOVE · Z · SPACE · Collect dots · Power pills freeze ghosts
+              </p>
+            )}
+            {activeGame.id === 'g10' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">NES Emulator</span> · Paste ROM URL · Click LOAD · Arrow keys + Z/X to play
+              </p>
+            )}
+            {activeGame.id === 'g11' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Centipede</span> · Mouse aim · Click/shoot · Destroy segments · Watch the split
+              </p>
+            )}
+            {activeGame.id === 'g12' && (
+              <p className="text-[0.6rem] font-mono text-muted-foreground/60 tracking-wide">
+                <span className="text-muted-foreground/80">Space Invaders</span> · ← → MOVE · Z/SPACE SHOOT · Defend Earth · High score saved
               </p>
             )}
           </div>
