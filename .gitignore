@@ -23,3 +23,6 @@ dashboard/.hermes/
 
 dashboard/dist/
 dashboard/.hermes/
+
+# Local restore points — 626MB of bundles, never belongs in the repo
+dashboard/backup/
