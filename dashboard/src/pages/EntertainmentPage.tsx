@@ -825,7 +825,7 @@ function VideoPlayer({ src, isPlaying, channelId, volume, isMuted }: { src: stri
         key={src}
         ref={videoRef}
         src={src}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-contain"
         loop
         playsInline
         autoPlay

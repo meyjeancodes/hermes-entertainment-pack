@@ -26,19 +26,43 @@ _style.textContent = `/* Music Portal page styles — Hermes branding */
 `;
 document.head.appendChild(_style);
 
-// Import React hooks and page components (bundled)
-import React, { useState } from 'react';
-import EntertainmentPage from './pages/EntertainmentPage';
-import DiscordPage from './pages/DiscordPage';
-import GalleryPage from './pages/GalleryPage';
-import MusicPortalPage from './pages/MusicPortalPage';
+// Import React hooks and page components (lazy-loaded for smaller initial bundle)
+import React, { useState, Suspense, lazy } from 'react';
+const EntertainmentPage = lazy(() => import('./pages/EntertainmentPage'));
+const DiscordPage = lazy(() => import('./pages/DiscordPage'));
+const GalleryPage = lazy(() => import('./pages/GalleryPage'));
+const MusicPortalPage = lazy(() => import('./pages/MusicPortalPage'));
+const StreamingPage = lazy(() => import('./pages/StreamingPage'));
+const HubPage = lazy(() => import('./pages/HubPage'));
+const MusicStudioPage = lazy(() => import('./pages/MusicStudioPage'));
+const SocialPage = lazy(() => import('./pages/SocialPage'));
 
-type TabId = 'entertainment' | 'discord' | 'gallery' | 'music';
+class PageErrorBoundary extends React.Component<{ children: React.ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: '2rem', color: '#fca5a5', fontFamily: 'monospace' }}>
+          <h3 style={{ margin: '0 0 .5rem' }}>Page failed to load</h3>
+          <pre style={{ whiteSpace: 'pre-wrap', opacity: .7 }}>{this.state.error.message}</pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+type TabId = 'entertainment' | 'discord' | 'gallery' | 'music' | 'streaming' | 'hub' | 'musicstudio' | 'social';
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'entertainment', label: 'TV & Games' },
+  { id: 'streaming',     label: 'Streaming' },
+  { id: 'musicstudio',   label: 'Music Studio' },
+  { id: 'hub',           label: 'Hub' },
   { id: 'discord',       label: 'Discord' },
   { id: 'gallery',       label: 'Gallery' },
+  { id: 'social',        label: 'Social' },
   { id: 'music',        label: 'Music' },
 ];
 
@@ -84,16 +108,16 @@ function EntertainmentApp() {
   return (
     <div className="w-full min-h-screen bg-background text-foreground">
       {/* Tab bar */}
-      <div className="flex items-center gap-1 px-4 border-b border-border/30 bg-background/60 backdrop-blur-sm sticky top-0 z-10">
+      <div className="flex items-center gap-1 px-4 border-b border-border/30 bg-background/60 backdrop-blur-sm sticky top-0 z-10 overflow-x-auto no-scrollbar">
         {TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={[
-              'flex items-center gap-1.5 px-4 py-3 text-xs font-mono tracking-widest uppercase transition-all border-b-2 -mb-px whitespace-nowrap',
+              'flex items-center gap-1.5 px-3 py-3 text-xs font-mono tracking-widest uppercase transition-all border-b-2 -mb-px whitespace-nowrap shrink-0',
               activeTab === tab.id
-                ? 'border-midground text-midground'
-                : 'border-transparent text-midground/50 hover:text-midground/80',
+                ? 'border-foreground text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground',
             ].join(' ')}
           >
             <TabIcon id={tab.id} />
@@ -103,10 +127,18 @@ function EntertainmentApp() {
       </div>
 
       {/* Tab panels */}
-      {activeTab === 'entertainment' && <EntertainmentPage />}
-      {activeTab === 'discord'       && <DiscordPage />}
-      {activeTab === 'gallery'       && <GalleryPage />}
-      {activeTab === 'music'        && <MusicPortalPage />}
+      <PageErrorBoundary>
+        <Suspense fallback={<div style={{ padding: '2rem', opacity: .5 }}>Loading…</div>}>
+          {activeTab === 'entertainment' && <EntertainmentPage />}
+          {activeTab === 'streaming'     && <StreamingPage />}
+          {activeTab === 'musicstudio'   && <MusicStudioPage />}
+          {activeTab === 'hub'           && <HubPage />}
+          {activeTab === 'discord'       && <DiscordPage />}
+          {activeTab === 'gallery'       && <GalleryPage />}
+          {activeTab === 'social'       && <SocialPage />}
+          {activeTab === 'music'        && <MusicPortalPage />}
+        </Suspense>
+      </PageErrorBoundary>
     </div>
   );
 }
