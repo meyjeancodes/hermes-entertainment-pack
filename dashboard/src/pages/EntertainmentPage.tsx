@@ -29,7 +29,7 @@ const CHANNELS: Channel[] = [
 const GAMEBOY_GAMES = [
   { id: "g1", name: "Pong",        src: `${PLUGIN_URL}/games/pong.html`,   icon: "pong", color: "#9ca3af" },
   { id: "g2", name: "Tetris",      src: `${PLUGIN_URL}/games/tetris.html`, icon: "tetris", color: "#60a5fa" },
-  { id: "g3", name: "Space Raid",  src: `${PLUGIN_URL}/games/space.html`,  icon: "space", color: "#4ade80" },
+  { id: "g3", name: "Space Raid",  src: `${PLUGIN_URL}/games/space.html`,  icon: "space", color: "#8CB4CE" },
   { id: "g4", name: "Flappy Bird", src: "https://flappybird.io",           icon: "flappy", color: "#fbbf24" },
   { id: "g5", name: "Snake",       src: `${PLUGIN_URL}/games/snake.html`,  icon: "snake", color: "#34d399" },
   { id: "g6", name: "2048",        src: `${PLUGIN_URL}/games/2048.html`,  icon: "2048", color: "#fb923c" },
@@ -198,10 +198,6 @@ export default function EntertainmentPage() {
 
   return (
     <div className="flex flex-col gap-8 h-full">
-      <h1 className="text-2xl font-bold uppercase tracking-widest text-foreground">
-        Entertainment
-      </h1>
-
       {/* TV UNIT */}
       <div className="flex flex-col items-center gap-10">
         <Card className="overflow-hidden border-border bg-background-elevated relative w-full max-w-3xl mx-auto">
@@ -222,7 +218,7 @@ export default function EntertainmentPage() {
                      }}>
                   {/* accent ring — ties to power/play colors */}
                   <div className="absolute inset-0 rounded-[28px] pointer-events-none"
-                       style={{ boxShadow: 'inset 0 0 0 1px rgba(56,189,248,0.10)' }} />
+                       style={{ boxShadow: 'inset 0 0 0 1px rgba(32,131,172,0.10)' }} />
 
                   {/* Top accent strip */}
                   <div className="absolute top-0 left-8 right-8 h-px rounded-full"
@@ -230,7 +226,7 @@ export default function EntertainmentPage() {
 
                   {/* Brand badge */}
                   <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
-                    <div className={`w-2.5 h-2.5 rounded-full transition-all ${powerOn ? 'bg-emerald-400 shadow-[0_0_10px_#4ade80]' : 'bg-red-600 shadow-[0_0_6px_#dc2626]'}`} />
+                    <div className={`w-2.5 h-2.5 rounded-full transition-all ${powerOn ? 'bg-emerald-400 shadow-[0_0_10px_#8CB4CE]' : 'bg-red-600 shadow-[0_0_6px_#dc2626]'}`} />
                     <span className="text-[0.6rem] font-mono tracking-[0.5em] uppercase font-bold" style={{ color: 'rgba(255,255,255,0.65)' }}>NOUS</span>
                   </div>
 
@@ -292,7 +288,7 @@ export default function EntertainmentPage() {
                           color: powerOn ? '#6ee7b7' : '#fca5a5',
                           boxShadow: powerOn ? '0 0 12px rgba(52,211,153,0.2)' : 'none',
                         }}>
-                        <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all ${powerOn ? 'bg-emerald-400 shadow-[0_0_6px_#4ade80]' : 'bg-red-500'}`} />
+                        <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all ${powerOn ? 'bg-emerald-400 shadow-[0_0_6px_#8CB4CE]' : 'bg-red-500'}`} />
                         <Power className="w-3.5 h-3.5" />
                       </button>
 
@@ -309,10 +305,10 @@ export default function EntertainmentPage() {
                         disabled={!isVideoChannel}
                         className="flex-shrink-0 flex items-center gap-2 px-5 h-10 rounded-full border-2 active:scale-95 transition-all select-none"
                         style={{
-                          background: 'rgba(56,189,248,0.18)',
-                          borderColor: 'rgba(56,189,248,0.45)',
+                          background: 'rgba(32,131,172,0.18)',
+                          borderColor: 'rgba(32,131,172,0.45)',
                           color: isVideoChannel ? '#bae6fd' : 'rgba(186,230,253,0.35)',
-                          boxShadow: isVideoChannel ? '0 0 18px rgba(56,189,248,0.2)' : 'none',
+                          boxShadow: isVideoChannel ? '0 0 18px rgba(32,131,172,0.2)' : 'none',
                           opacity: isVideoChannel ? 1 : 0.5,
                           cursor: isVideoChannel ? 'pointer' : 'not-allowed',
                         }}>
@@ -385,15 +381,15 @@ export default function EntertainmentPage() {
                           onClick={() => changeChannel(i)}
                           className="relative flex-shrink-0 flex items-center gap-1.5 font-mono text-[0.58rem] active:scale-95 transition-all select-none rounded-full px-2.5 h-7 border"
                           style={{
-                            background: activeIdx === i ? 'rgba(56,189,248,0.22)' : 'rgba(255,255,255,0.04)',
-                            borderColor: activeIdx === i ? 'rgba(56,189,248,0.55)' : 'rgba(255,255,255,0.08)',
+                            background: activeIdx === i ? 'rgba(32,131,172,0.22)' : 'rgba(255,255,255,0.04)',
+                            borderColor: activeIdx === i ? 'rgba(32,131,172,0.55)' : 'rgba(255,255,255,0.08)',
                             color: activeIdx === i ? '#e9d5ff' : 'rgba(255,255,255,0.38)',
-                            boxShadow: activeIdx === i ? '0 0 14px rgba(56,189,248,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
+                            boxShadow: activeIdx === i ? '0 0 14px rgba(32,131,172,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
                           }}>
                           <ChannelIcon channel={ch} size={10} />
                           <span>{String(i + 1).padStart(2, "0")}</span>
                           {activeIdx === i && (
-                            <span className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: '#38bdf8', boxShadow: '0 0 4px #38bdf8' }} />
+                            <span className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: '#2083AC', boxShadow: '0 0 4px #2083AC' }} />
                           )}
                         </button>
                       ))}
@@ -1490,7 +1486,7 @@ function NousBoySection({
     <div ref={sectionRef} className="flex flex-col items-center gap-0 w-full">
       {/* Section header */}
       <div className="w-full flex items-center gap-3 pb-4 pt-2">
-        <div className="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]" />
+        <div className="w-2 h-2 rounded-full bg-[#2083AC] shadow-[0_0_8px_rgba(32,131,172,0.8)]" />
         <h2 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">Nous Boy</h2>
         <div className="flex-1 h-px bg-border/30" />
         <span className="text-[0.6rem] font-mono text-muted-foreground/40 uppercase tracking-widest">
@@ -1519,7 +1515,7 @@ function NousBoySection({
                     borderColor: gbPower ? '#3a8a3a' : '#6a2020',
                     boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)',
                   }}>
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${gbPower ? 'bg-[#4ade80] shadow-[0_0_8px_#4ade80]' : 'bg-[#ef4444] shadow-[0_0_6px_#dc2626]'}`} />
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${gbPower ? 'bg-[#8CB4CE] shadow-[0_0_8px_#8CB4CE]' : 'bg-[#ef4444] shadow-[0_0_6px_#dc2626]'}`} />
                   <span className="text-[0.42rem] font-mono font-bold uppercase tracking-widest" style={{ color: gbPower ? '#86efac' : '#fca5a5' }}>PWR</span>
                 </button>
               </div>
@@ -1689,7 +1685,7 @@ function NousBoySection({
                 {GAMEBOY_GAMES.map((_, i) => (
                   <div key={i} className={`w-1.5 h-4 rounded-full transition-all
                     ${activeGameIdx === i
-                      ? 'bg-sky-400 shadow-[0_0_6px_rgba(56,189,248,0.6)]'
+                      ? 'bg-[#2083AC] shadow-[0_0_6px_rgba(32,131,172,0.6)]'
                       : 'bg-slate-700'}`} />
                 ))}
               </div>
