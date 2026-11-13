@@ -377,6 +377,13 @@ export default function EntertainmentPage() {
                           <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                         )}
                       </button>
+                      {/* Volume level */}
+                      <span
+                        className="w-9 text-center text-[0.55rem] font-mono tabular-nums"
+                        style={{ color: isVideoChannel ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.2)' }}
+                      >
+                        {isMuted ? 'MUTE' : `${Math.round(volume)}%`}
+                      </span>
                       {/* Vol+ */}
                       <button onClick={() => adjustVolume(10)} title="Volume Up"
                         disabled={!isVideoChannel}
@@ -439,8 +446,11 @@ export default function EntertainmentPage() {
                       </span>
                     </div>
                   ) : (
-                    <div className="w-full h-6 flex items-center justify-center text-[0.55rem] font-mono text-muted-foreground/30 uppercase tracking-wider">
-                      No video
+                    <div className="w-full h-6 flex items-center justify-center gap-2 text-[0.55rem] font-mono uppercase tracking-wider">
+                      <span className="text-muted-foreground/30">{String(activeIdx + 1).padStart(2, "0")}</span>
+                      <span className="text-muted-foreground/60 truncate max-w-[55%]">{activeChannel.name}</span>
+                      <span className="text-muted-foreground/25">·</span>
+                      <span className="text-muted-foreground/40">{activeChannel.type}</span>
                     </div>
                   )}
                 </div>
