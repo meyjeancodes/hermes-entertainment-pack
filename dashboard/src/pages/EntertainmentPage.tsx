@@ -21,7 +21,6 @@ const CHANNELS: Channel[] = [
   { id: "ch2", name: "Signal", type: "iframe", src: `${PLUGIN_URL}/public/twitter-embed.html`, color: "#0a0a1a" },
   { id: "ch3",  name: "Weather Retro", type: "iframe", src: `${PLUGIN_URL}/public/weather.html` },
   { id: "ch4", name: "Nous Network", type: "video", src: `${PLUGIN_URL}/public/NousNetwork.mp4`, poster: `${PLUGIN_URL}/branding/nous-network-ident.png`, color: "#0a0a1a" },
-  { id: "ch5",  name: "HNN Teletext",type: "canvas",  color: "#000033" },
   { id: "ch6", name: "Vapor FM", type: "iframe", src: `${PLUGIN_URL}/public/vapor.html?v=2` },
   { id: "ch7", name: "Ballad of Hermes", type: "iframe", src: `${PLUGIN_URL}/public/ballad-hermes.html`, color: "#0a0a1a" },
   { id: "ch8", name: "Nous Promo", type: "iframe", src: `${PLUGIN_URL}/public/channel-promo-tweet.html`, color: "#0a0a1a" },
@@ -44,6 +43,26 @@ const GAMEBOY_GAMES = [
 export default function EntertainmentPage() {
   const [activeChannelId, setActiveChannelId] = useState(CHANNELS[1].id);
   const [activeGameId, setActiveGameId] = useState<string>("g1");
+
+  // Channel favorites + TV Guide filter (persisted locally)
+  const [channelFavs, setChannelFavs] = useState<Set<string>>(() => {
+    try {
+      const raw = localStorage.getItem("entertainment.channel-favs");
+      return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+    } catch { return new Set(); }
+  });
+  const [guideFilter, setGuideFilter] = useState<"all" | "fav">("all");
+  const toggleChannelFav = (id: string) => {
+    setChannelFavs(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      try { localStorage.setItem("entertainment.channel-favs", JSON.stringify(Array.from(next))); } catch {}
+      return next;
+    });
+  };
+  const guideChannels = guideFilter === "fav"
+    ? CHANNELS.filter(ch => channelFavs.has(ch.id))
+    : CHANNELS;
   const [powerOn, setPowerOn] = useState(false);
   const [volume, setVolume] = useState(50);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -373,27 +392,6 @@ export default function EntertainmentPage() {
                       </button>
                     </div>
 
-                    {/* Channel pills — scrollable single row */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-                      {CHANNELS.map((ch, i) => (
-                        <button
-                          key={ch.id}
-                          onClick={() => changeChannel(i)}
-                          className="relative flex-shrink-0 flex items-center gap-1.5 font-mono text-[0.58rem] active:scale-95 transition-all select-none rounded-full px-2.5 h-7 border"
-                          style={{
-                            background: activeIdx === i ? 'rgba(32,131,172,0.22)' : 'rgba(255,255,255,0.04)',
-                            borderColor: activeIdx === i ? 'rgba(32,131,172,0.55)' : 'rgba(255,255,255,0.08)',
-                            color: activeIdx === i ? '#e9d5ff' : 'rgba(255,255,255,0.38)',
-                            boxShadow: activeIdx === i ? '0 0 14px rgba(32,131,172,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
-                          }}>
-                          <ChannelIcon channel={ch} size={10} />
-                          <span>{String(i + 1).padStart(2, "0")}</span>
-                          {activeIdx === i && (
-                            <span className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: '#2083AC', boxShadow: '0 0 4px #2083AC' }} />
-                          )}
-                        </button>
-                      ))}
-                    </div>
                   </div>{/* close control panel */}
 
                 </div>{/* close TV housing */}
@@ -458,29 +456,73 @@ export default function EntertainmentPage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-2.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-              {CHANNELS.map((ch, i) => (
-                <button
-                  key={ch.id}
-                  onClick={(e) => {
-                    if (e.shiftKey) clearChannelProgress(e, ch.id);
-                    else changeChannel(i);
-                  }}
-                  title={ch.name}
-                  className={`relative flex-shrink-0 flex items-center gap-1.5 px-3 h-8 rounded-full font-mono text-[0.63rem] border transition-all select-none active:scale-95 whitespace-nowrap
-                    ${activeIdx === i
-                      ? "bg-primary/10 text-foreground border-primary/50"
-                      : "bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted hover:text-foreground hover:border-foreground/20"
-                    }`}
-                >
-                  <ChannelIcon channel={ch} size={11} />
-                  <span className="font-semibold">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="opacity-75">{ch.name}</span>
-                  {activeIdx === i && (
-                    <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(74,222,128,0.9)]" />
-                  )}
-                </button>
-              ))}
+            <div className="flex items-center gap-1.5 px-3 py-2 border-b border-border/30">
+              <button
+                onClick={() => setGuideFilter("all")}
+                className="rounded-full border px-2.5 py-1 font-mono text-[0.55rem] uppercase tracking-widest transition-colors"
+                style={{
+                  background: guideFilter === "all" ? "rgba(32,131,172,0.16)" : "transparent",
+                  borderColor: guideFilter === "all" ? "rgba(32,131,172,0.5)" : "rgba(255,255,255,0.08)",
+                  color: guideFilter === "all" ? "var(--ui-text-primary)" : "rgba(255,255,255,0.4)",
+                }}
+              >
+                All {CHANNELS.length}
+              </button>
+              <button
+                onClick={() => setGuideFilter("fav")}
+                className="rounded-full border px-2.5 py-1 font-mono text-[0.55rem] uppercase tracking-widest transition-colors"
+                style={{
+                  background: guideFilter === "fav" ? "rgba(32,131,172,0.16)" : "transparent",
+                  borderColor: guideFilter === "fav" ? "rgba(32,131,172,0.5)" : "rgba(255,255,255,0.08)",
+                  color: guideFilter === "fav" ? "var(--ui-text-primary)" : "rgba(255,255,255,0.4)",
+                }}
+              >
+                Favorites {channelFavs.size}
+              </button>
+              {guideFilter === "fav" && guideChannels.length === 0 && (
+                <span className="text-[0.55rem] font-mono text-muted-foreground/50 uppercase tracking-widest">
+                  Star a channel to pin it here
+                </span>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 px-3 py-2.5">
+              {guideChannels.map((ch) => {
+                const i = CHANNELS.indexOf(ch);
+                const isActive = activeChannelId === ch.id;
+                const isFav = channelFavs.has(ch.id);
+                return (
+                  <button
+                    key={ch.id}
+                    onClick={(e) => {
+                      if (e.shiftKey) clearChannelProgress(e, ch.id);
+                      else changeChannel(i);
+                    }}
+                    title={ch.name}
+                    className={`relative flex-shrink-0 flex items-center gap-1.5 px-3 h-8 rounded-full font-mono text-[0.63rem] border transition-all select-none active:scale-95 whitespace-nowrap
+                      ${isActive
+                        ? "bg-primary/10 text-foreground border-primary/50"
+                        : "bg-muted/40 text-muted-foreground border-border/40 hover:bg-muted hover:text-foreground hover:border-foreground/20"
+                      }`}
+                  >
+                    <ChannelIcon channel={ch} size={11} />
+                    <span className="font-semibold">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="opacity-75">{ch.name}</span>
+                    <span
+                      role="button"
+                      aria-label={isFav ? "Unfavorite" : "Favorite"}
+                      title={isFav ? "Unfavorite" : "Favorite"}
+                      onClick={(e) => { e.stopPropagation(); toggleChannelFav(ch.id); }}
+                      className="ml-0.5 text-[0.55rem] leading-none hover:scale-110 transition-transform"
+                      style={{ color: isFav ? "#fbbf24" : "rgba(255,255,255,0.25)" }}
+                    >
+                      {isFav ? "★" : "☆"}
+                    </span>
+                    {isActive && (
+                      <div className="absolute -top-px left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(74,222,128,0.9)]" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
@@ -705,7 +747,6 @@ function ChannelRenderer({ channel, isPlaying, volume, isMuted }: { channel: Cha
         case "CORE BREATHWORK": return <CoreBreathworkCanvas canvasId={`canvas-${channel.id}`} />;
         case "NEO NEWSWIRE": return <NeoNewswireCanvas canvasId={`canvas-${channel.id}`} />;
         case "CHAOS MATRIX": return <ChaosMatrixCanvas canvasId={`canvas-${channel.id}`} />;
-        case "HNN Teletext": return <HNNTeletextCanvas />;
         case "Bloom Terminal": return <BloombergCanvas canvasId={`canvas-${channel.id}`} />;
         default: return <FallbackScreen name={channel.name} />;
       }
@@ -1496,7 +1537,7 @@ function NousBoySection({
 
       {/* GameBoy console — classic DMG-01 style */}
       <div className="flex justify-center mb-6">
-        <div style={{ width: 480 }}>
+        <div style={{ width: '100%', maxWidth: 480 }}>
           {/* Body — solid classic Game Boy gray */}
           <div className="relative rounded-[28px_28px_20px_20px] px-6 pt-4 pb-7"
                style={{
@@ -1691,7 +1732,7 @@ function NousBoySection({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-2.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+          <div className="flex flex-wrap items-center gap-1.5 px-3 py-2.5">
             {GAMEBOY_GAMES.map((game, i) => (
               <button
                 key={game.id}
@@ -1776,341 +1817,3 @@ function NousBoySection({
     </div>
   );
 }
-
-/* ─────────────── HNN Teletext ─────────────── */
-
-const HNN_TICKER = "◈ BREAKING: AI MODELS SURPASS HUMAN BENCHMARKS IN REASONING  ◈  S&P 500 CLOSES AT RECORD HIGH  ◈  FED HOLDS RATES — SIGNALS CUTS AHEAD  ◈  NOUS RESEARCH RELEASES HERMES-3 OPEN-SOURCE MODEL  ◈  SPACEX LAUNCHES 23 STARLINK SATELLITES  ◈  BITCOIN SURGES PAST $90K ON INSTITUTIONAL DEMAND  ◈  NVIDIA UNVEILS NEXT-GEN AI CHIP — SHARES SURGE 9%  ◈  CONGRESS PASSES INFRASTRUCTURE BILL  ◈  MAJOR BREAKTHROUGH IN FUSION ENERGY ANNOUNCED  ◈  ";
-
-const HNN_FALLBACK: Record<string, string[]> = {
-  top: [
-    "GLOBAL AI SAFETY SUMMIT REACHES LANDMARK AGREEMENT ON STANDARDS",
-    "FEDERAL RESERVE HOLDS RATES AS INFLATION EASES TO 2.4%",
-    "UN SECURITY COUNCIL VOTES ON MIDDLE EAST CEASEFIRE RESOLUTION",
-    "MAJOR CYBERATTACK DISRUPTS INFRASTRUCTURE ACROSS THREE NATIONS",
-    "RECORD HEATWAVE GRIPS SOUTHERN EUROPE — TEMPERATURES HIT 47°C",
-    "INTERNATIONAL SPACE STATION CREW COMPLETES HISTORIC SPACEWALK",
-    "PRESIDENT SIGNS EXECUTIVE ORDER ON CRITICAL INFRASTRUCTURE",
-  ],
-  world: [
-    "EUROPE: NATO SUMMIT CONCLUDES WITH INCREASED DEFENSE PLEDGES",
-    "ASIA: SOUTH KOREA ELECTIONS — OPPOSITION WINS PARLIAMENT",
-    "MIDEAST: DIPLOMATIC TALKS RESUME IN CAIRO — TRUCE HOLDS",
-    "AFRICA: AFRICAN UNION LAUNCHES $20B CLIMATE ADAPTATION FUND",
-    "AMERICAS: CANADA ANNOUNCES NEW IMMIGRATION REFORM PACKAGE",
-    "PACIFIC: AUSTRALIA REPORTS RECORD TRADE SURPLUS WITH ASIA",
-    "EUROPE: GERMANY UNVEILS €200B INDUSTRIAL TRANSFORMATION PLAN",
-  ],
-  business: [
-    "S&P 500 HITS ALL-TIME HIGH AS EARNINGS SEASON BEATS FORECASTS",
-    "FEDERAL RESERVE SIGNALS RATE CUTS AS INFLATION COOLS TO 2.4%",
-    "OIL PRICES SLIDE ON OPEC DISPUTE — BRENT CRUDE AT $78/BBL",
-    "AMAZON ANNOUNCES $5B INVESTMENT IN NEW DATA CENTER EXPANSION",
-    "SEMICONDUCTOR SECTOR SURGES ON STRONG AI CHIP DEMAND OUTLOOK",
-    "GLOBAL TRADE VOLUMES RISE 3.2% IN Q1 DESPITE TARIFF TENSIONS",
-    "EURO STRENGTHENS AS ECB HOLDS RATES — USD INDEX FALLS 0.4%",
-  ],
-  tech: [
-    "GOOGLE UNVEILS GEMINI ULTRA 2 WITH BREAKTHROUGH REASONING",
-    "OPENAI RELEASES NEW MODEL WITH EXTENDED 200K CONTEXT WINDOW",
-    "APPLE SILICON M4 DELIVERS 40% PERFORMANCE BOOST OVER PRIOR GEN",
-    "QUANTUM MILESTONE: IBM ACHIEVES STABLE 1000-QUBIT PROCESSOR",
-    "EU FINALIZES AI ACT ENFORCEMENT — FINES UP TO 7% OF REVENUE",
-    "STARTUP RAISES $500M TO DEPLOY HUMANOID ROBOTS IN WAREHOUSES",
-    "META RELEASES OPEN-SOURCE 70B PARAMETER MULTIMODAL MODEL",
-  ],
-  sports: [
-    "NBA PLAYOFFS: CELTICS ADVANCE TO CONFERENCE FINALS IN 5",
-    "NFL DRAFT: TEAMS TRADE UP FOR TOP QUARTERBACK PROSPECTS",
-    "MLB: YANKEES EXTEND WIN STREAK TO 9 — LEAD AL EAST BY 3",
-    "PREMIER LEAGUE: ARSENAL CLOSE GAP ON LEADERS WITH 3-1 WIN",
-    "F1: VERSTAPPEN TAKES POLE IN MONACO — RACE SUNDAY 3PM EST",
-    "TENNIS: DJOKOVIC WITHDRAWS FROM FRENCH OPEN — KNEE INJURY",
-    "GOLF: MCILROY LEADS BY TWO STROKES HEADING INTO FINAL ROUND",
-  ],
-};
-
-const HNN_PAGES = [
-  { num: 100, title: "HNN INDEX",      cat: "top",      accent: "#FFE066", strip: "#1a0a00" },
-  { num: 101, title: "HEADLINE NEWS",  cat: "top",      accent: "#FF6B6B", strip: "#1a0000" },
-  { num: 200, title: "WORLD REPORT",   cat: "world",    accent: "#4DFFFF", strip: "#00131a" },
-  { num: 300, title: "MARKETS",        cat: "business", accent: "#50FF9A", strip: "#001a08" },
-  { num: 400, title: "TECHNOLOGY",     cat: "tech",     accent: "#FFAA44", strip: "#1a0800" },
-  { num: 500, title: "SPORTS",         cat: "sports",   accent: "#FF88CC", strip: "#1a0012" },
-];
-
-const HNN_INIT_PRICES = [
-  { s: "S&P 500",  p: 5847.32,  c:  0.74 },
-  { s: "NASDAQ",   p: 18943.21, c:  1.12 },
-  { s: "DOW",      p: 42318.65, c:  0.31 },
-  { s: "NVIDIA",   p: 142.86,   c:  3.24 },
-  { s: "APPLE",    p: 213.42,   c:  0.55 },
-  { s: "TESLA",    p: 248.77,   c: -1.32 },
-  { s: "MSFT",     p: 415.20,   c:  0.92 },
-  { s: "BTC/USD",  p: 89542.10, c:  2.41 },
-  { s: "ETH/USD",  p: 3284.55,  c:  1.87 },
-  { s: "SOL/USD",  p: 182.33,   c:  4.12 },
-];
-
-const HNN_REGION_COLORS: Record<string, string> = {
-  "EUROPE:": "#4DFFFF", "ASIA:": "#FFE066", "MIDEAST:": "#FFAA44",
-  "AFRICA:": "#50FF9A", "AMERICAS:": "#FF88CC", "PACIFIC:": "#CC99FF",
-};
-
-function HNNTeletextCanvas() {
-  const [pidx, setPidx] = useState(0);
-  const [now, setNow] = useState(new Date());
-  const [blink, setBlink] = useState(true);
-  const [flash, setFlash] = useState(false);
-  const [news, setNews] = useState<Record<string, string[]>>(HNN_FALLBACK);
-  const [prices, setPrices] = useState(HNN_INIT_PRICES);
-  const [tickerText, setTickerText] = useState(HNN_TICKER);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const tickRef = useRef<HTMLSpanElement>(null);
-  const raf = useRef(0);
-  const pg = HNN_PAGES[pidx];
-
-  const MONO: React.CSSProperties = { fontFamily:'"Courier New",Courier,monospace', fontWeight:700 };
-
-  useEffect(() => { const iv = setInterval(() => setNow(new Date()), 1000); return () => clearInterval(iv); }, []);
-  useEffect(() => { const iv = setInterval(() => setBlink(b => !b), 700); return () => clearInterval(iv); }, []);
-  useEffect(() => { const iv = setInterval(() => setPidx(i => (i + 1) % HNN_PAGES.length), 13000); return () => clearInterval(iv); }, []);
-  useEffect(() => {
-    const iv = setInterval(() => setPrices(prev => prev.map(p => ({
-      ...p,
-      p: p.p * (1 + (Math.random() - 0.499) * 0.003),
-      c: parseFloat((p.c + (Math.random() - 0.5) * 0.1).toFixed(2)),
-    }))), 2500);
-    return () => clearInterval(iv);
-  }, []);
-
-  const changePage = (i: number) => {
-    setFlash(true);
-    setTimeout(() => { setPidx(i); setFlash(false); }, 70);
-  };
-
-  useEffect(() => {
-    const el = tickRef.current; const wrap = wrapRef.current;
-    if (!el || !wrap) return;
-    let pos = 0;
-    const loop = () => {
-      pos += 1.2;
-      if (pos > el.offsetWidth + wrap.clientWidth) pos = 0;
-      el.style.transform = `translateX(${wrap.clientWidth - pos}px)`;
-      raf.current = requestAnimationFrame(loop);
-    };
-    raf.current = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf.current);
-  }, []);
-
-  useEffect(() => {
-    (['top', 'world', 'business', 'tech', 'sports'] as const).forEach(async cat => {
-      try {
-        const tok = (window as any).__HERMES_SESSION_TOKEN__;
-        const h: Record<string, string> = tok ? { 'X-Hermes-Session-Token': tok } : {};
-        const r = await fetch(`/api/plugins/hermes-entertainment-pack/teletext/news?category=${cat}`, { headers: h });
-        if (r.ok) {
-          const d = await r.json();
-          if (d.headlines?.length >= 3) {
-            setNews(prev => ({ ...prev, [cat]: d.headlines }));
-            if (cat === 'top') {
-              setTickerText(d.headlines.map((hl: string) => `◈ ${hl.toUpperCase()}  `).join('  '));
-            }
-          }
-        }
-      } catch {}
-    });
-  }, []);
-
-  const lines = news[pg.cat] ?? HNN_FALLBACK[pg.cat as keyof typeof HNN_FALLBACK] ?? [];
-  const ts = now.toLocaleTimeString('en-US', { hour12: false });
-  const ds = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }).toUpperCase();
-
-  /* reusable row strip */
-  const Row = ({ bg, children, py=3 }: { bg:string; children:React.ReactNode; py?:number }) => (
-    <div style={{ background:bg, padding:`${py}px 10px`, flexShrink:0 }}>{children}</div>
-  );
-
-  return (
-    <div ref={wrapRef} style={{ ...MONO, position:'absolute', inset:0, background:'#000018', color:'#fff', overflow:'hidden', display:'flex', flexDirection:'column', userSelect:'none', fontSize:12 }}>
-
-      {flash && <div style={{ position:'absolute', inset:0, background:'#fff', zIndex:99, opacity:0.55, pointerEvents:'none' }} />}
-
-      {/* ══ MASTHEAD ══ */}
-      <div style={{ background:'linear-gradient(90deg,#1a0050 0%,#000080 40%,#001a60 100%)', display:'flex', alignItems:'stretch', flexShrink:0, borderBottom:'2px solid #FFE06688' }}>
-        {/* HNN Logo block */}
-        <div style={{ background:'#FFE066', color:'#000', fontFamily:'"Arial Black",Arial,sans-serif', fontWeight:900, fontSize:20, padding:'4px 10px', letterSpacing:'-0.02em', display:'flex', alignItems:'center', flexShrink:0, lineHeight:1 }}>HNN</div>
-        <div style={{ width:2, background:'#FFE066', flexShrink:0 }} />
-        <div style={{ flex:1, display:'flex', flexDirection:'column', justifyContent:'center', padding:'3px 10px' }}>
-          <div style={{ color:'#FFE066', fontSize:9, letterSpacing:'0.3em', lineHeight:1 }}>HERMES NEWS NETWORK</div>
-          <div style={{ color:'rgba(255,224,102,0.45)', fontSize:8, letterSpacing:'0.18em', marginTop:2 }}>TELETEXT INFORMATION SERVICE</div>
-        </div>
-        <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', justifyContent:'center', padding:'3px 10px', gap:2 }}>
-          <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-            <span style={{ background:blink?'#FF4444':'transparent', color:'#fff', fontSize:8, padding:'0 4px', letterSpacing:'0.15em', transition:'background 0.1s' }}>● LIVE</span>
-            <span style={{ color:'#FFE066', fontSize:11, letterSpacing:'0.05em', fontVariantNumeric:'tabular-nums' }}>P{pg.num}</span>
-          </div>
-          <span style={{ color:'rgba(255,224,102,0.5)', fontSize:9, fontVariantNumeric:'tabular-nums' }}>{ts}</span>
-        </div>
-      </div>
-
-      {/* ══ DATE + PAGE SELECTOR ══ */}
-      <div style={{ background:'#0a0030', display:'flex', alignItems:'center', padding:'2px 10px', gap:8, flexShrink:0, borderBottom:'1px solid rgba(255,224,102,0.15)' }}>
-        <span style={{ color:'rgba(100,160,255,0.7)', fontSize:9, letterSpacing:'0.12em', flex:1 }}>{ds}</span>
-        <div style={{ display:'flex', gap:2 }}>
-          {HNN_PAGES.map((p, i) => (
-            <button key={p.num} onClick={() => changePage(i)}
-              style={{ background:i===pidx?p.accent:'rgba(255,255,255,0.07)', color:i===pidx?'#000':'rgba(255,255,255,0.4)', border:'none', cursor:'pointer', padding:'1px 5px', fontSize:9, fontFamily:'"Courier New",monospace', fontWeight:900, borderRadius:1, lineHeight:1.6, transition:'all 0.12s' }}>
-              {p.num}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ══ PAGE TITLE STRIP ══ */}
-      <div style={{ background:pg.strip, borderBottom:`2px solid ${pg.accent}`, padding:'4px 10px', display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
-        <div style={{ background:pg.accent, color:'#000', fontSize:8, fontWeight:900, padding:'1px 6px', letterSpacing:'0.2em', lineHeight:1.7, flexShrink:0 }}>
-          {pg.num===300?'LIVE MKT':pg.num===500?'SCORES':pg.num===100?'INDEX':'LATEST'}
-        </div>
-        <span style={{ color:pg.accent, fontSize:14, fontWeight:900, letterSpacing:'0.14em', flex:1, textShadow:`0 0 18px ${pg.accent}66` }}>{pg.title}</span>
-        <span style={{ color:'rgba(255,255,255,0.18)', fontSize:8, letterSpacing:'0.1em' }}>HNN.NET</span>
-      </div>
-
-      {/* ══ CONTENT ══ */}
-      <div style={{ flex:1, overflow:'hidden', display:'flex', flexDirection:'column' }}>
-
-        {/* INDEX 100 */}
-        {pg.num === 100 && (
-          <>
-            {/* Top headline highlighted */}
-            <div style={{ background:'#1a0020', borderBottom:'1px solid #FFE06633', padding:'6px 10px' }}>
-              <div style={{ color:'#FF6B6B', fontSize:8, letterSpacing:'0.22em', marginBottom:3 }}>◈ BREAKING NOW</div>
-              <div style={{ color:'#FFE066', fontSize:13, lineHeight:1.35, fontWeight:900 }}>{(lines[0]||'').toUpperCase()}</div>
-            </div>
-            {/* Menu */}
-            {[
-              { num:101, label:'HEADLINE NEWS',      sub:'TOP STORIES',    accent:'#FF6B6B' },
-              { num:200, label:'WORLD REPORT',        sub:'INTERNATIONAL',  accent:'#4DFFFF' },
-              { num:300, label:'MARKETS & FINANCE',   sub:'LIVE DATA',      accent:'#50FF9A' },
-              { num:400, label:'TECHNOLOGY',          sub:'AI & SCIENCE',   accent:'#FFAA44' },
-              { num:500, label:'SPORTS',              sub:'SCORES & NEWS',  accent:'#FF88CC' },
-            ].map((item, ii) => (
-              <div key={item.num}
-                onClick={() => changePage(HNN_PAGES.findIndex(p=>p.num===item.num))}
-                style={{ display:'flex', alignItems:'center', gap:0, cursor:'pointer', background:ii%2===0?'rgba(255,255,255,0.025)':'transparent', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ background:item.accent, color:'#000', fontWeight:900, fontSize:10, padding:'5px 8px', minWidth:36, textAlign:'center', lineHeight:1, flexShrink:0 }}>{item.num}</div>
-                <div style={{ width:3, background:`${item.accent}44`, alignSelf:'stretch', flexShrink:0 }} />
-                <span style={{ color:'#fff', fontSize:12, padding:'5px 8px', flex:1, letterSpacing:'0.04em' }}>{item.label}</span>
-                <span style={{ color:item.accent, fontSize:8, letterSpacing:'0.14em', padding:'0 10px', opacity:0.65 }}>{item.sub} ›</span>
-              </div>
-            ))}
-            <div style={{ padding:'5px 10px', color:'rgba(255,255,255,0.2)', fontSize:8, letterSpacing:'0.14em', marginTop:'auto' }}>
-              AUTO-ROTATE ON · SELECT PAGE ABOVE · FASTEXT BELOW
-            </div>
-          </>
-        )}
-
-        {/* NEWS 101 */}
-        {pg.num === 101 && lines.map((h, i) => (
-          <div key={i} style={{ display:'flex', alignItems:'stretch', background:i===0?'#1a0010':i%2===0?'rgba(255,255,255,0.02)':'transparent', borderBottom:`1px solid ${i===0?'#FF6B6B44':'rgba(255,255,255,0.05)'}` }}>
-            <div style={{ background:i===0?'#FF6B6B':i===1?'#88334488':i<4?'rgba(255,107,107,0.15)':'transparent', width:4, flexShrink:0 }} />
-            <div style={{ padding:'5px 8px', display:'flex', gap:7, alignItems:'flex-start', flex:1 }}>
-              <span style={{ color:i===0?'#FF6B6B':i===1?'rgba(255,107,107,0.6)':'rgba(255,255,255,0.2)', fontSize:i===0?14:10, flexShrink:0, lineHeight:1.4 }}>{i===0?'◈':i===1?'▶':'·'}</span>
-              <span style={{ color:i===0?'#FFE066':i<3?'#fff':'rgba(180,200,255,0.6)', fontSize:i===0?13:i<3?11:10, lineHeight:1.45, fontWeight:i===0?900:i<3?700:400 }}>{h.toUpperCase()}</span>
-            </div>
-          </div>
-        ))}
-
-        {/* WORLD 200 */}
-        {pg.num === 200 && lines.map((h, i) => {
-          const rk = Object.keys(HNN_REGION_COLORS).find(k => h.toUpperCase().startsWith(k));
-          const rc = rk ? HNN_REGION_COLORS[rk] : null;
-          const rl = rk ? rk.replace(':','') : null;
-          const txt = rk ? h.toUpperCase().replace(rk.toUpperCase(),'').trim() : h.toUpperCase();
-          return (
-            <div key={i} style={{ display:'flex', alignItems:'stretch', background:i%2===0?'rgba(0,30,40,0.5)':'transparent', borderBottom:'1px solid rgba(77,255,255,0.08)' }}>
-              {rc && <div style={{ background:`${rc}22`, width:3, flexShrink:0 }} />}
-              <div style={{ padding:'5px 8px', display:'flex', gap:7, alignItems:'flex-start', flex:1 }}>
-                {rl
-                  ? <div style={{ background:rc!, color:'#000', fontSize:7, fontWeight:900, padding:'2px 5px', alignSelf:'flex-start', lineHeight:1.5, flexShrink:0, marginTop:1, letterSpacing:'0.1em' }}>{rl}</div>
-                  : <span style={{ color:'rgba(77,255,255,0.3)', fontSize:9, flexShrink:0 }}>◈</span>
-                }
-                <span style={{ color:i===0?'#FFE066':'rgba(220,240,255,0.82)', fontSize:i===0?12:11, lineHeight:1.4, fontWeight:i===0?900:400 }}>{txt}</span>
-              </div>
-            </div>
-          );
-        })}
-
-        {/* MARKETS 300 */}
-        {pg.num === 300 && (
-          <div style={{ display:'flex', flex:1, overflow:'hidden' }}>
-            {/* Price table */}
-            <div style={{ flex:1, display:'flex', flexDirection:'column' }}>
-              <div style={{ background:'#001a08', padding:'3px 8px', borderBottom:'1px solid #50FF9A33' }}>
-                <span style={{ color:'#50FF9A', fontSize:8, letterSpacing:'0.22em' }}>◈ LIVE MARKETS</span>
-              </div>
-              {prices.map((q, i) => (
-                <div key={q.s} style={{ display:'flex', alignItems:'center', padding:'3px 8px', background:i%2===0?'rgba(0,40,15,0.4)':'transparent', borderBottom:'1px solid rgba(80,255,154,0.06)' }}>
-                  <span style={{ color:'#FFE066', fontSize:10, minWidth:58, letterSpacing:'0.02em' }}>{q.s}</span>
-                  <span style={{ color:'#fff', fontSize:11, flex:1, fontVariantNumeric:'tabular-nums', textAlign:'right', letterSpacing:'0.02em' }}>
-                    {q.p >= 10000 ? q.p.toFixed(0) : q.p >= 1000 ? q.p.toFixed(0) : q.p.toFixed(2)}
-                  </span>
-                  <div style={{ minWidth:60, textAlign:'right' }}>
-                    <span style={{ color:q.c>=0?'#50FF9A':'#FF5555', fontSize:10, fontWeight:900 }}>
-                      {q.c>=0?'▲':'▼'} {Math.abs(q.c).toFixed(2)}%
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {/* Business headlines */}
-            <div style={{ width:1, background:'rgba(80,255,154,0.15)', flexShrink:0 }} />
-            <div style={{ width:'38%', display:'flex', flexDirection:'column' }}>
-              <div style={{ background:'#001a08', padding:'3px 8px', borderBottom:'1px solid #4DFFFF33' }}>
-                <span style={{ color:'#4DFFFF', fontSize:8, letterSpacing:'0.22em' }}>◈ BIZ WIRE</span>
-              </div>
-              {lines.slice(0,6).map((h,i) => (
-                <div key={i} style={{ padding:'4px 8px', borderBottom:'1px solid rgba(255,255,255,0.05)', background:i%2===0?'rgba(0,20,30,0.4)':'transparent' }}>
-                  <span style={{ color:i===0?'#fff':'rgba(190,215,255,0.65)', fontSize:9, lineHeight:1.4, display:'block' }}>{h.toUpperCase()}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* TECH 400 */}
-        {pg.num === 400 && lines.map((h, i) => (
-          <div key={i} style={{ display:'flex', alignItems:'stretch', background:i===0?'rgba(26,12,0,0.8)':i%2===0?'rgba(255,170,68,0.03)':'transparent', borderBottom:`1px solid ${i===0?'#FFAA4444':'rgba(255,170,68,0.07)'}` }}>
-            <div style={{ background:i===0?'#FFAA44':i<3?`#FFAA44${i===1?'66':'33'}`:'transparent', width:3, flexShrink:0 }} />
-            <div style={{ padding:'5px 8px', display:'flex', gap:7, alignItems:'flex-start', flex:1 }}>
-              <span style={{ color:i===0?'#FFAA44':i<3?'rgba(255,170,68,0.5)':'rgba(255,255,255,0.2)', fontSize:i===0?13:10, flexShrink:0 }}>{i===0?'◈':i===1?'▶':'·'}</span>
-              <span style={{ color:i===0?'#FFE066':i<3?'#fff':'rgba(190,200,255,0.55)', fontSize:i===0?13:i<3?11:10, lineHeight:1.45, fontWeight:i===0?900:i<3?700:400 }}>{h.toUpperCase()}</span>
-            </div>
-          </div>
-        ))}
-
-        {/* SPORTS 500 */}
-        {pg.num === 500 && lines.map((h, i) => (
-          <div key={i} style={{ display:'flex', alignItems:'stretch', background:i===0?'rgba(26,0,18,0.8)':i%2===0?'rgba(255,136,204,0.03)':'transparent', borderBottom:`1px solid ${i===0?'#FF88CC44':'rgba(255,136,204,0.07)'}` }}>
-            <div style={{ background:i===0?'#FF88CC':i<3?`#FF88CC${i===1?'55':'28'}`:'transparent', width:3, flexShrink:0 }} />
-            <div style={{ padding:'5px 8px', display:'flex', gap:7, alignItems:'flex-start', flex:1 }}>
-              <span style={{ color:i===0?'#FF88CC':i<3?'rgba(255,136,204,0.5)':'rgba(255,255,255,0.2)', fontSize:i===0?13:10, flexShrink:0 }}>{i===0?'◈':i===1?'▶':'·'}</span>
-              <span style={{ color:i===0?'#FFE066':i<3?'#fff':'rgba(220,190,255,0.55)', fontSize:i===0?13:i<3?11:10, lineHeight:1.45, fontWeight:i===0?900:i<3?700:400 }}>{h.toUpperCase()}</span>
-            </div>
-          </div>
-        ))}
-
-      </div>
-
-      {/* ══ TICKER ══ */}
-      <div style={{ background:'#0d0030', borderTop:'1px solid rgba(255,224,102,0.3)', display:'flex', alignItems:'center', height:18, overflow:'hidden', flexShrink:0 }}>
-        <div style={{ background:'#FFE066', color:'#000', fontWeight:900, padding:'0 8px', fontSize:10, whiteSpace:'nowrap', height:'100%', display:'flex', alignItems:'center', letterSpacing:'0.08em', flexShrink:0 }}>◈ HNN</div>
-        <div style={{ flex:1, overflow:'hidden', position:'relative', height:'100%' }}>
-          <span ref={tickRef} style={{ position:'absolute', top:'50%', left:0, transform:'translateY(-50%)', whiteSpace:'nowrap', fontSize:10, color:'rgba(255,230,100,0.85)', fontWeight:600, letterSpacing:'0.04em', willChange:'transform' }}>
-            {tickerText}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-

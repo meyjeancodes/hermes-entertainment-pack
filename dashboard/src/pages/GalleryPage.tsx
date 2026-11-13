@@ -1,7 +1,6 @@
 import GalleryFullPage from "@/components/GalleryFullPage";
 
 const SIBLINGS = [
-  { id: "music-studio", name: "Music Studio" },
   { id: "spotify", name: "Spotify" },
   { id: "spotify-popover", name: "Spotify Popover" },
   { id: "hermes-social", name: "Hermes Social" },
