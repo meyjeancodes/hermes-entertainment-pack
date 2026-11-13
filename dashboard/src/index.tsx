@@ -3,6 +3,7 @@
 // Import React hooks and page components (lazy-loaded for smaller initial bundle)
 import React, { useState, Suspense, lazy } from 'react';
 const EntertainmentPage = lazy(() => import('./pages/EntertainmentPage'));
+const StreamingPage = lazy(() => import('./pages/StreamingPage'));
 const MusicPortalPage = lazy(() => import('./pages/MusicPortalPage'));
 const SocialTab = lazy(() => import('./pages/SocialTab'));
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
@@ -23,10 +24,11 @@ class PageErrorBoundary extends React.Component<{ children: React.ReactNode }, {
   }
 }
 
-type TabId = 'entertainment' | 'music' | 'social' | 'gallery';
+type TabId = 'entertainment' | 'streaming' | 'music' | 'social' | 'gallery';
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'entertainment', label: 'TV & Games' },
+  { id: 'streaming',     label: 'Streaming' },
   { id: 'music',         label: 'Music' },
   { id: 'social',        label: 'Social' },
   { id: 'gallery',       label: 'Gallery' },
@@ -41,6 +43,13 @@ function TabIcon({ id, size = 13 }: { id: TabId; size?: number }) {
         <svg width={s} height={s} viewBox="0 0 24 24" {...stroke}>
           <rect x="2" y="3" width="20" height="14" rx="2" />
           <path d="M8 21h8M12 17v4" />
+        </svg>
+      );
+    case 'streaming':
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" {...stroke}>
+          <polygon points="23 7 16 12 23 17 23 7" />
+          <rect x="1" y="5" width="15" height="14" rx="2" />
         </svg>
       );
     case 'music':
@@ -100,6 +109,7 @@ function EntertainmentApp() {
       <PageErrorBoundary>
         <Suspense fallback={<div style={{ padding: '2rem', opacity: .5, fontFamily: 'monospace' }}>Loading…</div>}>
           {activeTab === 'entertainment' && <EntertainmentPage />}
+          {activeTab === 'streaming'     && <StreamingPage />}
           {activeTab === 'music'         && <MusicPortalPage />}
           {activeTab === 'social'        && <SocialTab />}
           {activeTab === 'gallery'       && <GalleryPage />}
