@@ -9,11 +9,13 @@ import { PLUGIN_URL } from "@/lib/plugin";
 export interface Channel {
   id: string;
   name: string;
-  type: "static" | "canvas" | "iframe" | "noise" | "video";
+  type: "static" | "canvas" | "iframe" | "noise" | "video" | "stream";
   src?: string;
   poster?: string;
   color?: string;
   autoplay?: boolean;
+  /** Streaming services only: false when the service sends X-Frame-Options: DENY. */
+  embeddable?: boolean;
 }
 
 const CHANNELS: Channel[] = [
@@ -25,6 +27,18 @@ const CHANNELS: Channel[] = [
   { id: "ch6", name: "Vapor FM", type: "iframe", src: `${PLUGIN_URL}/public/vapor.html?v=2` },
   { id: "ch7", name: "Ballad of Hermes", type: "iframe", src: `${PLUGIN_URL}/public/ballad-hermes.html`, color: "#0a0a1a" },
   { id: "ch8", name: "Nous Promo", type: "iframe", src: `${PLUGIN_URL}/public/channel-promo-tweet.html`, color: "#0a0a1a" },
+  /* Streaming services live in the TV lineup. Only YouTube and Disney+ allow framing;
+     the rest send X-Frame-Options: DENY and render a launch panel instead of a white screen. */
+  { id: "s1", name: "YouTube",      type: "stream", src: "https://www.youtube.com/",       embeddable: true,  color: "#FF0000" },
+  { id: "s2", name: "Disney+",      type: "stream", src: "https://www.disneyplus.com/",    embeddable: true,  color: "#113CCF" },
+  { id: "s3", name: "YouTube TV",   type: "stream", src: "https://tv.youtube.com/",        embeddable: false, color: "#FF0000" },
+  { id: "s4", name: "Prime Video",  type: "stream", src: "https://www.primevideo.com/",     embeddable: false, color: "#00A8E1" },
+  { id: "s5", name: "Netflix",      type: "stream", src: "https://www.netflix.com/",      embeddable: false, color: "#E50914" },
+  { id: "s6", name: "Hulu",         type: "stream", src: "https://www.hulu.com/",          embeddable: false, color: "#1CE783" },
+  { id: "s7", name: "Paramount+",   type: "stream", src: "https://www.paramountplus.com/",  embeddable: false, color: "#0064FF" },
+  { id: "s8", name: "HBO Max",      type: "stream", src: "https://play.hbomax.com/",       embeddable: false, color: "#B833FF" },
+  { id: "s9", name: "Apple TV+",    type: "stream", src: "https://tv.apple.com/",          embeddable: false, color: "#A2AAAD" },
+  { id: "s10", name: "Peacock",     type: "stream", src: "https://www.peacocktv.com/",     embeddable: false, color: "#F4C51A" },
 ];
 const GAMEBOY_GAMES = [
   { id: "g1", name: "Pong",        src: `${PLUGIN_URL}/games/pong.html`,   icon: "pong", color: "#9ca3af" },
@@ -691,9 +705,52 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
+function StreamLaunch({ channel }: { channel: Channel }) {
+  const color = channel.color || "#2083AC";
+  return (
+    <div
+      className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center"
+      style={{ background: "radial-gradient(circle at 50% 40%, #14141c 0%, #000 80%)" }}
+    >
+      <div
+        className="w-14 h-14 rounded-xl flex items-center justify-center border border-white/10"
+        style={{ background: `${color}1f` }}
+      >
+        <span className="font-mono text-xs uppercase" style={{ color }}>{channel.name.slice(0, 2)}</span>
+      </div>
+      <h3 className="font-mono text-sm uppercase tracking-widest text-foreground">{channel.name}</h3>
+      <p className="text-[0.6rem] leading-relaxed text-muted-foreground max-w-xs">
+        {channel.name} blocks embedding, so it can&apos;t play inside the TV. Open it in your
+        browser and sign in — your subscription still applies.
+      </p>
+      <button
+        onClick={() => window.open(channel.src, "_blank", "noopener,noreferrer")}
+        className="px-3 py-1.5 rounded border border-border/40 font-mono text-[11px] tracking-widest uppercase bg-background/60 hover:bg-foreground/5 transition-colors"
+      >
+        Open {channel.name}
+      </button>
+    </div>
+  );
+}
+
 function ChannelRenderer({ channel, isPlaying, volume, isMuted }: { channel: Channel; isPlaying: boolean; volume: number; isMuted: boolean }) {
-  console.log('[ENT] ChannelRenderer', { id: channel.id, name: channel.name, type: channel.type, src: channel.src?.slice(0, 80) });
   switch (channel.type) {
+    case "stream": {
+      if (!channel.src) return <FallbackScreen name={channel.name} />;
+      if (channel.embeddable === false) return <StreamLaunch channel={channel} />;
+      return (
+        <div className="absolute inset-0 overflow-hidden bg-black">
+          <iframe
+            src={channel.src}
+            allowFullScreen
+            title={channel.name}
+            allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+            referrerPolicy="strict-origin-when-cross-origin"
+            style={{ width: "100%", height: "100%", border: "none", display: "block", pointerEvents: "auto" }}
+          />
+        </div>
+      );
+    }
     case "noise":
       return <StaticNoise />;
     case "static":
