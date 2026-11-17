@@ -581,14 +581,14 @@ export default function MusicPortalPage() {
         <p className={styles.playerLabel}>— RADIO PLUGIN · NIGHTTRIDE / PARADISE / EVE —</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center', padding: '8px 16px 16px' }}>
           {[
-            { id: 'chillsynth', name: 'CHILLSYNTH', col: '#a855f7' },
-            { id: 'nightride', name: 'NIGHTRIDE', col: '#e879f9' },
-            { id: 'darksynth', name: 'DARKSYNTH', col: '#f43f5e' },
-            { id: 'spacesynth', name: 'SPACESYNTH', col: '#2083AC' },
-            { id: 'paradise-main', name: 'RADIO PARADISE', col: '#fbbf24' },
-            { id: 'eve-radio', name: 'EVE RADIO', col: '#34d399' },
+            { id: 'chillsynth', name: 'CHILLSYNTH', col: '#a855f7', url: 'https://stream.nightride.fm/chillsynth.mp3' },
+            { id: 'nightride', name: 'NIGHTRIDE', col: '#e879f9', url: 'https://stream.nightride.fm/nightride.mp3' },
+            { id: 'darksynth', name: 'DARKSYNTH', col: '#f43f5e', url: 'https://stream.nightride.fm/darksynth.mp3' },
+            { id: 'spacesynth', name: 'SPACESYNTH', col: '#2083AC', url: 'https://stream.nightride.fm/spacesynth.mp3' },
+            { id: 'paradise-main', name: 'RADIO PARADISE', col: '#fbbf24', url: 'https://stream.radioparadise.com/aac-128' },
+            { id: 'eve-radio', name: 'EVE RADIO', col: '#34d399', url: 'https://media01.gamingnow.net:8010/erweb.mp3' },
           ].map(st => (
-            <button key={st.id} onClick={() => { window.open(`https://stream.nightride.fm/${st.id === 'nightride' ? 'nightride' : st.id === 'chillsynth' ? 'chillsynth' : st.id === 'darksynth' ? 'darksynth' : st.id === 'spacesynth' ? 'spacesynth' : 'chillsynth'}.mp3`, '_blank'); }}
+            <button key={st.id} onClick={() => { window.open(st.url, '_blank'); }}
               style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.1em', padding: '6px 12px', borderRadius: 4, cursor: 'pointer', background: `${st.col}11`, color: st.col, border: `1px solid ${st.col}33`, textTransform: 'uppercase' }}>
               {st.name}
             </button>

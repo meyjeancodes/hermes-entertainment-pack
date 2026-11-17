@@ -96,14 +96,6 @@ const GALLERY_IMAGES = [
     orientation: "portrait",
   },
   {
-    id: "the-artist",
-    url: `${GALLERY_BASE}/the-artist.jpg`,
-    title: "The Artist",
-    subtitle: "",
-    type: "card",
-    orientation: "landscape",
-  },
-  {
     id: "composer-2026-06-13",
     url: `${GALLERY_BASE}/composer_2026-06-13_10-44-01-683_d13351.png`,
     title: "Composer Capture",
@@ -193,14 +185,6 @@ const GALLERY_IMAGES = [
     orientation: "square",
   },
   {
-    id: "issue1-9",
-    url: `${GALLERY_BASE}/GuYLrlGWMAAYMcu copy.jpeg`,
-    title: "Untitled Fragment",
-    subtitle: "Work in Progress",
-    type: "card",
-    orientation: "landscape",
-  },
-  {
     id: "13",
     url: `${GALLERY_BASE}/IMG_4D9E27515C6D-1.jpeg`,
     title: "Manga Interlude",
@@ -215,14 +199,6 @@ const GALLERY_IMAGES = [
     subtitle: "Nous Archive",
     type: "card",
     orientation: "landscape",
-  },
-  {
-    id: "20",
-    url: `${GALLERY_BASE}/HBi6R5xWEAAWLvZ copy.jpeg`,
-    title: "Fragment",
-    subtitle: "Nous Archive",
-    type: "card",
-    orientation: "portrait",
   },
   {
     id: "21",
@@ -367,6 +343,38 @@ const GALLERY_IMAGES = [
     subtitle: "Nous Research · 2026-08-23",
     type: "card",
     orientation: "portrait",
+  },
+  {
+    id: "h1",
+    url: `${GALLERY_BASE}/HIoy8J8W8AApMb-.jpeg`,
+    title: "Untitled",
+    subtitle: "Nous Archive",
+    type: "card",
+    orientation: "landscape",
+  },
+  {
+    id: "h2",
+    url: `${GALLERY_BASE}/HJ8JKOjW8AA2QrJ.jpeg`,
+    title: "Untitled",
+    subtitle: "Nous Archive",
+    type: "card",
+    orientation: "landscape",
+  },
+  {
+    id: "h3",
+    url: `${GALLERY_BASE}/HJSqH16WQAEfRIn.jpeg`,
+    title: "Untitled",
+    subtitle: "Nous Archive",
+    type: "card",
+    orientation: "landscape",
+  },
+  {
+    id: "h4",
+    url: `${GALLERY_BASE}/HKKY2haXMAA-alw.jpeg`,
+    title: "Untitled",
+    subtitle: "Nous Archive",
+    type: "card",
+    orientation: "landscape",
   },
 ];
 
