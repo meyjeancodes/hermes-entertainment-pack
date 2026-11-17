@@ -20,7 +20,7 @@ const CHANNELS: Channel[] = [
   { id: "ch1", name: "Hackathon Anime", type: "iframe", src: `${PLUGIN_URL}/public/hackathon-anime.html`, color: "#0a0a1a" },
   { id: "ch2", name: "Signal", type: "iframe", src: `${PLUGIN_URL}/public/twitter-embed.html`, color: "#0a0a1a" },
   { id: "ch3",  name: "Weather Retro", type: "iframe", src: `${PLUGIN_URL}/public/weather.html` },
-  { id: "ch4", name: "Nous Network", type: "video", src: `${PLUGIN_URL}/public/NousNetwork.mp4`, poster: `${PLUGIN_URL}/branding/nous-network-ident.png`, color: "#0a0a1a" },
+  { id: "ch4", name: "Nous Network", type: "video", src: "/api/plugins/hermes-entertainment-pack/video/NousNetwork.mp4", poster: `${PLUGIN_URL}/branding/nous-network-ident.png`, color: "#0a0a1a" },
   { id: "ch6", name: "Vapor FM", type: "iframe", src: `${PLUGIN_URL}/public/vapor.html?v=2` },
   { id: "ch7", name: "Ballad of Hermes", type: "iframe", src: `${PLUGIN_URL}/public/ballad-hermes.html`, color: "#0a0a1a" },
   { id: "ch8", name: "Nous Promo", type: "iframe", src: `${PLUGIN_URL}/public/channel-promo-tweet.html`, color: "#0a0a1a" },
@@ -810,12 +810,41 @@ function StaticNoise() {
 function VideoPlayer({ src, isPlaying, channelId, volume, isMuted }: { src: string; isPlaying: boolean; channelId: string; volume: number; isMuted: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const saveRef = useRef<number | null>(null);
+  const [mediaUrl, setMediaUrl] = useState<string>(src);
+
+  // The dashboard's static asset route blocks .mp4 by design (suffix allowlist), so
+  // plugin videos are served from the auth-gated plugin API instead. Fetch it with the
+  // session token and hand the <video> a blob URL — a plain src would 401/404 and leave
+  // a black player at 0:00.
+  useEffect(() => {
+    let live = true;
+    let objectUrl: string | null = null;
+    setMediaUrl(src);
+    if (!src.includes('/api/plugins/')) return;
+    const token = (window as any).__HERMES_SESSION_TOKEN__;
+    if (!token) return;
+    fetch(src, { headers: { 'X-Hermes-Session-Token': token } })
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.blob();
+      })
+      .then((b) => {
+        if (!live) return;
+        objectUrl = URL.createObjectURL(b);
+        setMediaUrl(objectUrl);
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [src]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Restore saved position on mount
+    // Restore saved position on mount, and again once the blob URL resolves
     const saved = getSavedPosition(channelId);
     if (saved > 2) {
       video.currentTime = saved;
@@ -826,7 +855,7 @@ function VideoPlayer({ src, isPlaying, channelId, volume, isMuted }: { src: stri
     } else {
       video.pause();
     }
-  }, [channelId, isPlaying]);
+  }, [channelId, isPlaying, mediaUrl]);
 
   // Throttled position saver: every 5 seconds while playing
   useEffect(() => {
@@ -864,14 +893,14 @@ function VideoPlayer({ src, isPlaying, channelId, volume, isMuted }: { src: stri
     const video = videoRef.current;
     if (!video) return;
     video.volume = isMuted ? 0 : volume / 100;
-  }, [volume, isMuted]);
+  }, [volume, isMuted, mediaUrl]);
 
   return (
     <div className="absolute inset-0" style={{ background: '#000' }}>
       <video
-        key={src}
+        key={mediaUrl}
         ref={videoRef}
-        src={src}
+        src={mediaUrl}
         className="absolute inset-0 w-full h-full object-contain"
         loop
         playsInline
